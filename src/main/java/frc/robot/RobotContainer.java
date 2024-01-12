@@ -4,25 +4,36 @@
 
 package frc.robot;
 
+import java.sql.Driver;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.subsystems.Swerve;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
-
 
   /* Drive Controls */
   private static final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -32,11 +43,16 @@ public class RobotContainer {
   /* Subsystems */
   public final Swerve s_Swerve = new Swerve();
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /* Auton */
+  private SendableChooser<Command> autoChooser;
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-
+    configureAuton();
     // Set Default commands for subsystems
     setDefaultCommands();
   }
@@ -48,16 +64,22 @@ public class RobotContainer {
     driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
   }
 
+private void configureAuton() {
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
   private void setDefaultCommands() {
     s_Swerve.setDefaultCommand(new SwerveTeleCMD(
-      s_Swerve,
-      () -> driver.getRawAxis(translationAxis),
-      () -> driver.getRawAxis(strafeAxis),
-      () -> -driver.getRawAxis(rotationAxis),
-      () -> driver.povDown().getAsBoolean(),
-      () -> driver.leftBumper().getAsBoolean(),
-      () -> driver.rightBumper().getAsBoolean()
-    ));
+        s_Swerve,
+        () -> driver.getRawAxis(translationAxis),
+        () -> driver.getRawAxis(strafeAxis),
+        () -> -driver.getRawAxis(rotationAxis),
+        () -> driver.povDown().getAsBoolean(),
+        () -> driver.leftBumper().getAsBoolean(),
+        () -> driver.rightBumper().getAsBoolean()));
   }
 
   /**
@@ -67,6 +89,12 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new SequentialCommandGroup();
+            // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
+        
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path);
+    
+    // return autoChooser.getSelected();
   }
 }
