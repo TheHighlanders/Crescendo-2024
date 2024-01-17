@@ -8,6 +8,7 @@ import java.sql.Driver;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.PIDweird;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.subsystems.Swerve;
 
@@ -80,6 +82,8 @@ private void configureAuton() {
         () -> driver.povDown().getAsBoolean(),
         () -> driver.leftBumper().getAsBoolean(),
         () -> driver.rightBumper().getAsBoolean()));
+
+    // s_Swerve.setDefaultCommand(new PIDweird(s_Swerve, () -> driver.getLeftX(), ()-> driver.getLeftY()));
   }
 
   /**
@@ -88,13 +92,8 @@ private void configureAuton() {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-            // Load the path you want to follow using its name in the GUI
-        PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
-        
-        // Create a path following command using AutoBuilder. This will also trigger event markers.
-        return AutoBuilder.followPath(path);
-    
+    // Uses an Auto to assign a starting position
+    return new PathPlannerAuto("New Auto");
     // return autoChooser.getSelected();
   }
 }

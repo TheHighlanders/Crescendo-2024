@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.s_Swerve.sendSmartDashboardDiagnostics();
+    m_robotContainer.s_Swerve.getRobotRelativeSpeeds();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

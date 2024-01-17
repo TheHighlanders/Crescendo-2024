@@ -69,17 +69,17 @@ public final class Constants {
 
   public static class Module {
     public static class DriveCurrentLimit{
-      public static final double kLimitToAmps = 30.0f;
+      public static final double kLimitToAmps = 40.0f;
       public static final double kMaxSpikeTime = 25.0f;
-      public static final double kMaxSpikeAmps = 80.0f;
+      public static final double kMaxSpikeAmps = 40.0f;
       public static final int kSmartLimit = 40;
     }
 
     public static class AngleCurrentLimit{
-      public static final double kLimitToAmps = 25.0f;
+      public static final double kLimitToAmps = 20.0f;
       public static final double kMaxSpikeTime = 25.0f;
-      public static final double kMaxSpikeAmps = 70.0f;
-      public static final int kSmartLimit = 30;
+      public static final double kMaxSpikeAmps = 20.0f;
+      public static final int kSmartLimit = 20;
     }
 
     public static final double kDriveGearRatio = 1.0f / 8.14f;
