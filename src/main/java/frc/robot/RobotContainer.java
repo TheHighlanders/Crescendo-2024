@@ -93,7 +93,7 @@ private void configureAuton() {
    */
   public Command getAutonomousCommand() {
     // Uses an Auto to assign a starting position
-    return new PathPlannerAuto("New Auto");
+    return new PathPlannerAuto("Testing Auton");
     // return autoChooser.getSelected();
   }
 }

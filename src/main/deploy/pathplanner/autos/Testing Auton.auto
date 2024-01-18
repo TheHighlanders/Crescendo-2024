@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 7.0
+      "x": 3.0,
+      "y": 5.0
     },
     "rotation": 0.0
   },
@@ -14,13 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "Reverse Loop"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "Reverse Loop"
           }
         }
       ]
