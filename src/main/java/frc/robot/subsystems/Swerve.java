@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.Modules;
 
 public class Swerve extends SubsystemBase {
@@ -79,13 +80,7 @@ public class Swerve extends SubsystemBase {
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(0.001, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(0.175, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
-            2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
-            0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig() // Default path replanning config. See the API for the options here
-        ),
+        Autonomous.pathFollowConfig,
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red
           // alliance

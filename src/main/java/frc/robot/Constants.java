@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -50,6 +53,15 @@ public final class Constants {
   }
 
   public static class Autonomous{
+    public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
+            2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
+            0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        );
+
+
     public static final double kPGrid = 0;
     public static final double kIGrid = 0;
     public static final double kDGrid = 0;
