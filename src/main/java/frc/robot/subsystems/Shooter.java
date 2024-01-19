@@ -4,33 +4,32 @@ import java.util.function.BooleanSupplier;
 
 public class Shooter extends SubsystemBase {
 
-  
-
-  public Shooter() {}
-
+  private BotPoseProvider m_source;
   private BooleanSupplier m_hasGamePiece = () -> false;
   private BooleanSupplier m_pivotAligned = () -> false;
 
-  
-  public void setSuppliers(BooleanSupplier hasGamePiece, BooleanSupplier pivotAligned) {
+  public Shooter() {}
+
+  public void setSuppliers(
+    BooleanSupplier hasGamePiece,
+    BooleanSupplier pivotAligned
+  ) {
     m_hasGamePiece = hasGamePiece;
     m_pivotAligned = pivotAligned;
   }
 
-  // /**
-  //  * command factory
-  //  *
-  //  * @return a command
-  //  */
-
-  // public Command Eject() {}
-
-  public boolean shoot() {
-    return false;
+  public void shoot() {
+    if (!m_pivotAligned) {
+      //call alignPivot(calcTrajectory());
+    }
+    if (!m_hasGamePiece) {
+      // well that sucks
+    }
+    // tell drive to align shot
   }
 
-  public boolean shoot() {
-    return false;
+  public double calcTrajectory() {
+    return 1_000;
   }
 
   @Override
