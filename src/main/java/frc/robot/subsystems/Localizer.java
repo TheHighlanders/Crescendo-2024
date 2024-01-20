@@ -15,6 +15,7 @@ import frc.robot.Constants;
 
 public class Localizer extends SubsystemBase {
     SwerveDrivePoseEstimator swervePoseEstimator;
+    EstimatedRobotPose previous;
     Swerve swerve;
     Vision vision;
   /** Creates a new Localizer. */
@@ -32,10 +33,12 @@ public class Localizer extends SubsystemBase {
   public void periodic() {
     swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
     
-    Optional<EstimatedRobotPose> estPose = vision.getEstimatedGlobalPosePhoton(null);
+    //TODO: Remove null prev
+    Optional<EstimatedRobotPose> estPose = vision.getEstimatedGlobalPosePhoton(previous.estimatedPose.toPose2d());
     
     if(estPose.isPresent()){
-      swervePoseEstimator.addVisionMeasurement(estPose.get().estimatedPose.toPose2d(),estPose.get().timestampSeconds);
+      previous = estPose.get();
+      swervePoseEstimator.addVisionMeasurement(estPose.get().estimatedPose.toPose2d(), estPose.get().timestampSeconds);
     }
     // This method will be called once per scheduler run
   }

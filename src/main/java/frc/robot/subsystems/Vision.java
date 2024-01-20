@@ -45,6 +45,7 @@ public class Vision extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  
   public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton(Pose2d prevEstimatedRobotPose) {
     photonPoseEst0.setReferencePose(prevEstimatedRobotPose);
     return photonPoseEst0.update();
