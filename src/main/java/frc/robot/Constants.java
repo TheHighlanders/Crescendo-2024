@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,12 +24,34 @@ import frc.robot.util.SwerveModuleConfig;
  */
 public final class Constants {
 
+  
+
+  public static class intakeconstants {
+    
+  public static final int INTAKE = 0; /**id where it connected */
+
+    public static final double kPGrid = 0;
+    public static final double kIGrid = 0;
+    public static final double kDGrid = 0;
+    public static class pidValues {
+      public static final double minOut = 0d;
+      public static final double maxOut = 0d;
+      public static final double kP = 0d;
+      public static final double kI = 0d;
+      public static final double kD = 0d;
+      public static final double kMaxI = 0d;
+      public static final double iMaxAccum = 0d;
+      public static final int slotID = 0;
+    }
+
+  }
+
   public static class SwerveConst {
 
     public static final double kMaxSpeedTele = 3.0; //Meters per Second
     public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
 
-    public static final double kStickDeadband = 0.05;
+    public static final double kStickDeadband = 0.01;
 
     public static final double kTrackWidth = Units.inchesToMeters(23.5);
     public static final double kWheelBase = Units.inchesToMeters(23.5);
@@ -48,7 +73,15 @@ public final class Constants {
     public static double slowAngularVelocityLimit = 45.0;
   }
 
-  public static class Autonomous {
+  public static class Autonomous{
+    public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
+            2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
+            0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        );
+
 
     public static final double kPGrid = 0;
     public static final double kIGrid = 0;
