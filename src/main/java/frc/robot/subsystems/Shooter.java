@@ -36,15 +36,15 @@ public class Shooter extends SubsystemBase {
 
     pidBottom = bottomFlywheelMotor.getPIDController();
     pidBottom.setOutputRange(
-      Constants.Shooter.pidValues.minOut,
-      Constants.Shooter.pidValues.maxOut
+      Constants.Shooter.pidConstants.minOut,
+      Constants.Shooter.pidConstants.maxOut
     );
-    pidBottom.setP(Constants.Shooter.pidValues.kP);
-    pidBottom.setI(Constants.Shooter.pidValues.kI);
-    pidBottom.setD(Constants.Shooter.pidValues.kD);
+    pidBottom.setP(Constants.Shooter.pidConstants.kP);
+    pidBottom.setI(Constants.Shooter.pidConstants.kI);
+    pidBottom.setD(Constants.Shooter.pidConstants.kD);
     pidBottom.setIMaxAccum(
-      Constants.Shooter.pidValues.iMaxAccum,
-      Constants.Shooter.pidValues.slotID
+      Constants.Shooter.pidConstants.iMaxAccum,
+      Constants.Shooter.pidConstants.slotID
     );
 
     
@@ -62,15 +62,15 @@ public class Shooter extends SubsystemBase {
 
     pidTop = topFlywheelMotor.getPIDController();
     pidTop.setOutputRange(
-      Constants.Shooter.pidValues.minOut,
-      Constants.Shooter.pidValues.maxOut
+      Constants.Shooter.pidConstants.minOut,
+      Constants.Shooter.pidConstants.maxOut
     );
-    pidTop.setP(Constants.Shooter.pidValues.kP);
-    pidTop.setI(Constants.Shooter.pidValues.kI);
-    pidTop.setD(Constants.Shooter.pidValues.kD);
+    pidTop.setP(Constants.Shooter.pidConstants.kP);
+    pidTop.setI(Constants.Shooter.pidConstants.kI);
+    pidTop.setD(Constants.Shooter.pidConstants.kD);
     pidTop.setIMaxAccum(
-      Constants.Shooter.pidValues.iMaxAccum,
-      Constants.Shooter.pidValues.slotID
+      Constants.Shooter.pidConstants.iMaxAccum,
+      Constants.Shooter.pidConstants.slotID
     );
   }
 

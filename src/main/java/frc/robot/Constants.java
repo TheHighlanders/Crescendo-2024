@@ -196,7 +196,7 @@ public final class Constants {
     public static final int topFlywheelMotorID = 99;
     public static final int kBottomRatio = 69;
     public static final int kTopRatio = 69;
-    public static class pidValues {
+    public static class pidConstants {
       public static final double minOut = 0d;
       public static final double maxOut = 0d;
       public static final double kP = 0d;
