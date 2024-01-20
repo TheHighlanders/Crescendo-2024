@@ -10,13 +10,12 @@ import com.kauailabs.navx.frc.AHRS;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.Modules;
 
@@ -32,14 +32,10 @@ public class Swerve extends SubsystemBase {
   /* Array of Modules */
   public SwerveModule[] modules;
   private AHRS gyro;
-
   public Field2d field;
-
   public ChassisSpeeds chassisSpeeds;
 
-  public SwerveDrivePoseEstimator swervePoseEstimator;
-
-  public SwerveDriveOdometry odometer;
+  // public SwerveDriveOdometry odometer;
 
   public Swerve() {
     /* Initializes modules from Constants */
@@ -63,10 +59,9 @@ public class Swerve extends SubsystemBase {
 
     field = new Field2d();
 
-    odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
+    // odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
 
-    swervePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConst.kinematics, getYaw(), getModulePositions(),
-        new Pose2d());
+
 
     chassisSpeeds = new ChassisSpeeds();
     // SmartDashboard.putData(field);
@@ -97,9 +92,8 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
 
-    odometer.update(gyro.getRotation2d(), getModulePositions());
-    swervePoseEstimator.update(getYaw(), getModulePositions());
-
+    // odometer.update(gyro.getRotation2d(), getModulePositions());
+    
     
 
     // field.setRobotPose(getPose());
@@ -156,8 +150,8 @@ public class Swerve extends SubsystemBase {
 
   // For PP
   public void resetPose(Pose2d pose) {
-    swervePoseEstimator.resetPosition(getYaw(), getModulePositions(), pose);
-    odometer.resetPosition(getYaw(), getModulePositions(), pose);
+    RobotContainer.s_Localizer.resetOdoPose2d(pose);
+    // odometer.resetPosition(getYaw(), getModulePositions(), pose);
 
     SmartDashboard.putNumber("ResetPoseX", pose.getX());
     SmartDashboard.putNumber("ResetPoseY", pose.getY());
@@ -187,8 +181,9 @@ public class Swerve extends SubsystemBase {
 
   public Pose2d getPose() {
     // return new Pose2d(odometer.getPoseMeters().getTranslation(), new Rotation2d());
-    return odometer.getPoseMeters();
+    // return odometer.getPoseMeters();
     // return swervePoseEstimator.getEstimatedPosition();
+    return RobotContainer.getLocalizedPose.get();
   }
 
   public Field2d getField() {

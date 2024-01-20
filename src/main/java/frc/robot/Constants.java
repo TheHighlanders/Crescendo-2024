@@ -10,7 +10,10 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.SwerveModuleConfig;
@@ -61,6 +64,9 @@ public final class Constants {
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         );
 
+    public static final Translation3d robotCameraTranslation0 = new Translation3d();
+    public static final Rotation3d robotCameraRotation0 = new Rotation3d();    
+    public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
 
     public static final double kPGrid = 0;
     public static final double kIGrid = 0;

@@ -47,8 +47,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    m_robotContainer.s_Swerve.sendSmartDashboardDiagnostics();
-    m_robotContainer.s_Swerve.getRobotRelativeSpeeds();
+    RobotContainer.s_Swerve.sendSmartDashboardDiagnostics();
+    RobotContainer.s_Swerve.getRobotRelativeSpeeds();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -92,14 +92,14 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    m_robotContainer.s_Swerve.jogAllModuleDrive(currentVeloc);
+    RobotContainer.s_Swerve.jogAllModuleDrive(currentVeloc);
     currentVeloc *= -1;
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    DriverStation.reportWarning(m_robotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() + "",false);
+    DriverStation.reportWarning(RobotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() + "",false);
 
   }
 
