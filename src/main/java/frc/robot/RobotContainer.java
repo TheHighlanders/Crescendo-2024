@@ -4,23 +4,15 @@
 
 package frc.robot;
 
-import java.sql.Driver;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.PIDweird;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.subsystems.Swerve;
 
@@ -82,10 +74,9 @@ private void configureAuton() {
         () -> driver.povDown().getAsBoolean(),
         () -> driver.leftBumper().getAsBoolean(),
         () -> driver.rightBumper().getAsBoolean()));
+    }
 
-    // s_Swerve.setDefaultCommand(new PIDweird(s_Swerve, () -> driver.getLeftX(), ()-> driver.getLeftY()));
-  }
-
+    
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -93,7 +84,7 @@ private void configureAuton() {
    */
   public Command getAutonomousCommand() {
     // Uses an Auto to assign a starting position
-    return new PathPlannerAuto("Testing Auton");
-    // return autoChooser.getSelected();
+    //return new PathPlannerAuto("Testing Auton");
+    return autoChooser.getSelected();
   }
 }

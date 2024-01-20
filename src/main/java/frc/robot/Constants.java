@@ -29,7 +29,7 @@ public final class Constants {
     public static final double kMaxSpeedTele = 3.0; //Meters per Second
     public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
 
-    public static final double kStickDeadband = 0.05;
+    public static final double kStickDeadband = 0.01;
 
     public static final double kTrackWidth = Units.inchesToMeters(23.5);
     public static final double kWheelBase = Units.inchesToMeters(23.5);
