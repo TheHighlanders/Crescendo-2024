@@ -37,7 +37,7 @@ public class Vision extends SubsystemBase {
       DriverStation.reportWarning("AprilTag Field Layout Load Exception", true);
     }
 
-    photonPoseEst0 = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,cam0,  Constants.Autonomous.kRobotCamera0);
+    photonPoseEst0 = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cam0,  Constants.Autonomous.kRobotCamera0);
       }
 
   @Override
@@ -45,9 +45,13 @@ public class Vision extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  
+
   public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton(Pose2d prevEstimatedRobotPose) {
     photonPoseEst0.setReferencePose(prevEstimatedRobotPose);
+    return photonPoseEst0.update();
+  }
+
+  public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton() {
     return photonPoseEst0.update();
   }
 }

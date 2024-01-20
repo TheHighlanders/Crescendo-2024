@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -32,7 +31,6 @@ public class Swerve extends SubsystemBase {
   /* Array of Modules */
   public SwerveModule[] modules;
   private AHRS gyro;
-  public Field2d field;
   public ChassisSpeeds chassisSpeeds;
 
   // public SwerveDriveOdometry odometer;
@@ -57,7 +55,6 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("PP Y", 5);
     SmartDashboard.putNumber("PP O", 6);
 
-    field = new Field2d();
 
     // odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
 
@@ -184,10 +181,6 @@ public class Swerve extends SubsystemBase {
     // return odometer.getPoseMeters();
     // return swervePoseEstimator.getEstimatedPosition();
     return RobotContainer.getLocalizedPose.get();
-  }
-
-  public Field2d getField() {
-    return field;
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
