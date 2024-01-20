@@ -24,28 +24,6 @@ import frc.robot.util.SwerveModuleConfig;
  */
 public final class Constants {
 
-  
-
-  public static class intakeconstants {
-    
-  public static final int INTAKE = 0; /**id where it connected */
-
-    public static final double kPGrid = 0;
-    public static final double kIGrid = 0;
-    public static final double kDGrid = 0;
-    public static class pidValues {
-      public static final double minOut = 0d;
-      public static final double maxOut = 0d;
-      public static final double kP = 0d;
-      public static final double kI = 0d;
-      public static final double kD = 0d;
-      public static final double kMaxI = 0d;
-      public static final double iMaxAccum = 0d;
-      public static final int slotID = 0;
-    }
-
-  }
-
   public static class SwerveConst {
 
     public static final double kMaxSpeedTele = 3.0; //Meters per Second
@@ -73,15 +51,15 @@ public final class Constants {
     public static double slowAngularVelocityLimit = 45.0;
   }
 
-  public static class Autonomous{
-    public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
-            2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
-            0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig() // Default path replanning config. See the API for the options here
-        );
+  public static class Autonomous {
 
+    public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+      new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
+      new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
+      2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
+      0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
+      new ReplanningConfig() // Default path replanning config. See the API for the options here
+    );
 
     public static final double kPGrid = 0;
     public static final double kIGrid = 0;
@@ -225,19 +203,116 @@ public final class Constants {
   }
 
   public static class Shooter {
+
     public static final int bottomFlywheelMotorID = 98;
     public static final int topFlywheelMotorID = 99;
     public static final int kBottomRatio = 69;
     public static final int kTopRatio = 69;
-    public static class pidConstants {
-      public static final double minOut = 0d;
-      public static final double maxOut = 0d;
+    public static final int slotID = 0;
+    public static final double maxVel = 2000; // rpm
+    public static final double minVel = 0;
+    public static final double maxAcc = 2000;
+    public static final double allowedErr = 100;
+
+    public static class pidValues {
+
+      public static final double minOut = -1;
+      public static final double maxOut = 1;
       public static final double kP = 0d;
       public static final double kI = 0d;
       public static final double kD = 0d;
       public static final double kMaxI = 0d;
       public static final double iMaxAccum = 0d;
-      public static final int slotID = 0;
+    }
+  }
+
+  public static class Intake {
+
+    public static final int INTAKE = 0;
+    public static final int slotID = 0;
+    public static final double maxVel = 2000; // rpm
+    public static final double minVel = 0;
+    public static final double maxAcc = 2000;
+    public static final double allowedErr = 100;
+
+    public static class pidValues {
+
+      public static final double minOut = -1;
+      public static final double maxOut = 1;
+      public static final double kP = 0d;
+      public static final double kI = 0d;
+      public static final double kD = 0d;
+      public static final double kMaxI = 0d;
+      public static final double iMaxAccum = 0d;
+    }
+
+    public static class IntakeCurrentLimit {
+
+      public static final double kLimitToAmps = 40.0f;
+      public static final double kMaxSpikeTime = 25.0f;
+      public static final double kMaxSpikeAmps = 40.0f;
+      public static final int kSmartLimit = 40;
+    }
+  }
+
+  public static class Pivot {
+
+    public static final int INTAKE = 0;
+    public static final int SHOOTER = 0;
+    public static final int slotID = 0;
+
+    public static class SmartMotionCoefficientsIntake {
+
+      public static final double maxVel = 2000; // rpm
+      public static final double minVel = 0;
+      public static final double maxAcc = 2000;
+      public static final double allowedErr = 100;
+    }
+
+    public static class SmartMotionCoefficientsShooter {
+
+      public static final double maxVel = 2000; // rpm
+      public static final double minVel = 0;
+      public static final double maxAcc = 2000;
+      public static final double allowedErr = 100;
+    }
+
+    public static class pidValuesIntake {
+
+      public static final double minOut = -1;
+      public static final double maxOut = 1;
+      public static final double kP = 0d;
+      public static final double kI = 0d;
+      public static final double kD = 0d;
+      public static final double kMaxI = 0d;
+      public static final double iMaxAccum = 0d;
+    }
+
+    public static class pidValuesShooter {
+
+      public static final double minOut = -1;
+      public static final double maxOut = 1;
+      public static final double kP = 0d;
+      public static final double kI = 0d;
+      public static final double kD = 0d;
+      public static final double kMaxI = 0d;
+      public static final double iMaxAccum = 0d;
+    }
+
+    public static class IntakeArmCurrentLimit {
+
+      public static final double kLimitToAmps = 40.0f;
+      public static final double kMaxSpikeTime = 25.0f;
+      public static final double kMaxSpikeAmps = 40.0f;
+      public static final int kSmartLimit = 40;
+    }
+
+    public static class ShooterArmCurrentLimit {
+
+      public static final double kLimitToAmps = 40.0f;
+      public static final double kMaxSpikeTime = 25.0f;
+      public static final double kMaxSpikeAmps = 40.0f;
+      public static final int kSmartLimit = 40;
     }
   }
 }

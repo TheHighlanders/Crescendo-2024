@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -16,235 +15,269 @@ import frc.robot.util.CANSparkMaxCurrent;
 import frc.robot.util.SwerveModuleConfig;
 
 public class SwerveModule {
-    public CANSparkMaxCurrent angleMotor;
-    public CANSparkMaxCurrent driveMotor;
 
-    public int moduleNumber;
+  public CANSparkMaxCurrent angleMotor;
+  public CANSparkMaxCurrent driveMotor;
 
-    public SparkPIDController driveController;
-    public SparkPIDController angleController;
+  public int moduleNumber;
 
-    private SimpleMotorFeedforward driveFeedforward;
+  public SparkPIDController driveController;
+  public SparkPIDController angleController;
 
-    public RelativeEncoder driveEncoder;
-    public RelativeEncoder angleEncoder;
-    public double angleReference;
-    public double driveReference;
+  private SimpleMotorFeedforward driveFeedforward;
 
-    public SparkAbsoluteEncoder absoluteEncoder;
+  public RelativeEncoder driveEncoder;
+  public RelativeEncoder angleEncoder;
+  public double angleReference;
+  public double driveReference;
 
-    private Rotation2d KModuleAbsoluteOffset;
-    private Rotation2d lastAngle;
+  public SparkAbsoluteEncoder absoluteEncoder;
 
-    public SwerveModule(int moduleNumber, SwerveModuleConfig config) {
-        this.moduleNumber = moduleNumber;
+  private Rotation2d KModuleAbsoluteOffset;
+  private Rotation2d lastAngle;
 
-        driveMotor = new CANSparkMaxCurrent(config.driveMotorID, MotorType.kBrushless);
-        angleMotor = new CANSparkMaxCurrent(config.angleMotorID, MotorType.kBrushless);
+  public SwerveModule(int moduleNumber, SwerveModuleConfig config) {
+    this.moduleNumber = moduleNumber;
 
-        driveEncoder = driveMotor.getEncoder();
-        angleEncoder = angleMotor.getEncoder();
+    driveMotor =
+      new CANSparkMaxCurrent(config.driveMotorID, MotorType.kBrushless);
+    angleMotor =
+      new CANSparkMaxCurrent(config.angleMotorID, MotorType.kBrushless);
 
-        driveController = driveMotor.getPIDController();
-        angleController = angleMotor.getPIDController();
+    driveEncoder = driveMotor.getEncoder();
+    angleEncoder = angleMotor.getEncoder();
 
-        /* Creates an additional FF controller for extra drive motor control */
-        driveFeedforward = new SimpleMotorFeedforward(Module.kSDrive, Module.kVDrive, Module.kADrive);
+    driveController = driveMotor.getPIDController();
+    angleController = angleMotor.getPIDController();
 
-        absoluteEncoder = angleMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+    /* Creates an additional FF controller for extra drive motor control */
+    driveFeedforward =
+      new SimpleMotorFeedforward(
+        Module.kSDrive,
+        Module.kVDrive,
+        Module.kADrive
+      );
 
-        this.KModuleAbsoluteOffset = config.absoluteEncoderOffset;
+    absoluteEncoder =
+      angleMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
-        configureDriveMotor();
-        configureAngleMotor();
+    this.KModuleAbsoluteOffset = config.absoluteEncoderOffset;
+
+    configureDriveMotor();
+    configureAngleMotor();
+  }
+
+  /**
+   * Sets both Angle and Drive to desired states
+   *
+   * @param state:      Desired module state
+   * @param isOpenLoop: Controls if the drive motor use a PID loop
+   */
+  public void setModuleState(SwerveModuleState state, boolean isOpenLoop) {
+    state = SwerveModuleState.optimize(state, getAnglePosition());
+
+    setAngleState(state);
+    setDriveState(state, isOpenLoop);
+  }
+
+  /**
+   * Sets the Drive Motor to a desired state,
+   * if isOpenLoop is true, it will be set as a percent, if it is false, than it
+   * will use a velocity PIDF loop
+   *
+   * @param state:      Desired module state
+   * @param isOpenLoop: Whether or not to use a PID loop
+   */
+  public void setDriveState(SwerveModuleState state, boolean isOpenLoop) {
+    if (isOpenLoop) {
+      double motorPercent =
+        state.speedMetersPerSecond / SwerveConst.kMaxSpeedTele;
+      driveMotor.set(motorPercent);
+    } else {
+      driveController.setReference(
+        state.speedMetersPerSecond,
+        ControlType.kVelocity,
+        0,
+        driveFeedforward.calculate(state.speedMetersPerSecond)
+      );
+      driveReference = state.speedMetersPerSecond;
     }
+  }
 
-    /**
-     * Sets both Angle and Drive to desired states
-     * 
-     * @param state:      Desired module state
-     * @param isOpenLoop: Controls if the drive motor use a PID loop
-     */
-    public void setModuleState(SwerveModuleState state, boolean isOpenLoop) {
-        state = SwerveModuleState.optimize(state, getAnglePosition());
-
-        setAngleState(state);
-        setDriveState(state, isOpenLoop);
+  /**
+   * Sets the Angle Motor to a desired state, does not set the state if speed is
+   * too low, to stop wheel jitter
+   *
+   * @param state: Desired module state
+   */
+  public void setAngleState(SwerveModuleState state) {
+    // Anti Jitter Code, not sure if it works, need to test and review
+    Rotation2d angle = (
+        Math.abs(state.speedMetersPerSecond) <=
+        SwerveConst.kMaxAngularSpeedFast *
+        0.001
+      )
+      ? lastAngle
+      : state.angle;
+    // Rotation2d angle = state.angle;
+    if (angle != null) {
+      angleController.setReference(angle.getDegrees(), ControlType.kPosition);
+      angleReference = angle.getDegrees();
     }
+    // lastAngle = state.angle;
+  }
 
-    /**
-     * Sets the Drive Motor to a desired state,
-     * if isOpenLoop is true, it will be set as a percent, if it is false, than it
-     * will use a velocity PIDF loop
-     * 
-     * @param state:      Desired module state
-     * @param isOpenLoop: Whether or not to use a PID loop
-     */
-    public void setDriveState(SwerveModuleState state, boolean isOpenLoop) {
-        if (isOpenLoop) {
-            double motorPercent = state.speedMetersPerSecond / SwerveConst.kMaxSpeedTele;
-            driveMotor.set(motorPercent);
-        } else {
-            driveController.setReference(state.speedMetersPerSecond, ControlType.kVelocity, 0,
-                    driveFeedforward.calculate(state.speedMetersPerSecond));
-            driveReference = state.speedMetersPerSecond;
-        }
-    }
+  /**
+   * Returns the position of the Angle Motor, measured with integrated encoder
+   *
+   * @return Angle Motor Position
+   */
+  public Rotation2d getAnglePosition() {
+    return Rotation2d.fromDegrees(angleEncoder.getPosition());
+  }
 
-    /**
-     * Sets the Angle Motor to a desired state, does not set the state if speed is
-     * too low, to stop wheel jitter
-     * 
-     * @param state: Desired module state
-     */
-    public void setAngleState(SwerveModuleState state) {
-        // Anti Jitter Code, not sure if it works, need to test and review
-        Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001)
-                ? lastAngle
-                : state.angle;
-        // Rotation2d angle = state.angle;
-        if (angle != null) {
-            angleController.setReference(angle.getDegrees(), ControlType.kPosition);
-            angleReference = angle.getDegrees();
-        }
-        // lastAngle = state.angle;
-    }
+  /**
+   * Returns the velocity of the Drive Motor, measured with integrated encoder
+   *
+   * @return Drive Motor Velocity
+   */
+  public double getDriveVelocity() {
+    return driveEncoder.getVelocity();
+  }
 
-    /**
-     * Returns the position of the Angle Motor, measured with integrated encoder
-     * 
-     * @return Angle Motor Position
-     */
-    public Rotation2d getAnglePosition() {
-        return Rotation2d.fromDegrees(angleEncoder.getPosition());
-    }
+  /**
+   * Gets the position of the Drive Motor, measured with integrated encoder
+   *
+   * @return Drive Motor Position
+   */
+  public double getDrivePosition() {
+    return driveEncoder.getPosition();
+  }
 
-    /**
-     * Returns the velocity of the Drive Motor, measured with integrated encoder
-     * 
-     * @return Drive Motor Velocity
-     */
-    public double getDriveVelocity() {
-        return driveEncoder.getVelocity();
-    }
+  /**
+   * Gets the position of the module using the absolute encoder
+   *
+   * @return Position of the module between 0 and 360, as a Rotation2d
+   */
+  public Rotation2d getAbsolutePosition() {
+    /* Gets Position from SparkMAX absol encoder * 360 to degrees */
+    double positionDeg = absoluteEncoder.getPosition() * 360.0d;
 
-    /**
-     * Gets the position of the Drive Motor, measured with integrated encoder
-     * 
-     * @return Drive Motor Position
-     */
-    public double getDrivePosition() {
-        return driveEncoder.getPosition();
-    }
+    /* Subtracts magnetic offset to get wheel position */
+    positionDeg -= KModuleAbsoluteOffset.getDegrees();
 
-    /**
-     * Gets the position of the module using the absolute encoder
-     * 
-     * @return Position of the module between 0 and 360, as a Rotation2d
-     */
-    public Rotation2d getAbsolutePosition() {
-        /* Gets Position from SparkMAX absol encoder * 360 to degrees */
-        double positionDeg = absoluteEncoder.getPosition() * 360.0d;
+    /* Inverts if necesary */
+    positionDeg *= (Module.KAbsoluteEncoderInverted ? -1 : 1);
 
-        /* Subtracts magnetic offset to get wheel position */
-        positionDeg -= KModuleAbsoluteOffset.getDegrees();
+    return Rotation2d.fromDegrees(positionDeg);
+  }
 
-        /* Inverts if necesary */
-        positionDeg *= (Module.KAbsoluteEncoderInverted ? -1 : 1);
+  /**
+   *
+   * @return Swerve Module Position (Position & Angle)
+   */
+  public SwerveModulePosition getPosition() {
+    return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
+  }
 
-        return Rotation2d.fromDegrees(positionDeg);
-    }
+  /**
+   *
+   * @return Swerve Module State (Velocity & Angle)
+   */
+  public SwerveModuleState getState() {
+    return new SwerveModuleState(getDriveVelocity(), getAnglePosition());
+  }
 
-    /**
-     * 
-     * @return Swerve Module Position (Position & Angle)
-     */
-    public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
-    }
+  /**
+   * Returns the assigned module number
+   */
+  public int getModuleNumber() {
+    return moduleNumber;
+  }
 
-    /**
-     * 
-     * @return Swerve Module State (Velocity & Angle)
-     */
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(getDriveVelocity(), getAnglePosition());
-    }
+  /**
+   * Configures Drive Motor using parameters from Constants
+   */
+  private void configureDriveMotor() {
+    driveMotor.restoreFactoryDefaults();
 
-    /**
-     * Returns the assigned module number
-     */
-    public int getModuleNumber() {
-        return moduleNumber;
-    }
+    driveMotor.setInverted(Module.driveMotorInverted);
+    driveMotor.setIdleMode(Module.kDriveIdleMode);
 
-    /**
-     * Configures Drive Motor using parameters from Constants
-     */
-    private void configureDriveMotor() {
-        driveMotor.restoreFactoryDefaults();
+    /* Sets encoder ratios to actual module gear ratios */
+    driveEncoder.setPositionConversionFactor(
+      Module.kDrivePositionConversionFactor
+    );
+    driveEncoder.setVelocityConversionFactor(
+      Module.kDriveVelocityConverstionFactor
+    );
 
-        driveMotor.setInverted(Module.driveMotorInverted);
-        driveMotor.setIdleMode(Module.kDriveIdleMode);
+    /* Configures PID loop */
+    driveController.setP(Module.kPDrive);
+    driveController.setI(Module.kIDrive);
+    driveController.setD(Module.kDDrive);
 
-        /* Sets encoder ratios to actual module gear ratios */
-        driveEncoder.setPositionConversionFactor(Module.kDrivePositionConversionFactor);
-        driveEncoder.setVelocityConversionFactor(Module.kDriveVelocityConverstionFactor);
+    // driveMotor.setSmartCurrentLimit(Module.kDriveCurrentLimit);
+    driveMotor.setSpikeCurrentLimit(
+      Module.DriveCurrentLimit.kLimitToAmps,
+      Module.DriveCurrentLimit.kMaxSpikeTime,
+      Module.DriveCurrentLimit.kMaxSpikeAmps,
+      Module.DriveCurrentLimit.kSmartLimit
+    );
 
-        /* Configures PID loop */
-        driveController.setP(Module.kPDrive);
-        driveController.setI(Module.kIDrive);
-        driveController.setD(Module.kDDrive);
+    driveMotor.burnFlash();
+    driveEncoder.setPosition(0.0);
+  }
 
-        // driveMotor.setSmartCurrentLimit(Module.kDriveCurrentLimit);
-        driveMotor.setSpikeCurrentLimit(Module.DriveCurrentLimit.kLimitToAmps, Module.DriveCurrentLimit.kMaxSpikeTime,
-                Module.DriveCurrentLimit.kMaxSpikeAmps, Module.DriveCurrentLimit.kSmartLimit);
+  /**
+   * Configures Angle Motor using parameters from Constants
+   */
+  private void configureAngleMotor() {
+    angleMotor.restoreFactoryDefaults();
 
-        driveMotor.burnFlash();
-        driveEncoder.setPosition(0.0);
-    }
+    angleMotor.setInverted(Module.angleMotorInverted);
+    angleMotor.setIdleMode(Module.kAngleIdleMode);
 
-    /**
-     * Configures Angle Motor using parameters from Constants
-     */
-    private void configureAngleMotor() {
-        angleMotor.restoreFactoryDefaults();
+    /* Sets encoder ratios to actual module gear ratios */
+    angleEncoder.setPositionConversionFactor(
+      Module.kAnglePositionConversionFactor
+    );
+    angleEncoder.setVelocityConversionFactor(
+      Module.kAngleVelocityConverstionFactor
+    );
 
-        angleMotor.setInverted(Module.angleMotorInverted);
-        angleMotor.setIdleMode(Module.kAngleIdleMode);
+    /* Configures PID loop */
+    angleController.setP(Module.kPAngle);
+    angleController.setI(Module.kIAngle);
+    angleController.setD(Module.kDAngle);
 
-        /* Sets encoder ratios to actual module gear ratios */
-        angleEncoder.setPositionConversionFactor(Module.kAnglePositionConversionFactor);
-        angleEncoder.setVelocityConversionFactor(Module.kAngleVelocityConverstionFactor);
+    /* Defines wheel angles as -pi to pi */
+    angleController.setPositionPIDWrappingMaxInput(180.0d);
+    angleController.setPositionPIDWrappingMinInput(-180.0d);
+    angleController.setPositionPIDWrappingEnabled(true);
 
-        /* Configures PID loop */
-        angleController.setP(Module.kPAngle);
-        angleController.setI(Module.kIAngle);
-        angleController.setD(Module.kDAngle);
+    // angleMotor.setSmartCurrentLimit(Module.kAngleCurrentLimit);
+    angleMotor.setSpikeCurrentLimit(
+      Module.AngleCurrentLimit.kLimitToAmps,
+      Module.AngleCurrentLimit.kMaxSpikeTime,
+      Module.AngleCurrentLimit.kMaxSpikeAmps,
+      Module.AngleCurrentLimit.kSmartLimit
+    );
 
-        /* Defines wheel angles as -pi to pi */
-        angleController.setPositionPIDWrappingMaxInput(180.0d);
-        angleController.setPositionPIDWrappingMinInput(-180.0d);
-        angleController.setPositionPIDWrappingEnabled(true);
+    angleMotor.burnFlash();
 
-        // angleMotor.setSmartCurrentLimit(Module.kAngleCurrentLimit);
-        angleMotor.setSpikeCurrentLimit(Module.AngleCurrentLimit.kLimitToAmps, Module.AngleCurrentLimit.kMaxSpikeTime,
-                Module.AngleCurrentLimit.kMaxSpikeAmps, Module.AngleCurrentLimit.kSmartLimit);
+    setIntegratedAngleToAbsolute();
+  }
 
-        angleMotor.burnFlash();
+  /**
+   * Resets the Angle Motor to the position of the absolute position
+   */
+  public void setIntegratedAngleToAbsolute() {
+    angleEncoder.setPosition(getAbsolutePosition().getDegrees());
+  }
 
-        setIntegratedAngleToAbsolute();
-    }
-
-    /**
-     * Resets the Angle Motor to the position of the absolute position
-     */
-    public void setIntegratedAngleToAbsolute() {
-        angleEncoder.setPosition(getAbsolutePosition().getDegrees());
-    }
-
-    public void runPeriodicLimiting() {
-        driveMotor.periodicLimit();
-        angleMotor.periodicLimit();
-    }
+  public void runPeriodicLimiting() {
+    driveMotor.periodicLimit();
+    angleMotor.periodicLimit();
+  }
 }
