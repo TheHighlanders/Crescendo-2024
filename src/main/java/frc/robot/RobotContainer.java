@@ -64,8 +64,8 @@ public class RobotContainer {
   private void configureBindings() {
     DriverStation.silenceJoystickConnectionWarning(true);
     driver.y().onTrue(new InstantCommand(s_Swerve::zeroGyro));
-    driver.z().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
-
+    driver.a().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
+    
     driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
   }
 
@@ -79,8 +79,8 @@ private void configureAuton() {
   private void setDefaultCommands() {
     s_Swerve.setDefaultCommand(new SwerveTeleCMD(
         s_Swerve,
-        driver::getRawAxis(translationAxis),
-        driver::getRawAxis(strafeAxis),
+        () -> driver.getRawAxis(translationAxis),
+        () -> driver.getRawAxis(strafeAxis),
         () -> -driver.getRawAxis(rotationAxis),
         driver.povDown()::getAsBoolean,
         driver.leftBumper()::getAsBoolean,

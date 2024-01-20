@@ -1,5 +1,6 @@
 package frc.robot.commands.ShooterCMDs;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 public class ShooterCMD extends Command {
@@ -8,23 +9,21 @@ public class ShooterCMD extends Command {
 
   public ShooterCMD(Shooter snoot) {
     m_shooter = snoot;
-    addRequirements(m_shooter);
   }
 
   @Override
-  protected void initialize() {}
+  public void initialize() {}
 
   @Override
-  protected void execute() {}
+  public void execute() {
+    m_shooter.shoot();
+  }
 
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     return false;
   }
 
   @Override
-  protected void end() {}
-
-  @Override
-  protected void interrupted() {}
+  public void end(boolean interrupted) {}
 }
