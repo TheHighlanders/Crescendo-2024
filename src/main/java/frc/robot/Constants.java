@@ -25,6 +25,28 @@ import frc.robot.util.SwerveModuleConfig;
  */
 public final class Constants {
 
+  
+
+  public static class intakeconstants {
+    
+  public static final int INTAKE = 0; /**id where it connected */
+
+    public static final double kPGrid = 0;
+    public static final double kIGrid = 0;
+    public static final double kDGrid = 0;
+    public static class pidValues {
+      public static final double minOut = 0d;
+      public static final double maxOut = 0d;
+      public static final double kP = 0d;
+      public static final double kI = 0d;
+      public static final double kD = 0d;
+      public static final double kMaxI = 0d;
+      public static final double iMaxAccum = 0d;
+      public static final int slotID = 0;
+    }
+
+  }
+
   public static class SwerveConst {
     public static final double kMaxSpeedTele = 3.0; //Meters per Second
     public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
