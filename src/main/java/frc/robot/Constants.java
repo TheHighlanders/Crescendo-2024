@@ -64,6 +64,9 @@ public final class Constants {
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         );
 
+    public static final Translation2d kRedSpeaker = new Translation2d(-0.04,	5.55);
+    public static final Translation2d kBlueSpeaker = new Translation2d(16.58, 5.55); 
+
     public static final Translation3d robotCameraTranslation0 = new Translation3d();
     public static final Rotation3d robotCameraRotation0 = new Rotation3d();    
     public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);

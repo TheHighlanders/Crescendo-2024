@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.sql.Driver;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -17,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Autonomous;
 
 public class Localizer extends SubsystemBase {
     SwerveDrivePoseEstimator swervePoseEstimator;
@@ -40,6 +40,7 @@ public class Localizer extends SubsystemBase {
   @Override
   public void periodic() {
     swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
+    // swervePoseEstimator.update(this.swerve.getYaw(), new SwerveModulePosition[]  {new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()});
     
     Optional<EstimatedRobotPose> estPose;
 
@@ -55,19 +56,6 @@ public class Localizer extends SubsystemBase {
       swervePoseEstimator.addVisionMeasurement(estPose.get().estimatedPose.toPose2d(), estPose.get().timestampSeconds);
     }
 
-    // Pose2d temp;
-    
-    // DriverStation.reportWarning("Vision print: " + vision.getEstimatedGlobalPosePhoton(previous).toString(), false);
-    // Optional<EstimatedRobotPose> ERP = vision.getEstimatedGlobalPosePhoton(previous);
-    // if(ERP.isPresent()){
-    //   temp = ERP.get().estimatedPose.toPose2d();
-    // } else{
-    //   temp = new Pose2d(new Translation2d(-1,-1), null);
-    //   DriverStation.reportWarning("FALSE", false);
-    // }
-    
-    // SmartDashboard.putNumber("X vision", temp.getX());
-    // SmartDashboard.putNumber("Y vision", temp.getY());
 
     field.setRobotPose(getPose());
   }
@@ -82,5 +70,12 @@ public class Localizer extends SubsystemBase {
 
   public Field2d getField(){
     return field;
+  }
+
+  public double getDistanceToSpeaker(){
+    Translation2d robot = getPose().getTranslation();
+    Translation2d goal = (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? Autonomous.kRedSpeaker : Autonomous.kBlueSpeaker);
+
+    return Math.hypot(robot.getX() - goal.getX(), robot.getY() - goal.getY());
   }
 }
