@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.rgbSUB;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,7 +22,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private double currentVeloc = 2.5;
   private RobotContainer m_robotContainer;
-
+private rgbSUB testRgbSUB; // bring in thing from rgb subsystem 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -31,6 +32,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+
   }
 
   /**
@@ -49,6 +52,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     m_robotContainer.s_Swerve.sendSmartDashboardDiagnostics();
     m_robotContainer.s_Swerve.getRobotRelativeSpeeds();
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -56,7 +60,8 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {testRgbSUB.rainbow(); // use thing from rgb sub system and call the rainbow function
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -86,7 +91,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
   public void testInit() {
