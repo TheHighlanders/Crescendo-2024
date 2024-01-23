@@ -6,8 +6,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Intake;
 import frc.robot.util.CANSparkMaxCurrent;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
 
@@ -20,58 +22,40 @@ public class Shooter extends SubsystemBase {
   public SparkPIDController pidTop;
 
   private BooleanSupplier m_hasGamePiece = () -> false;
-  private BooleanSupplier m_pivotAligned = () -> false;
+
 
   public Shooter() {
+
     bottomFlywheelMotor =
-      new CANSparkMaxCurrent(
-        Constants.Shooter.bottomFlywheelMotorID,
-        MotorType.kBrushless
-      );
+        new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
     bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
-    bottomFlywheelEncoder.setPositionConversionFactor(
-      Constants.Shooter.kBottomRatio
-    );
+    bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomRatio);
     bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     pidBottom = bottomFlywheelMotor.getPIDController();
-    pidBottom.setOutputRange(
-      Constants.Shooter.pidValues.minOut,
-      Constants.Shooter.pidValues.maxOut
-    );
+    pidBottom.setOutputRange(Constants.Shooter.pidValues.minOut,
+        Constants.Shooter.pidValues.maxOut);
     pidBottom.setP(Constants.Shooter.pidValues.kP);
     pidBottom.setI(Constants.Shooter.pidValues.kI);
     pidBottom.setD(Constants.Shooter.pidValues.kD);
-    pidBottom.setIMaxAccum(
-      Constants.Shooter.pidValues.iMaxAccum,
-      Constants.Shooter.slotID
-    );
+    pidBottom.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
     pidBottom.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
     pidBottom.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel, Constants.Shooter.slotID);
     pidBottom.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
-    pidBottom.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr, Constants.Shooter.slotID);
+    pidBottom.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr,
+        Constants.Shooter.slotID);
   }
 
-  public void setSuppliers(
-    BooleanSupplier hasGamePiece,
-    BooleanSupplier pivotAligned
-  ) {
+  public void setSuppliers(BooleanSupplier hasGamePiece) {
     m_hasGamePiece = hasGamePiece;
-    m_pivotAligned = pivotAligned;
   }
 
-  public void shoot() {
-    if (!m_pivotAligned.getAsBoolean()) {
-      //call alignPivot(calcTrajectory());
-    }
+  public boolean shoot() {
     if (!m_hasGamePiece.getAsBoolean()) {
-      // well that sucks
+      return false;
     }
-    // tell pivot to align shot
-  }
-
-  public double calcTrajectory() {
-    return 1_000;
+    // spin outake and shooter flywheel
+    return true;
   }
 
   @Override
