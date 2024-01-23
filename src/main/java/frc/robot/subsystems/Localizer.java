@@ -10,29 +10,31 @@ import org.photonvision.EstimatedRobotPose;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Autonomous;
 
 public class Localizer extends SubsystemBase {
-    SwerveDrivePoseEstimator swervePoseEstimator;
-    Pose2d previous = new Pose2d();
-    Field2d field;
-    Swerve swerve;
-    Vision vision;
+  SwerveDrivePoseEstimator swervePoseEstimator;
+  Pose2d previous = new Pose2d();
+  Field2d field;
+  Swerve swerve;
+  Vision vision;
+
   /** Creates a new Localizer. */
   public Localizer(Swerve swerve, Vision vision) {
     this.swerve = swerve;
     this.vision = vision;
 
     field = new Field2d();
-    
-    swervePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConst.kinematics, this.swerve.getYaw(), this.swerve.getModulePositions(),
-      new Pose2d());
+
+    swervePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConst.kinematics, this.swerve.getYaw(),
+        this.swerve.getModulePositions(),
+        new Pose2d());
 
     SmartDashboard.putData(field);
   }
@@ -40,42 +42,50 @@ public class Localizer extends SubsystemBase {
   @Override
   public void periodic() {
     swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
-    // swervePoseEstimator.update(this.swerve.getYaw(), new SwerveModulePosition[]  {new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()});
-    
+    // swervePoseEstimator.update(this.swerve.getYaw(), new SwerveModulePosition[]
+    // {new SwerveModulePosition(), new SwerveModulePosition(), new
+    // SwerveModulePosition(), new SwerveModulePosition()});
+
     Optional<EstimatedRobotPose> estPose;
 
-    if(previous != null){
+    if (previous != null) {
       estPose = vision.getEstimatedGlobalPosePhoton(previous);
     } else {
       estPose = vision.getEstimatedGlobalPosePhoton();
     }
 
-
-    if(estPose.isPresent()){
+    if (estPose.isPresent()) {
+      var estStdDevs = vision.getEstimationStdDevs(estPose.get().estimatedPose.toPose2d());
       previous = estPose.get().estimatedPose.toPose2d();
-      swervePoseEstimator.addVisionMeasurement(estPose.get().estimatedPose.toPose2d(), estPose.get().timestampSeconds);
+      swervePoseEstimator.addVisionMeasurement(estPose.get().estimatedPose.toPose2d(), estPose.get().timestampSeconds,
+          estStdDevs);
     }
 
-
-    field.setRobotPose(getPose());
+    // field.setRobotPose(getPose());
+    field.setRobotPose(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
+    // field.setRobotPose(getPose().getX(), getPose().getY(),
+    // getPose().getRotation());
   }
-    
-  public void resetOdoPose2d(Pose2d pose){
+
+  public void resetOdoPose2d(Pose2d pose) {
     swervePoseEstimator.resetPosition(this.swerve.getYaw(), this.swerve.getModulePositions(), pose);
   }
 
-  public Pose2d getPose(){
+  public Pose2d getPose() {
     return swervePoseEstimator.getEstimatedPosition();
   }
 
-  public Field2d getField(){
+  public Field2d getField() {
     return field;
   }
 
-  public double getDistanceToSpeaker(){
+  public double getDistanceToSpeaker() {
     Translation2d robot = getPose().getTranslation();
-    Translation2d goal = (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? Autonomous.kRedSpeaker : Autonomous.kBlueSpeaker);
+    Translation2d goal = (DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+        ? Constants.VisionConstants.kRedSpeaker
+        : Constants.VisionConstants.kBlueSpeaker);
 
     return Math.hypot(robot.getX() - goal.getX(), robot.getY() - goal.getY());
   }
+
 }
