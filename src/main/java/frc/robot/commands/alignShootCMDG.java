@@ -46,7 +46,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
           () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
           () -> {},
           value -> {},
-          () -> m_Pivot.atSetpoints(currentShotData.getArmAngle())
+          m_Pivot::atSetpoints
         ),
         new SwerveMoveToCMD(m_Swerve, -1, -1, 0)
       ),

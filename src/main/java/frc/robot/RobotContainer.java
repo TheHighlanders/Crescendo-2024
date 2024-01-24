@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -14,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
-import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Swerve;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -27,6 +26,7 @@ import frc.robot.subsystems.Shooter;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
 
@@ -57,29 +57,30 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
     driver.y().onTrue(new InstantCommand(s_Swerve::zeroGyro));
     driver.a().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
-    
+
     driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
   }
 
-private void configureAuton() {
-
+  private void configureAuton() {
     autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   private void setDefaultCommands() {
-    s_Swerve.setDefaultCommand(new SwerveTeleCMD(
+    s_Swerve.setDefaultCommand(
+      new SwerveTeleCMD(
         s_Swerve,
         () -> driver.getRawAxis(translationAxis),
         () -> driver.getRawAxis(strafeAxis),
         () -> -driver.getRawAxis(rotationAxis),
         () -> driver.povDown().getAsBoolean(),
         () -> driver.leftBumper().getAsBoolean(),
-        () -> driver.rightBumper().getAsBoolean()));
-    }
+        () -> driver.rightBumper().getAsBoolean()
+      )
+    );
+  }
 
-    
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

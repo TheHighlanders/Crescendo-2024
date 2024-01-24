@@ -23,46 +23,84 @@ public class Shooter extends SubsystemBase {
   private SparkPIDController pidBottom;
   private SparkPIDController pidTop;
 
-
   public Shooter() {
-
     bottomFlywheelMotor =
-        new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
+      new CANSparkMaxCurrent(
+        Constants.Shooter.bottomFlywheelMotorID,
+        MotorType.kBrushless
+      );
     bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
-    bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomRatio);
+    bottomFlywheelEncoder.setPositionConversionFactor(
+      Constants.Shooter.kBottomRatio
+    );
     bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     pidBottom = bottomFlywheelMotor.getPIDController();
-    pidBottom.setOutputRange(Constants.Shooter.pidValues.minOut,
-        Constants.Shooter.pidValues.maxOut);
+    pidBottom.setOutputRange(
+      Constants.Shooter.pidValues.minOut,
+      Constants.Shooter.pidValues.maxOut
+    );
     pidBottom.setP(Constants.Shooter.pidValues.kP);
     pidBottom.setI(Constants.Shooter.pidValues.kI);
     pidBottom.setD(Constants.Shooter.pidValues.kD);
-    pidBottom.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
-    pidBottom.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
-    pidBottom.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel, Constants.Shooter.slotID);
-    pidBottom.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
-    pidBottom.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr,
-        Constants.Shooter.slotID);
-
+    pidBottom.setIMaxAccum(
+      Constants.Shooter.pidValues.iMaxAccum,
+      Constants.Shooter.slotID
+    );
+    pidBottom.setSmartMotionMaxVelocity(
+      Constants.Shooter.maxVel,
+      Constants.Shooter.slotID
+    );
+    pidBottom.setSmartMotionMinOutputVelocity(
+      Constants.Shooter.minVel,
+      Constants.Shooter.slotID
+    );
+    pidBottom.setSmartMotionMaxAccel(
+      Constants.Shooter.maxAcc,
+      Constants.Shooter.slotID
+    );
+    pidBottom.setSmartMotionAllowedClosedLoopError(
+      Constants.Shooter.allowedErr,
+      Constants.Shooter.slotID
+    );
 
     topFlywheelMotor =
-        new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
+      new CANSparkMaxCurrent(
+        Constants.Shooter.bottomFlywheelMotorID,
+        MotorType.kBrushless
+      );
     topFlywheelEncoder = topFlywheelMotor.getEncoder();
     topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
     topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     pidTop = topFlywheelMotor.getPIDController();
-    pidTop.setOutputRange(Constants.Shooter.pidValues.minOut, Constants.Shooter.pidValues.maxOut);
+    pidTop.setOutputRange(
+      Constants.Shooter.pidValues.minOut,
+      Constants.Shooter.pidValues.maxOut
+    );
     pidTop.setP(Constants.Shooter.pidValues.kP);
     pidTop.setI(Constants.Shooter.pidValues.kI);
     pidTop.setD(Constants.Shooter.pidValues.kD);
-    pidTop.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
-    pidTop.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
-    pidTop.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel, Constants.Shooter.slotID);
-    pidTop.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
-    pidTop.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr,
-        Constants.Shooter.slotID);
+    pidTop.setIMaxAccum(
+      Constants.Shooter.pidValues.iMaxAccum,
+      Constants.Shooter.slotID
+    );
+    pidTop.setSmartMotionMaxVelocity(
+      Constants.Shooter.maxVel,
+      Constants.Shooter.slotID
+    );
+    pidTop.setSmartMotionMinOutputVelocity(
+      Constants.Shooter.minVel,
+      Constants.Shooter.slotID
+    );
+    pidTop.setSmartMotionMaxAccel(
+      Constants.Shooter.maxAcc,
+      Constants.Shooter.slotID
+    );
+    pidTop.setSmartMotionAllowedClosedLoopError(
+      Constants.Shooter.allowedErr,
+      Constants.Shooter.slotID
+    );
   }
 
   public void shoot() {

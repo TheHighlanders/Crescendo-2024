@@ -14,10 +14,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
- * 
+ *
  * TODO: Fix current limiting
  */
 public class Robot extends TimedRobot {
+
   private Command m_autonomousCommand;
   private double currentVeloc = 2.5;
   private RobotContainer m_robotContainer;
@@ -99,8 +100,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    DriverStation.reportWarning(m_robotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() + "",false);
-
+    DriverStation.reportWarning(
+      m_robotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() +
+      "",
+      false
+    );
   }
 
   /** This function is called once when the robot is first started up. */
