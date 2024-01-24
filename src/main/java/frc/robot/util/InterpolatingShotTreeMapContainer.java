@@ -8,7 +8,7 @@ public class InterpolatingShotTreeMapContainer {
             {1000.0, 1200.0, 900.0, 1100.0, 800.0} // RPMs
         };
 
-    InterpolatingShotTreeMapContainer() {
+    public InterpolatingShotTreeMapContainer() {
         for (int i = 0; i < values[0].length; i++) {
             double distance = values[0][i];
             double angle = values[1][i];

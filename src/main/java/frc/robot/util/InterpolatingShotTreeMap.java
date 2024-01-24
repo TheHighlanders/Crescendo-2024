@@ -5,7 +5,8 @@ import java.util.TreeMap;
 public class InterpolatingShotTreeMap {
     private final TreeMap<Double, InterpolatableShotData> STM = new TreeMap<>();
 
-    public InterpolatingShotTreeMap() {}
+    public InterpolatingShotTreeMap() {
+    }
 
     public void put(Double key, InterpolatableShotData value) {
         STM.put(key, value);

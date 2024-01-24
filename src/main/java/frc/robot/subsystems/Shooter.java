@@ -4,22 +4,24 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Intake;
 import frc.robot.util.CANSparkMaxCurrent;
+import frc.robot.util.InterpolatingShotTreeMapContainer;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
 
-  public CANSparkMaxCurrent bottomFlywheelMotor;
-  public CANSparkMaxCurrent topFlywheelMotor;
-  public RelativeEncoder bottomFlywheelEncoder;
-  public RelativeEncoder topFlywheelEncoder;
+  private CANSparkMaxCurrent bottomFlywheelMotor;
+  private CANSparkMaxCurrent topFlywheelMotor;
+  private RelativeEncoder bottomFlywheelEncoder;
+  private RelativeEncoder topFlywheelEncoder;
 
-  public SparkPIDController pidBottom;
-  public SparkPIDController pidTop;
+  private SparkPIDController pidBottom;
+  private SparkPIDController pidTop;
 
   private BooleanSupplier m_hasGamePiece = () -> false;
 
