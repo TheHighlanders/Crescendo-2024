@@ -4,11 +4,12 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
-import frc.robot.Constants.Module;
 import frc.robot.subsystems.Swerve;
 
 public class SwerveMoveToCMD extends Command {
@@ -23,17 +24,23 @@ public class SwerveMoveToCMD extends Command {
   double endAngle;
   
   /** Creates a new SwerveMoveToCMD. */
-  public SwerveMoveToCMD(Swerve s_Swerve, double X, double Y, double angleDeg ) {
+  public SwerveMoveToCMD(Swerve s_Swerve, Pose2d target) {
     this.s_Swerve = s_Swerve;
-    endX = X;
-    endY = Y;
-    endAngle = angleDeg;
+    endX = target.getX();
+    endY = target.getY();
+    endAngle = target.getRotation().getDegrees();
 
-    xPID = new PIDController(0, 1, 0);
-    yPID = new PIDController(0, 1, 0);
-    aPID = new PIDController(0.5, 0.05, 0);
+    xPID = new PIDController(5, 0, 0);
+    yPID = new PIDController(5, 0, 0);
+    aPID = new PIDController(1, 0, 0);
 
-    aPID.setTolerance(7);
+    xPID.setIntegratorRange(-100,100);
+    yPID.setIntegratorRange(-100,100);
+
+    xPID.setTolerance(0.001);
+    yPID.setTolerance(0.001);
+
+    aPID.setTolerance(5);
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(s_Swerve);
@@ -52,9 +59,14 @@ public class SwerveMoveToCMD extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("A PID ERROR", aPID.getPositionError());
+
+    double aCalc = aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
+    SmartDashboard.putNumber("A CALC", aCalc);
+
     s_Swerve.drive(
       new Translation2d(xPID.calculate(s_Swerve.getPose().getX()), yPID.calculate(s_Swerve.getPose().getY())),
-      Rotation2d.fromDegrees(aPID.calculate(s_Swerve.getPose().getRotation().getDegrees())),
+      Rotation2d.fromDegrees(aCalc),
       true, 
       false);
   }
@@ -66,6 +78,6 @@ public class SwerveMoveToCMD extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return /*xPID.atSetpoint() && yPID.atSetpoint() &&*/ aPID.atSetpoint();
+    return xPID.atSetpoint() && yPID.atSetpoint() && aPID.atSetpoint();
   }
 }

@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -13,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.subsystems.Swerve;
 
@@ -84,7 +87,8 @@ private void configureAuton() {
    */
   public Command getAutonomousCommand() {
     // Uses an Auto to assign a starting position
-    //return new PathPlannerAuto("Testing Auton");
-    return autoChooser.getSelected();
+    
+    // return autoChooser.getSelected();
+    return new SwerveMoveToCMD(s_Swerve, new Pose2d(0, 0, Rotation2d.fromDegrees(90)));
   }
 }
