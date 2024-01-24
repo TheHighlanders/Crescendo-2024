@@ -22,7 +22,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private double currentVeloc = 2.5;
   private RobotContainer m_robotContainer;
-private rgbSUB testRgbSUB; // bring in thing from rgb subsystem 
+  
+  rgbSUB RgbOne;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -32,8 +34,6 @@ private rgbSUB testRgbSUB; // bring in thing from rgb subsystem
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-
-
   }
 
   /**
@@ -44,7 +44,7 @@ private rgbSUB testRgbSUB; // bring in thing from rgb subsystem
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
+  public void robotPeriodic() {RgbOne.rainbow();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -52,7 +52,6 @@ private rgbSUB testRgbSUB; // bring in thing from rgb subsystem
     CommandScheduler.getInstance().run();
     m_robotContainer.s_Swerve.sendSmartDashboardDiagnostics();
     m_robotContainer.s_Swerve.getRobotRelativeSpeeds();
-
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -60,8 +59,7 @@ private rgbSUB testRgbSUB; // bring in thing from rgb subsystem
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {testRgbSUB.rainbow(); // use thing from rgb sub system and call the rainbow function
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -77,7 +75,7 @@ private rgbSUB testRgbSUB; // bring in thing from rgb subsystem
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
-
+ 
   @Override
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
@@ -91,8 +89,7 @@ private rgbSUB testRgbSUB; // bring in thing from rgb subsystem
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {
