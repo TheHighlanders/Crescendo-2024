@@ -23,8 +23,6 @@ public class Shooter extends SubsystemBase {
   private SparkPIDController pidBottom;
   private SparkPIDController pidTop;
 
-  private BooleanSupplier m_hasGamePiece = () -> false;
-
 
   public Shooter() {
 
@@ -46,17 +44,38 @@ public class Shooter extends SubsystemBase {
     pidBottom.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
     pidBottom.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr,
         Constants.Shooter.slotID);
+
+
+    topFlywheelMotor =
+        new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
+    topFlywheelEncoder = topFlywheelMotor.getEncoder();
+    topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
+    topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
+    pidTop = topFlywheelMotor.getPIDController();
+    pidTop.setOutputRange(Constants.Shooter.pidValues.minOut, Constants.Shooter.pidValues.maxOut);
+    pidTop.setP(Constants.Shooter.pidValues.kP);
+    pidTop.setI(Constants.Shooter.pidValues.kI);
+    pidTop.setD(Constants.Shooter.pidValues.kD);
+    pidTop.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
+    pidTop.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
+    pidTop.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel, Constants.Shooter.slotID);
+    pidTop.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
+    pidTop.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr,
+        Constants.Shooter.slotID);
   }
 
-  public void setSuppliers(BooleanSupplier hasGamePiece) {
-    m_hasGamePiece = hasGamePiece;
+  public void shoot() {
+    pidBottom.setReference(1, CANSparkMax.ControlType.kVelocity);
+    pidTop.setReference(1, CANSparkMax.ControlType.kVelocity);
   }
 
-  public boolean shoot() {
-    if (!m_hasGamePiece.getAsBoolean()) {
-      return false;
-    }
-    // spin outake and shooter flywheel
+  public void shootCancel() {
+    pidBottom.setReference(0, CANSparkMax.ControlType.kVelocity);
+    pidTop.setReference(0, CANSparkMax.ControlType.kVelocity);
+  }
+
+  public boolean hasGamePiece() {
     return true;
   }
 

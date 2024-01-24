@@ -23,6 +23,8 @@ public class Pivot extends SubsystemBase {
     private RelativeEncoder shooterAngleEncoder;
     private SparkPIDController pidShooterAngleController;
 
+    private double setpoint = 0;
+
 
 
     public Pivot() {
@@ -88,6 +90,7 @@ public class Pivot extends SubsystemBase {
 
     public boolean alignPivot(DoubleSupplier angle) {
         try {
+        
             pidIntakeAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
             pidShooterAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
             // call swerve subsystem alignAngle pass in angle
@@ -112,6 +115,10 @@ public class Pivot extends SubsystemBase {
                 CANSparkMax.ControlType.kPosition);
         pidShooterAngleController.setReference(Constants.Pivot.readyAngle,
                 CANSparkMax.ControlType.kPosition);
+    }
+
+    public boolean atSetpoints(double targetAngle) {
+        return intakeAngleEncoder.getPosition() == targetAngle && shooterAngleEncoder.getPosition() == targetAngle;
     }
 
     @Override

@@ -20,8 +20,6 @@ public class intake extends SubsystemBase {
 
   public intake(Shooter shooterSubsystem) {
 
-    shooterSubsystem.setSuppliers(() -> hasGamePiece());
-
     intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
     intakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     intakeEncoder = intakeMotor.getEncoder();
@@ -48,7 +46,7 @@ public class intake extends SubsystemBase {
   @Override
   public void periodic() {}
 
-  public void intakestop() {
+  public void intakeStop() {
     pidIntakeController.setReference(0, CANSparkMax.ControlType.kSmartVelocity);
   }
 
@@ -58,10 +56,6 @@ public class intake extends SubsystemBase {
 
   public void intakeStartout() {
     pidIntakeController.setReference(-1, CANSparkMax.ControlType.kSmartVelocity);
-  }
-
-  private boolean hasGamePiece() {
-    return true;
   }
 
 
