@@ -33,15 +33,16 @@ public class SwerveMoveToCMD extends Command {
 
     xPID = new PIDController(5, 0, 0);
     yPID = new PIDController(5, 0, 0);
-    aPID = new PIDController(1, 0, 0);
+    aPID = new PIDController(5, 0, 0.13);
 
     xPID.setIntegratorRange(-100,100);
     yPID.setIntegratorRange(-100,100);
 
-    xPID.setTolerance(0.001);
-    yPID.setTolerance(0.001);
+    xPID.setTolerance(0.01);
+    yPID.setTolerance(0.01);
 
-    aPID.setTolerance(5);
+    aPID.setTolerance(0.25);
+    aPID.enableContinuousInput(0, 360);
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(s_Swerve);
@@ -50,8 +51,8 @@ public class SwerveMoveToCMD extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    xPID.setSetpoint(endX);
-    yPID.setSetpoint(endY);
+    // xPID.setSetpoint(endX);
+    // yPID.setSetpoint(endY);
     aPID.setSetpoint(endAngle);
     
     
@@ -62,11 +63,11 @@ public class SwerveMoveToCMD extends Command {
   public void execute() {
     SmartDashboard.putNumber("A PID ERROR", aPID.getPositionError());
 
-    double aCalc = aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
+    double aCalc = -aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("A CALC", aCalc);
 
     s_Swerve.drive(
-      new Translation2d(xPID.calculate(s_Swerve.getPose().getX()), yPID.calculate(s_Swerve.getPose().getY())),
+      new Translation2d(0,0/* xPID.calculate(s_Swerve.getPose().getX()), yPID.calculate(s_Swerve.getPose().getY() )*/),
       Rotation2d.fromDegrees(aCalc),
       true, 
       false);
@@ -81,6 +82,6 @@ public class SwerveMoveToCMD extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xPID.atSetpoint() && yPID.atSetpoint() && aPID.atSetpoint();
+    return /*xPID.atSetpoint() && yPID.atSetpoint() && */ aPID.atSetpoint();
   }
 }
