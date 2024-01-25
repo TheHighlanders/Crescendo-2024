@@ -1,49 +1,36 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class rgbSUB extends SubsystemBase {
-    private AddressableLED m_led;
-    private AddressableLEDBuffer m_ledBuffer;
-    private int m_rainbowFirstPixelHue;
+  DigitalOutput[] dios = {new DigitalOutput(0), new DigitalOutput(1), new DigitalOutput(2), new DigitalOutput(3)};
+  
+  public rgbSUB() {
+  }
 
-    public rgbSUB() {
-        m_led = new AddressableLED(7);
-        m_ledBuffer = new AddressableLEDBuffer(12);
-        m_led.setLength(m_ledBuffer.getLength());
-//        m_led.setData(m_ledBuffer);
-        m_led.start();
+  public void sendDioNum(int num){
+    String binary = Integer.toBinaryString(num);
+  
+    SmartDashboard.putString("Binary", binary + " " + num);
 
-    }
-
-    public void rainbow() {
-        for (var i = 1; i < m_ledBuffer.getLength(); i++) {
-            final var hue = (m_rainbowFirstPixelHue + (i * 180 / m_ledBuffer.getLength())) % 180;
-            m_ledBuffer.setHSV(i, hue, 255, 255);
-        }
-        m_rainbowFirstPixelHue += 3; // Increment by 3 for visible change
-        m_rainbowFirstPixelHue %= 180;
-        m_led.setData(m_ledBuffer);
-        DriverStation.reportWarning("it work", false);
-    }
-    public void rgbRed() {
-
-        m_ledBuffer.setHSV(0, 25, 255, 255);
-        DriverStation.reportWarning("it work", false);
-        m_led.setData(m_ledBuffer);
-      }
-
-
-
-    @Override
-    public void periodic() {
-      // This method will be called once per scheduler run
-
+    for (int i = binary.length()-1; i >= 0; i--) {
+        dios[binary.length() - i - 1].set(binary.charAt(i) == '1');
     }
   }
+
+  @Override
+  public void periodic() {
+      // This method will be called once per scheduler run
+
+    // dios[0].set(true);
+    // dios[3].set(true);
+    // dios[1].set(true);
+    // dios[2].set(true);
+  }
+}
   
 
   

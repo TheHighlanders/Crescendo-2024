@@ -24,12 +24,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private double currentVeloc = 2.5;
   private RobotContainer m_robotContainer;
-  DigitalOutput dio0 = new DigitalOutput(0);
-  DigitalOutput dio1 = new DigitalOutput(1);
-  DigitalOutput dio2 = new DigitalOutput(2);
+
   
   
-  rgbSUB RgbOne = new rgbSUB();
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -51,16 +49,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    
-    //RgbOne.rainbow();
-
-    // RgbOne.rgbRed();
-    // RgbOne.rainbow();
-
-    dio0.set(true);
-    dio1.set(false);
-    dio2.set(true);
-
+    m_robotContainer.RgbOne.sendDioNum(3);
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic

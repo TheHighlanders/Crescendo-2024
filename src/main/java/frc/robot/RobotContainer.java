@@ -11,10 +11,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
+import frc.robot.commands.ledSetCommand;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.rgbSUB;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -36,6 +41,7 @@ public class RobotContainer {
 
   /* Subsystems */
   public final Swerve s_Swerve = new Swerve();
+  public final rgbSUB RgbOne = new rgbSUB();
 
   /* Auton */
   private SendableChooser<Command> autoChooser;
@@ -58,7 +64,7 @@ public class RobotContainer {
     driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
   }
 
-private void configureAuton() {
+  private void configureAuton() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -74,9 +80,8 @@ private void configureAuton() {
         () -> driver.povDown().getAsBoolean(),
         () -> driver.leftBumper().getAsBoolean(),
         () -> driver.rightBumper().getAsBoolean()));
-    }
+  }
 
-    
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -84,7 +89,7 @@ private void configureAuton() {
    */
   public Command getAutonomousCommand() {
     // Uses an Auto to assign a starting position
-    //return new PathPlannerAuto("Testing Auton");
-    return autoChooser.getSelected();
+    // return new PathPlannerAuto("Testing Auton");
+    return new InstantCommand();
   }
 }
