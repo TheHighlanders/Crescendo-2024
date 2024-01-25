@@ -88,4 +88,12 @@ public class Localizer extends SubsystemBase {
     return Math.hypot(robot.getX() - goal.getX(), robot.getY() - goal.getY());
   }
 
+    public double getAngleToSpeaker() {
+    Translation2d robot = getPose().getTranslation();
+    Translation2d goal = (DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+        ? Constants.VisionConstants.kRedSpeaker
+        : Constants.VisionConstants.kBlueSpeaker);
+
+    return Math.atan2(robot.getY() - goal.getY(), robot.getX() - goal.getX());
+  }
 }
