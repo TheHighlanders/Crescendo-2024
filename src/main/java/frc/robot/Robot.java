@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,8 +23,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private double currentVeloc = 2.5;
   private RobotContainer m_robotContainer;
+  PWM pwm = new PWM(6);
   
-  rgbSUB RgbOne;
+  
+  rgbSUB RgbOne = new rgbSUB();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -31,6 +34,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    pwm.setBoundsMicroseconds(10, 0, 5, 0, 0);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -44,7 +48,15 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {RgbOne.rainbow();
+  public void robotPeriodic() {
+    
+    //RgbOne.rainbow();
+
+    // RgbOne.rgbRed();
+    // RgbOne.rainbow();
+
+    pwm.setPosition(1.0);
+
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic

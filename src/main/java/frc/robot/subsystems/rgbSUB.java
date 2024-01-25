@@ -20,16 +20,21 @@ public class rgbSUB extends SubsystemBase {
     }
 
     public void rainbow() {
-        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        for (var i = 1; i < m_ledBuffer.getLength(); i++) {
             final var hue = (m_rainbowFirstPixelHue + (i * 180 / m_ledBuffer.getLength())) % 180;
-            m_ledBuffer.setHSV(i, hue, 255, 128);
+            m_ledBuffer.setHSV(i, hue, 255, 255);
         }
         m_rainbowFirstPixelHue += 3; // Increment by 3 for visible change
         m_rainbowFirstPixelHue %= 180;
         m_led.setData(m_ledBuffer);
         DriverStation.reportWarning("it work", false);
     }
+    public void rgbRed() {
 
+        m_ledBuffer.setHSV(0, 25, 255, 255);
+        DriverStation.reportWarning("it work", false);
+        m_led.setData(m_ledBuffer);
+      }
 
 
 
@@ -39,6 +44,7 @@ public class rgbSUB extends SubsystemBase {
 
     }
   }
+  
 
   
 
