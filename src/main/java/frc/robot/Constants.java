@@ -8,7 +8,6 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,10 +43,11 @@ public final class Constants {
     public static final double kWheelBase = Units.inchesToMeters(23.5);
 
     public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-        new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
-        new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0),
-        new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
-        new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0));
+      new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
+      new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0),
+      new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
+      new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0)
+    );
 
     public static double speedLimit = 3.0;
     public static double slowSpeedLimit = 1.0;
@@ -62,14 +62,14 @@ public final class Constants {
   public static class Autonomous {
 
     public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in
-        // your Constants class
-        new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
-        new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
-        2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
-        0.42207203769, // Drive base radius in meters. Distance from robot center to furthest
-        // module.
-        new ReplanningConfig() // Default path replanning config. See the API for the options
-    // here
+      // your Constants class
+      new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
+      new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
+      2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
+      0.42207203769, // Drive base radius in meters. Distance from robot center to furthest
+      // module.
+      new ReplanningConfig() // Default path replanning config. See the API for the options
+      // here
     );
 
     public static final double kPGrid = 0;
@@ -89,16 +89,34 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(
+      4,
+      4,
+      8
+    );
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(
+      0.5,
+      0.5,
+      1
+    );
     //TODO: Actual stddevs
 
-    public static final Translation2d kRedSpeaker = new Translation2d(-0.04, 5.55);
-    public static final Translation2d kBlueSpeaker = new Translation2d(16.58, 5.55);
+    public static final Translation2d kRedSpeaker = new Translation2d(
+      -0.04,
+      5.55
+    );
+    public static final Translation2d kBlueSpeaker = new Translation2d(
+      16.58,
+      5.55
+    );
 
     public static final Translation3d robotCameraTranslation0 = new Translation3d();
     public static final Rotation3d robotCameraRotation0 = new Rotation3d();
-    public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
+    public static final Transform3d kRobotCamera0 = new Transform3d(
+      robotCameraTranslation0,
+      robotCameraRotation0
+    );
   }
 
   public static class Module {
@@ -125,11 +143,15 @@ public final class Constants {
     public static final double kWheelDiameter = Units.inchesToMeters(4);
     public static final double kWheelCircumfrence = kWheelDiameter * Math.PI;
 
-    public static final double kDrivePositionConversionFactor = kDriveGearRatio * kWheelCircumfrence;
-    public static final double kDriveVelocityConverstionFactor = kDrivePositionConversionFactor / 60.0f;
+    public static final double kDrivePositionConversionFactor =
+      kDriveGearRatio * kWheelCircumfrence;
+    public static final double kDriveVelocityConverstionFactor =
+      kDrivePositionConversionFactor / 60.0f;
 
-    public static final double kAnglePositionConversionFactor = kAngleGearRatio * 360.0;
-    public static final double kAngleVelocityConverstionFactor = kAnglePositionConversionFactor / 60.0f;
+    public static final double kAnglePositionConversionFactor =
+      kAngleGearRatio * 360.0;
+    public static final double kAngleVelocityConverstionFactor =
+      kAnglePositionConversionFactor / 60.0f;
 
     public static final double kPAngle = 0.05; // AIR 0.01;
     public static final double kIAngle = 0; // AIR 0;
@@ -145,8 +167,10 @@ public final class Constants {
 
     public static final int kAngleCurrentLimit = 30;
 
-    public static final CANSparkMax.IdleMode kDriveIdleMode = CANSparkMax.IdleMode.kBrake;
-    public static final CANSparkMax.IdleMode kAngleIdleMode = CANSparkMax.IdleMode.kCoast;
+    public static final CANSparkMax.IdleMode kDriveIdleMode =
+      CANSparkMax.IdleMode.kBrake;
+    public static final CANSparkMax.IdleMode kAngleIdleMode =
+      CANSparkMax.IdleMode.kCoast;
 
     public static final boolean angleMotorInverted = false;
     public static final boolean driveMotorInverted = false;
@@ -161,12 +185,14 @@ public final class Constants {
       public static final int angleMotorID = 11;
 
       public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-          Math.toRadians(76.97476923465729));
+        Math.toRadians(76.97476923465729)
+      );
 
       public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
+        driveMotorID,
+        angleMotorID,
+        absoluteEncoderOffset
+      );
     }
 
     public static class FrontRight {
@@ -175,12 +201,14 @@ public final class Constants {
       public static final int angleMotorID = 21;
 
       public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-          Math.toRadians(59.69142973423005));
+        Math.toRadians(59.69142973423005)
+      );
 
       public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
+        driveMotorID,
+        angleMotorID,
+        absoluteEncoderOffset
+      );
     }
 
     public static class BackLeft {
@@ -189,12 +217,14 @@ public final class Constants {
       public static final int angleMotorID = 41;
 
       public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-          Math.toRadians(131.00274682044983));
+        Math.toRadians(131.00274682044983)
+      );
 
       public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
+        driveMotorID,
+        angleMotorID,
+        absoluteEncoderOffset
+      );
     }
 
     public static class BackRight {
@@ -203,12 +233,14 @@ public final class Constants {
       public static final int angleMotorID = 31;
 
       public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-          Math.toRadians(170.9482741355896));
+        Math.toRadians(170.9482741355896)
+      );
 
       public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
+        driveMotorID,
+        angleMotorID,
+        absoluteEncoderOffset
+      );
     }
   }
 
@@ -332,6 +364,13 @@ public final class Constants {
       public static final double kMaxSpikeTime = 25.0f;
       public static final double kMaxSpikeAmps = 40.0f;
       public static final int kSmartLimit = 40;
+    }
+
+    public static class actuatorConst {
+      public static final double inchesToRotationsConversion = 0; 
+      public static final double actuatorDist = 0; // Inches
+      public static final double actuatorBaseDistX = 0;
+      public static final double actuatorBaseDistY = 0;
     }
   }
 }

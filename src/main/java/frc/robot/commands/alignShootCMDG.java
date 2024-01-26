@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
@@ -18,27 +19,29 @@ import frc.robot.util.InterpolatableShotData;
 import frc.robot.util.InterpolatingShotTreeMapContainer;
 
 public class alignShootCMDG extends SequentialCommandGroup {
-
-  private InterpolatingShotTreeMapContainer iTreeMapContainer = new InterpolatingShotTreeMapContainer();
-
   private final Shooter m_shooter;
   public final intake m_intake;
   public final Pivot m_Pivot;
   public final Swerve m_Swerve;
+  public final Localizer m_Localizer;
 
   public alignShootCMDG(
     Shooter shoot,
     intake intake,
     Pivot pivot,
-    Swerve swerve
+    Swerve swerve,
+    Localizer localizer
   ) {
     m_shooter = shoot;
     m_intake = intake;
     m_Pivot = pivot;
     m_Swerve = swerve;
+    m_Localizer = localizer;
 
     // TODO: get from vision
-    InterpolatableShotData currentShotData = iTreeMapContainer.interpolate(1);
+    InterpolatableShotData currentShotData = m_Pivot.interpolate(m_Localizer.getDistanceToSpeaker());
+    //this should resolve before we start rotating hopefully
+    double angleToSpeaker = localizer.getAngleToSpeaker();
 
     addCommands(
       new ParallelCommandGroup(
@@ -48,7 +51,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
           value -> {},
           m_Pivot::atSetpoints
         ),
-        new SwerveMoveToCMD(m_Swerve, -1, -1, 0)
+        new SwerveMoveToCMD(m_Swerve, -1, -1, angleToSpeaker)
       ),
       new ParallelRaceGroup(
         new StartEndCommand(m_shooter::shoot, m_shooter::shootCancel),

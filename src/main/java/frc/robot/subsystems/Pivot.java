@@ -11,9 +11,13 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
+import frc.robot.util.InterpolatableShotData;
+import frc.robot.util.InterpolatingShotTreeMapContainer;
 import java.util.function.DoubleSupplier;
 
 public class Pivot extends SubsystemBase {
+
+  private InterpolatingShotTreeMapContainer iTreeMapContainer;
 
   private CANSparkMaxCurrent intakeAngleMotor;
   private RelativeEncoder intakeAngleEncoder;
@@ -27,6 +31,7 @@ public class Pivot extends SubsystemBase {
   private double cachedSetpointShooter = 0;
 
   public Pivot() {
+    iTreeMapContainer = new InterpolatingShotTreeMapContainer();
     /*----------------------------------------------------------------------------*/
     /* Intake */
     /*----------------------------------------------------------------------------*/
@@ -81,6 +86,9 @@ public class Pivot extends SubsystemBase {
       new CANSparkMaxCurrent(Constants.Pivot.INTAKE, MotorType.kBrushless);
     shooterAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     shooterAngleEncoder = shooterAngleMotor.getEncoder();
+    shooterAngleEncoder.setPositionConversionFactor(
+      Constants.Pivot.actuatorConst.inchesToRotationsConversion
+    );
     pidShooterAngleController = shooterAngleMotor.getPIDController();
     shooterAngleEncoder.setPositionConversionFactor(
       Constants.Pivot.shooterPivotRatio
@@ -121,9 +129,15 @@ public class Pivot extends SubsystemBase {
     );
   }
 
+  public InterpolatableShotData interpolate(double dist) {
+    return iTreeMapContainer.interpolate(dist);
+  }
+
   public boolean alignPivot(DoubleSupplier angle) {
     try {
-      cachedSetpointShooter = cachedSetpointIntake = angle.getAsDouble();
+      double angleSupplied = angle.getAsDouble();
+      cachedSetpointShooter = convertAngleToDistanceInches(angleSupplied);
+      cachedSetpointIntake = angleSupplied;
       pidIntakeAngleController.setReference(
         angle.getAsDouble(),
         CANSparkMax.ControlType.kPosition
@@ -177,6 +191,13 @@ public class Pivot extends SubsystemBase {
       Math.abs(cachedSetpointShooter - shooterAngleEncoder.getPosition()) <=
       Constants.Pivot.shooterAngleDeadzone &&
       Math.abs(shooterAngleEncoder.getVelocity()) == 0
+    );
+  }
+
+  public double convertAngleToDistanceInches(double angle) {
+    return Math.hypot(
+      Constants.Pivot.actuatorConst.actuatorBaseDistY - Math.sin(angle),
+      Constants.Pivot.actuatorConst.actuatorBaseDistX - Math.cos(angle)
     );
   }
 
