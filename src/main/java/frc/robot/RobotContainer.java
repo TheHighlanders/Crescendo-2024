@@ -89,6 +89,6 @@ private void configureAuton() {
     // Uses an Auto to assign a starting position
     
     // return autoChooser.getSelected();
-    return new SwerveMoveToCMD(s_Swerve, new Pose2d(0, 0, Rotation2d.fromDegrees(90)));
+    return new SwerveMoveToCMD(s_Swerve, new Pose2d(-1, -1, Rotation2d.fromDegrees(0)));
   }
 }
