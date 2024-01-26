@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,65 +25,67 @@ import frc.robot.subsystems.Swerve;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  /* Controllers */
-  private final CommandXboxController driver = new CommandXboxController(0);
 
-  /* Drive Controls */
-  private static final int translationAxis = XboxController.Axis.kLeftY.value;
-  private static final int strafeAxis = XboxController.Axis.kLeftX.value;
-  private static final int rotationAxis = XboxController.Axis.kRightX.value;
+    /* Controllers */
+    private final CommandXboxController driver = new CommandXboxController(0);
 
-  /* Subsystems */
-  public final Swerve s_Swerve = new Swerve();
+    /* Drive Controls */
+    private static final int translationAxis = XboxController.Axis.kLeftY.value;
+    private static final int strafeAxis = XboxController.Axis.kLeftX.value;
+    private static final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  /* Auton */
-  private SendableChooser<Command> autoChooser;
+    /* Subsystems */
+    public final Swerve s_Swerve = new Swerve();
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-    configureAuton();
-    // Set Default commands for subsystems
-    setDefaultCommands();
-  }
+    /* Auton */
+    private SendableChooser<Command> autoChooser;
 
-  private void configureBindings() {
-    DriverStation.silenceJoystickConnectionWarning(true);
-    driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-
-    driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
-  }
-
-private void configureAuton() {
-
-    autoChooser = AutoBuilder.buildAutoChooser();
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-  }
-
-  private void setDefaultCommands() {
-    s_Swerve.setDefaultCommand(new SwerveTeleCMD(
-        s_Swerve,
-        () -> driver.getRawAxis(translationAxis),
-        () -> driver.getRawAxis(strafeAxis),
-        () -> -driver.getRawAxis(rotationAxis),
-        () -> driver.povDown().getAsBoolean(),
-        () -> driver.leftBumper().getAsBoolean(),
-        () -> driver.rightBumper().getAsBoolean()));
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        // Configure the trigger bindings
+        configureBindings();
+        configureAuton();
+        // Set Default commands for subsystems
+        setDefaultCommands();
     }
 
-    
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // Uses an Auto to assign a starting position
-    //return new PathPlannerAuto("Testing Auton");
-    return autoChooser.getSelected();
-  }
+    private void configureBindings() {
+        DriverStation.silenceJoystickConnectionWarning(true);
+        driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+
+        driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+    }
+
+    private void configureAuton() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+    }
+
+    private void setDefaultCommands() {
+        s_Swerve.setDefaultCommand(
+            new SwerveTeleCMD(
+                s_Swerve,
+                () -> driver.getRawAxis(translationAxis),
+                () -> driver.getRawAxis(strafeAxis),
+                () -> -driver.getRawAxis(rotationAxis),
+                () -> driver.povDown().getAsBoolean(),
+                () -> driver.leftBumper().getAsBoolean(),
+                () -> driver.rightBumper().getAsBoolean()
+            )
+        );
+    }
+
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // Uses an Auto to assign a starting position
+        //return new PathPlannerAuto("Testing Auton");
+        return autoChooser.getSelected();
+    }
 }
