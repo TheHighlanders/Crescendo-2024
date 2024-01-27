@@ -5,23 +5,16 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
-import frc.robot.commands.ledSetCommand;
-import frc.robot.subsystems.Rgbstate;
-import frc.robot.subsystems.Rgbstrip;
+import frc.robot.subsystems.RGB;
 import frc.robot.subsystems.Swerve;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -33,66 +26,68 @@ import frc.robot.subsystems.Swerve;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  /* Controllers */
-  private final CommandXboxController driver = new CommandXboxController(0);
 
-  /* Drive Controls */
-  private static final int translationAxis = XboxController.Axis.kLeftY.value;
-  private static final int strafeAxis = XboxController.Axis.kLeftX.value;
-  private static final int rotationAxis = XboxController.Axis.kRightX.value;
+    /* Controllers */
+    private final CommandXboxController driver = new CommandXboxController(0);
 
-  /* Subsystems */
-  public final Swerve s_Swerve = new Swerve();
-  
-  public final Rgbstate Rgbste = new Rgbstate();
-  public final Rgbstrip Rgbstrp = new Rgbstrip();
-  /* Auton */
-  private SendableChooser<Command> autoChooser;
+    /* Drive Controls */
+    private static final int translationAxis = XboxController.Axis.kLeftY.value;
+    private static final int strafeAxis = XboxController.Axis.kLeftX.value;
+    private static final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-    configureAuton();
-    // Set Default commands for subsystems
-    setDefaultCommands();
-  }
+    /* Subsystems */
+    public final Swerve s_Swerve = new Swerve();
+    public final RGB s_RGB = new RGB();
 
-  private void configureBindings() {
-    DriverStation.silenceJoystickConnectionWarning(true);
-    driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+    /* Auton */
+    private SendableChooser<Command> autoChooser;
 
-    driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
-  }
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        // Configure the trigger bindings
+        configureBindings();
+        configureAuton();
+        // Set Default commands for subsystems
+        setDefaultCommands();
+    }
 
-  private void configureAuton() {
+    private void configureBindings() {
+        DriverStation.silenceJoystickConnectionWarning(true);
+        driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
-    autoChooser = AutoBuilder.buildAutoChooser();
+        driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+    }
 
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-  }
+    private void configureAuton() {
+        autoChooser = AutoBuilder.buildAutoChooser();
 
-  private void setDefaultCommands() {
-    s_Swerve.setDefaultCommand(new SwerveTeleCMD(
-        s_Swerve,
-        () -> driver.getRawAxis(translationAxis),
-        () -> driver.getRawAxis(strafeAxis),
-        () -> -driver.getRawAxis(rotationAxis),
-        () -> driver.povDown().getAsBoolean(),
-        () -> driver.leftBumper().getAsBoolean(),
-        () -> driver.rightBumper().getAsBoolean()));
-  }
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+    }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // Uses an Auto to assign a starting position
-    // return new PathPlannerAuto("Testing Auton");
-    return new InstantCommand();
-  }
+    private void setDefaultCommands() {
+        s_Swerve.setDefaultCommand(
+            new SwerveTeleCMD(
+                s_Swerve,
+                () -> driver.getRawAxis(translationAxis),
+                () -> driver.getRawAxis(strafeAxis),
+                () -> -driver.getRawAxis(rotationAxis),
+                () -> driver.povDown().getAsBoolean(),
+                () -> driver.leftBumper().getAsBoolean(),
+                () -> driver.rightBumper().getAsBoolean()
+            )
+        );
+    }
+
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // Uses an Auto to assign a starting position
+        // return new PathPlannerAuto("Testing Auton");
+        return new InstantCommand();
+    }
 }
