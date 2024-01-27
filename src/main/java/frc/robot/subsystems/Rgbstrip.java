@@ -5,21 +5,22 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class rgbSUB extends SubsystemBase {
-  DigitalOutput[] dios = {new DigitalOutput(0), new DigitalOutput(1), new DigitalOutput(2), new DigitalOutput(3)};
+public class Rgbstrip extends SubsystemBase {
+  DigitalOutput[] dios = {new DigitalOutput(4), new DigitalOutput(5), new DigitalOutput(6), new DigitalOutput(7)};
   
-  public rgbSUB() {
+  public Rgbstrip() {
   }
 
-  public void sendDioNum(int num){
-    String binary = Integer.toBinaryString(num);
+  public void sendDiostrip(int strip){
+    String binary = Integer.toBinaryString(strip);
   
-    SmartDashboard.putString("Binary", binary + " " + num);
+    SmartDashboard.putString("Binary", binary + " " + strip);
 
     for (int i = binary.length()-1; i >= 0; i--) {
         dios[binary.length() - i - 1].set(binary.charAt(i) == '1');
     }
   }
+
 
   @Override
   public void periodic() {

@@ -18,8 +18,10 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.ledSetCommand;
+import frc.robot.subsystems.Rgbstate;
+import frc.robot.subsystems.Rgbstrip;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.rgbSUB;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -41,8 +43,9 @@ public class RobotContainer {
 
   /* Subsystems */
   public final Swerve s_Swerve = new Swerve();
-  public final rgbSUB RgbOne = new rgbSUB();
-
+  
+  public final Rgbstate Rgbste = new Rgbstate();
+  public final Rgbstrip Rgbstrp = new Rgbstrip();
   /* Auton */
   private SendableChooser<Command> autoChooser;
 
