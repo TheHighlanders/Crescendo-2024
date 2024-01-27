@@ -13,23 +13,22 @@ import java.util.Optional;
 public class RGB extends SubsystemBase {
 
     /** Creates a new RGB. */
-    private SerialPort laPuerta;
-    private StringBuilder data;
+    private SerialPort elPuerto;
 
 
     public RGB() {
-      laPuerta = new SerialPort(9600, SerialPort.Port.kMXP);
-      data = new StringBuilder(/*DriverStation.getAlliance().get() == Alliance.Red ? "Red" : "Blue"*/ "testset");
+      elPuerto = new SerialPort(9600, SerialPort.Port.kMXP);
+      elPuerto.writeString("5\n");
     }
 
     public void changeString(String str) {
-      data.setLength(0);
-      data.append(str);
+      elPuerto.writeString(str + "\n");
     }
 
     @Override
     public void periodic() {
-      laPuerta.writeString(data.toString());
+
+      // DriverStation.reportWarning("something", false);
         // This method will be called once per scheduler run
     }
 }
