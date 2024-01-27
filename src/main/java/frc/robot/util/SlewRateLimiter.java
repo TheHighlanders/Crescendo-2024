@@ -17,6 +17,7 @@ import edu.wpi.first.math.MathUtil;
  * edu.wpi.first.math.trajectory.TrapezoidProfile} instead.
  */
 public class SlewRateLimiter {
+
     private double m_positiveRateLimit;
     private double m_negativeRateLimit;
     private double m_prevVal;
@@ -35,7 +36,11 @@ public class SlewRateLimiter {
      *                          second. This is expected to be negative.
      * @param initialValue      The initial value of the input.
      */
-    public SlewRateLimiter(double positiveRateLimit, double negativeRateLimit, double initialValue) {
+    public SlewRateLimiter(
+        double positiveRateLimit,
+        double negativeRateLimit,
+        double initialValue
+    ) {
         m_positiveRateLimit = positiveRateLimit;
         m_negativeRateLimit = negativeRateLimit;
         m_prevVal = initialValue;
@@ -78,10 +83,12 @@ public class SlewRateLimiter {
     public double calculate(double input) {
         double currentTime = MathSharedStore.getTimestamp();
         double elapsedTime = currentTime - m_prevTime;
-        m_prevVal += MathUtil.clamp(
+        m_prevVal +=
+            MathUtil.clamp(
                 input - m_prevVal,
                 m_negativeRateLimit * elapsedTime,
-                m_positiveRateLimit * elapsedTime);
+                m_positiveRateLimit * elapsedTime
+            );
         m_prevTime = currentTime;
         return m_prevVal;
     }
@@ -90,10 +97,12 @@ public class SlewRateLimiter {
         setRateLimit(rateLimit);
         double currentTime = MathSharedStore.getTimestamp();
         double elapsedTime = currentTime - m_prevTime;
-        m_prevVal += MathUtil.clamp(
+        m_prevVal +=
+            MathUtil.clamp(
                 input - m_prevVal,
                 m_negativeRateLimit * elapsedTime,
-                m_positiveRateLimit * elapsedTime);
+                m_positiveRateLimit * elapsedTime
+            );
         m_prevTime = currentTime;
         return m_prevVal;
     }

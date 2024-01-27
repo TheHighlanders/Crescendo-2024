@@ -3,6 +3,7 @@ package frc.robot.util;
 import com.revrobotics.CANSparkMax;
 
 public class CANSparkMaxCurrent extends CANSparkMax {
+
     public int timeAbove;
     public double currentCurrent;
     public double[] currentBuffer;
@@ -36,12 +37,17 @@ public class CANSparkMaxCurrent extends CANSparkMax {
     public void setTorque(double nm) {
         double percentTorque = nm / 3.28;
 
-        int currentLimit = (int)(percentTorque * 181);
+        int currentLimit = (int) (percentTorque * 181);
 
         this.setCurrent(currentLimit);
     }
 
-    public void setSpikeCurrentLimit(double limitTo, double spikeMaxTime, double spikeMaxAmps, int smartLimit){
+    public void setSpikeCurrentLimit(
+        double limitTo,
+        double spikeMaxTime,
+        double spikeMaxAmps,
+        int smartLimit
+    ) {
         this.limitTo = limitTo;
         this.spikeMaxTime = spikeMaxTime;
         this.spikeMaxAmps = spikeMaxAmps;
@@ -50,37 +56,36 @@ public class CANSparkMaxCurrent extends CANSparkMax {
         limiting = true;
     }
 
-
-    public void periodicLimit(){
-        if(limiting){
+    public void periodicLimit() {
+        if (limiting) {
             currentCurrent = this.getOutputCurrent(); //Changed from 0 @ NERD -ah (idk why it was 0, we probably werent limiting bc of stale current data)
-        
+
             currentBuffer[(int) index] = currentCurrent;
             index++;
             index %= currentBuffer.length;
-            
-            if(currentCurrent >= spikeMaxAmps){
+
+            if (currentCurrent >= spikeMaxAmps) {
                 limitNow(smartLimit);
             }
-    
-            if(timeAbove >= spikeMaxTime){
+
+            if (timeAbove >= spikeMaxTime) {
                 limitNow(smartLimit);
             }
-    
-            if(currentCurrent >= limitTo){
+
+            if (currentCurrent >= limitTo) {
                 timeAbove++;
             } else {
                 timeAbove--;
-                timeAbove = Math.max(0,timeAbove);
-                if(timeAbove == 0){
-                    limitNow(150) ;
+                timeAbove = Math.max(0, timeAbove);
+                if (timeAbove == 0) {
+                    limitNow(150);
                 }
             }
         }
     }
 
-    public void limitNow(double amps){
-        if(amps != setLimit){
+    public void limitNow(double amps) {
+        if (amps != setLimit) {
             this.setSmartCurrentLimit((int) amps);
             setLimit = amps;
         }
