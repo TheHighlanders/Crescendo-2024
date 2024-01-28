@@ -8,9 +8,17 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.SwerveModuleConfig;
 
@@ -65,6 +73,7 @@ public final class Constants {
       // here
     );
 
+
     public static final double kPGrid = 0;
     public static final double kIGrid = 0;
     public static final double kDGrid = 0;
@@ -79,6 +88,19 @@ public final class Constants {
 
     public static final double kGridLineUpPos = 0.5;
     public static final double kGridLineUpAngle = 90;
+  }
+
+  public static class VisionConstants{
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.00040, 0.00080, 0.00050);
+    //TODO: Actual stddevs
+
+    public static final Translation2d kRedSpeaker = new Translation2d(-0.04,	5.55);
+    public static final Translation2d kBlueSpeaker = new Translation2d(16.58, 5.55); 
+
+    public static final Translation3d robotCameraTranslation0 = new Translation3d(-0.3175, -0.0445, 0.1778);//-x, -y, z
+    public static final Rotation3d robotCameraRotation0 = new Rotation3d(0,0,-Math.PI/2.0f);    
+    public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
   }
 
   public static class Module {
