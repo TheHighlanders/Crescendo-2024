@@ -46,7 +46,7 @@ public class Shooter extends SubsystemBase {
         );
 
         topFlywheelMotor =
-            new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
+            new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
         topFlywheelEncoder = topFlywheelMotor.getEncoder();
         topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
         topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);

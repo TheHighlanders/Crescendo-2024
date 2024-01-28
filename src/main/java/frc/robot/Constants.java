@@ -55,61 +55,8 @@ public final class Constants {
         public static double accelerationLimit = 1.5;
         public static double slowAccelerationLimit = 2;
 
-    public static double angularVelocityLimit = 180.0;
-    public static double slowAngularVelocityLimit = 45.0;
-  }
-
-  public static class Autonomous {
-
-    public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in
-      // your Constants class
-      new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
-      new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
-      2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
-      0.42207203769, // Drive base radius in meters. Distance from robot center to furthest
-      // module.
-      new ReplanningConfig() // Default path replanning config. See the API for the options
-      // here
-    );
-
-
-    public static final double kPGrid = 0;
-    public static final double kIGrid = 0;
-    public static final double kDGrid = 0;
-
-    public static final double kGridTranslateTol = 0;
-
-    public static final double kPGridTheta = 0;
-    public static final double kIGridTheta = 0;
-    public static final double kDGridTheta = 0;
-
-    public static final double kGridThetaTol = 0;
-
-    public static final double kGridLineUpPos = 0.5;
-    public static final double kGridLineUpAngle = 90;
-  }
-
-  public static class VisionConstants{
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.00040, 0.00080, 0.00050);
-    //TODO: Actual stddevs
-
-    public static final Translation2d kRedSpeaker = new Translation2d(-0.04,	5.55);
-    public static final Translation2d kBlueSpeaker = new Translation2d(16.58, 5.55); 
-
-    public static final Translation3d robotCameraTranslation0 = new Translation3d(-0.3175, -0.0445, 0.1778);//-x, -y, z
-    public static final Rotation3d robotCameraRotation0 = new Rotation3d(0,0,-Math.PI/2.0f);    
-    public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
-  }
-
-  public static class Module {
-
-    public static class DriveCurrentLimit {
-
-      public static final double kLimitToAmps = 40.0f;
-      public static final double kMaxSpikeTime = 25.0f;
-      public static final double kMaxSpikeAmps = 40.0f;
-      public static final int kSmartLimit = 40;
+        public static double angularVelocityLimit = 180.0;
+        public static double slowAngularVelocityLimit = 45.0;
     }
 
     public static class Autonomous {
@@ -282,8 +229,8 @@ public final class Constants {
 
     public static class Shooter {
 
-        public static final int bottomFlywheelMotorID = 98;
-        public static final int topFlywheelMotorID = 99;
+        public static final int bottomFlywheelMotorID = 103;
+        public static final int topFlywheelMotorID = 104;
         public static final int kBottomRatio = 69;
         public static final int kTopRatio = 69;
         public static final int slotID = 0;
@@ -335,8 +282,8 @@ public final class Constants {
 
     public static class Pivot {
 
-        public static final int INTAKE = 0;
-        public static final int SHOOTER = 0;
+        public static final int INTAKE = 100;
+        public static final int SHOOTER = 101;
         public static final int slotID = 0;
 
         public static final double intakeOutAngle = 0;
