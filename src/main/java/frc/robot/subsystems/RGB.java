@@ -21,7 +21,7 @@ public class RGB extends SubsystemBase {
       elPuerto.writeString("5\n");
     }
 
-    public void changeString(String str) {
+    public static void changeString(String str) {
       elPuerto.writeString(str + "\n");
     }
 
