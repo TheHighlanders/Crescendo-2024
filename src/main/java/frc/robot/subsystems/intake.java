@@ -18,7 +18,7 @@ public class intake extends SubsystemBase {
     public RelativeEncoder intakeEncoder;
     public SparkPIDController pidIntakeController;
 
-    public intake(Shooter shooterSubsystem) {
+    public intake() {
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         intakeEncoder = intakeMotor.getEncoder();

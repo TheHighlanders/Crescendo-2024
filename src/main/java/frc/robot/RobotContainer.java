@@ -14,10 +14,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
+import frc.robot.commands.alignShootCMDG;
 import frc.robot.subsystems.Localizer;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.intake;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -44,6 +47,8 @@ public class RobotContainer {
     public static final Shooter s_Shooter = new Shooter();
     public static final Swerve s_Swerve = new Swerve();
     public static final Vision s_Vision = new Vision();
+    public static final intake s_Intake = new intake();
+    public static final Pivot s_Pivot = new Pivot();
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
@@ -69,7 +74,7 @@ public class RobotContainer {
         driver.y().onTrue(new InstantCommand(s_Swerve::zeroGyro));
         driver.a().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
 
-        driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
+        driver.x().onTrue(new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer));
     }
 
     private void configureAuton() {

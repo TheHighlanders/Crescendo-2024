@@ -280,7 +280,7 @@ public final class Constants {
         }
     }
 
-    public static class Pivot {
+    public static class PivotConstants {
 
         public static final int INTAKE = 100;
         public static final int SHOOTER = 101;

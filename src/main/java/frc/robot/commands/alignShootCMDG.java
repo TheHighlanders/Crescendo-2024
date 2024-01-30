@@ -4,11 +4,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
@@ -44,24 +43,27 @@ public class alignShootCMDG extends SequentialCommandGroup {
         double angleToSpeaker = localizer.getAngleToSpeaker();
 
         addCommands(
-            new ParallelCommandGroup(
-                new FunctionalCommand(
-                    () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
-                    () -> {},
-                    value -> {},
-                    m_Pivot::atSetpoints
-                ),
-                new SwerveMoveToCMD(m_Swerve, Double.NaN, Double.NaN, angleToSpeaker)
-            ),
-            new ParallelRaceGroup(
-                new StartEndCommand(m_shooter::shoot, m_shooter::shootCancel),
-                new FunctionalCommand(
-                    m_intake::intakeStartout,
-                    () -> {},
-                    value -> m_intake.intakeStop(),
-                    m_shooter::hasGamePiece
-                )
-            )
+            new InstantCommand(() -> {
+                DriverStation.reportWarning("desired arm angle" + Double.toString(currentShotData.getArmAngle()) + ": angle to speaker" + Double.toString(angleToSpeaker), false);
+            })
+            // new ParallelCommandGroup(
+            //     new FunctionalCommand(
+            //         () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
+            //         () -> {},
+            //         value -> {},
+            //         m_Pivot::atSetpoints
+            //     ),
+            //     new SwerveMoveToCMD(m_Swerve, Double.NaN, Double.NaN, angleToSpeaker)
+            // ),
+            // new ParallelRaceGroup(
+            //     new StartEndCommand(m_shooter::shoot, m_shooter::shootCancel),
+            //     new FunctionalCommand(
+            //         m_intake::intakeStartout,
+            //         () -> {},
+            //         value -> m_intake.intakeStop(),
+            //         m_shooter::hasGamePiece
+            //     )
+            // )
         );
     }
 }
