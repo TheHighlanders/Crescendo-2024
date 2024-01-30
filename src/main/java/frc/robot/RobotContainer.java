@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
-import frc.robot.subsystems.RGB;
+//import frc.robot.subsystems.RGB;
 import frc.robot.subsystems.Swerve;
 
 /**
@@ -39,7 +40,7 @@ public class RobotContainer {
 
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
-    public final RGB s_RGB = new RGB();
+    //public RGB s_RGB = new RGB();
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
@@ -80,6 +81,8 @@ public class RobotContainer {
                 () -> driver.rightBumper().getAsBoolean()
             )
         );
+        
+
     }
 
     /**
@@ -89,10 +92,12 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // Uses an Auto to assign a starting position
-        // return new PathPlannerAuto("Testing Auton");
+         //return new PathPlannerAuto("Testing Auton");
+     return new SequentialCommandGroup(new InstantCommand(()-> new WaitCommand(1)));
+
       //  return new SequentialCommandGroup(new InstantCommand(()->s_RGB.changeString("2")), new WaitCommand(15),new InstantCommand(()->s_RGB.changeString("3")), new WaitCommand(15),new InstantCommand(()->s_RGB.changeString("4")), new WaitCommand(15),new InstantCommand(()->s_RGB.changeString("5")), new WaitCommand(15), new InstantCommand(()->s_RGB.changeString("6")), new WaitCommand(15));
-    return new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), 
-     new WaitCommand(1),new InstantCommand(()->s_RGB.changeString("7")), new WaitCommand(1));
+    //return new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), 
+     //new WaitCommand(1),new InstantCommand(()->s_RGB.changeString("7")), new WaitCommand(1));
     
     
     }

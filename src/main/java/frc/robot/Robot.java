@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
-
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.RGB;
 
 
 /**
@@ -24,7 +26,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private double currentVeloc = 2.5;
   private RobotContainer m_robotContainer;
-
+  public  RGB s_RGB = new RGB();
   
   
 
@@ -61,10 +63,17 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+
+      new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), 
+      new WaitCommand(1));
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+   
+
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -79,7 +88,14 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    // SequentialCommandGroup(new InstantCommand(()-> new WaitCommand(15)));
+    DriverStation.reportError("TACO CAT", false);
+    //  new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), new WaitCommand(1),new InstantCommand(()->s_RGB.changeString("7")), new WaitCommand(1));
+         new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("7")));
+
+
+  }
  
   @Override
   public void teleopInit() {
