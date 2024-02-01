@@ -65,8 +65,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
 
-      new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), 
-      new WaitCommand(1));
+   s_RGB.changeString("10");
   }
 
   @Override
@@ -78,8 +77,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(s_RGB);
+    s_RGB.changeString("10");
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -92,13 +91,13 @@ public class Robot extends TimedRobot {
     // SequentialCommandGroup(new InstantCommand(()-> new WaitCommand(15)));
     DriverStation.reportError("TACO CAT", false);
     //  new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), new WaitCommand(1),new InstantCommand(()->s_RGB.changeString("7")), new WaitCommand(1));
-         new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("7")));
-
+   
 
   }
  
   @Override
   public void teleopInit() {
+    new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("3")));
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
