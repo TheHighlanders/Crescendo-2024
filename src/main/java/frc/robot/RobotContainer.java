@@ -17,6 +17,7 @@ import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.RGB;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
