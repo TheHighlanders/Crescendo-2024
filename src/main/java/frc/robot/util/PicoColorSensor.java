@@ -19,7 +19,8 @@ public class PicoColorSensor implements AutoCloseable {
             ir = _ir;
         }
 
-        public RawColor() {}
+        public RawColor() {
+        }
 
         public int red;
         public int green;

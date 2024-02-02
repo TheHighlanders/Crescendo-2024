@@ -23,8 +23,7 @@ public class InterpolatableShotData implements Interpolatable<InterpolatableShot
     @Override
     public InterpolatableShotData interpolate(InterpolatableShotData endValue, double t) {
         return new InterpolatableShotData(
-            ((endValue.getArmAngle() - armAngle) * t) + armAngle,
-            ((endValue.getRPM() - rotationsPerSecond) * t) + rotationsPerSecond
-        );
+                ((endValue.getArmAngle() - armAngle) * t) + armAngle,
+                ((endValue.getRPM() - rotationsPerSecond) * t) + rotationsPerSecond);
     }
 }

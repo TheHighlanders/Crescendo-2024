@@ -31,13 +31,11 @@ public class Localizer extends SubsystemBase {
 
         field = new Field2d();
 
-        swervePoseEstimator =
-            new SwerveDrivePoseEstimator(
+        swervePoseEstimator = new SwerveDrivePoseEstimator(
                 Constants.SwerveConst.kinematics,
                 this.swerve.getYaw(),
                 this.swerve.getModulePositions(),
-                new Pose2d()
-            );
+                new Pose2d());
 
         SmartDashboard.putData(field);
     }
@@ -61,10 +59,9 @@ public class Localizer extends SubsystemBase {
             var estStdDevs = vision.getEstimationStdDevs(estPose.get().estimatedPose.toPose2d());
             previous = estPose.get().estimatedPose.toPose2d();
             swervePoseEstimator.addVisionMeasurement(
-                estPose.get().estimatedPose.toPose2d(),
-                estPose.get().timestampSeconds,
-                estStdDevs
-            );
+                    estPose.get().estimatedPose.toPose2d(),
+                    estPose.get().timestampSeconds,
+                    estStdDevs);
         }
 
         // field.setRobotPose(getPose());
@@ -75,10 +72,9 @@ public class Localizer extends SubsystemBase {
 
     public void resetOdoPose2d(Pose2d pose) {
         swervePoseEstimator.resetPosition(
-            this.swerve.getYaw(),
-            this.swerve.getModulePositions(),
-            pose
-        );
+                this.swerve.getYaw(),
+                this.swerve.getModulePositions(),
+                pose);
     }
 
     public Pose2d getPose() {
@@ -91,24 +87,18 @@ public class Localizer extends SubsystemBase {
 
     public double getDistanceToSpeaker() {
         Translation2d robot = getPose().getTranslation();
-        Translation2d goal =
-            (
-                DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                    ? Constants.VisionConstants.kRedSpeaker
-                    : Constants.VisionConstants.kBlueSpeaker
-            );
+        Translation2d goal = (DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+                ? Constants.VisionConstants.kRedSpeaker
+                : Constants.VisionConstants.kBlueSpeaker);
 
         return Math.hypot(robot.getX() - goal.getX(), robot.getY() - goal.getY());
     }
 
     public double getAngleToSpeaker() {
         Translation2d robot = getPose().getTranslation();
-        Translation2d goal =
-            (
-                DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                    ? Constants.VisionConstants.kRedSpeaker
-                    : Constants.VisionConstants.kBlueSpeaker
-            );
+        Translation2d goal = (DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+                ? Constants.VisionConstants.kRedSpeaker
+                : Constants.VisionConstants.kBlueSpeaker);
 
         return Math.atan2(robot.getY() - goal.getY(), robot.getX() - goal.getX());
     }

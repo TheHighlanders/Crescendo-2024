@@ -51,23 +51,22 @@ public class SwerveMoveToCMD extends Command {
     @Override
     public void execute() {
         s_Swerve.drive(
-            new Translation2d(
-                xPID.calculate(s_Swerve.getPose().getX()),
-                yPID.calculate(s_Swerve.getPose().getY())
-            ),
-            Rotation2d.fromDegrees(aPID.calculate(s_Swerve.getPose().getRotation().getDegrees())),
-            true,
-            false
-        );
+                new Translation2d(
+                        xPID.calculate(s_Swerve.getPose().getX()),
+                        yPID.calculate(s_Swerve.getPose().getY())),
+                Rotation2d.fromDegrees(aPID.calculate(s_Swerve.getPose().getRotation().getDegrees())),
+                true,
+                false);
     }
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+    }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return /*xPID.atSetpoint() && yPID.atSetpoint() &&*/aPID.atSetpoint();
+        return /* xPID.atSetpoint() && yPID.atSetpoint() && */aPID.atSetpoint();
     }
 }

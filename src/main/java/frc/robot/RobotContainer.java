@@ -52,8 +52,7 @@ public class RobotContainer {
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
-    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) ->
-        s_Localizer.resetOdoPose2d(pose);
+    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
@@ -85,16 +84,14 @@ public class RobotContainer {
 
     private void setDefaultCommands() {
         s_Swerve.setDefaultCommand(
-            new SwerveTeleCMD(
-                s_Swerve,
-                () -> driver.getRawAxis(translationAxis),
-                () -> driver.getRawAxis(strafeAxis),
-                () -> -driver.getRawAxis(rotationAxis),
-                () -> driver.povDown().getAsBoolean(),
-                () -> driver.leftBumper().getAsBoolean(),
-                () -> driver.rightBumper().getAsBoolean()
-            )
-        );
+                new SwerveTeleCMD(
+                        s_Swerve,
+                        () -> driver.getRawAxis(translationAxis),
+                        () -> driver.getRawAxis(strafeAxis),
+                        () -> -driver.getRawAxis(rotationAxis),
+                        () -> driver.povDown().getAsBoolean(),
+                        () -> driver.leftBumper().getAsBoolean(),
+                        () -> driver.rightBumper().getAsBoolean()));
     }
 
     /**
@@ -104,7 +101,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // Uses an Auto to assign a starting position
-        //return new PathPlannerAuto("Testing Auton");
+        // return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
     }
 }

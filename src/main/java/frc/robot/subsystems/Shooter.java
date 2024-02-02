@@ -19,43 +19,37 @@ public class Shooter extends SubsystemBase {
     private SparkPIDController pidTop;
 
     public Shooter() {
-        bottomFlywheelMotor =
-            new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
+        bottomFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
         bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
         bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomRatio);
         bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidBottom = bottomFlywheelMotor.getPIDController();
         pidBottom.setOutputRange(
-            Constants.Shooter.pidValues.minOut,
-            Constants.Shooter.pidValues.maxOut
-        );
+                Constants.Shooter.pidValues.minOut,
+                Constants.Shooter.pidValues.maxOut);
         pidBottom.setP(Constants.Shooter.pidValues.kP);
         pidBottom.setI(Constants.Shooter.pidValues.kI);
         pidBottom.setD(Constants.Shooter.pidValues.kD);
         pidBottom.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
         pidBottom.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
         pidBottom.setSmartMotionMinOutputVelocity(
-            Constants.Shooter.minVel,
-            Constants.Shooter.slotID
-        );
+                Constants.Shooter.minVel,
+                Constants.Shooter.slotID);
         pidBottom.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
         pidBottom.setSmartMotionAllowedClosedLoopError(
-            Constants.Shooter.allowedErr,
-            Constants.Shooter.slotID
-        );
+                Constants.Shooter.allowedErr,
+                Constants.Shooter.slotID);
 
-        topFlywheelMotor =
-            new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
+        topFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
         topFlywheelEncoder = topFlywheelMotor.getEncoder();
         topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
         topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidTop = topFlywheelMotor.getPIDController();
         pidTop.setOutputRange(
-            Constants.Shooter.pidValues.minOut,
-            Constants.Shooter.pidValues.maxOut
-        );
+                Constants.Shooter.pidValues.minOut,
+                Constants.Shooter.pidValues.maxOut);
         pidTop.setP(Constants.Shooter.pidValues.kP);
         pidTop.setI(Constants.Shooter.pidValues.kI);
         pidTop.setD(Constants.Shooter.pidValues.kD);
@@ -64,9 +58,8 @@ public class Shooter extends SubsystemBase {
         pidTop.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel, Constants.Shooter.slotID);
         pidTop.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
         pidTop.setSmartMotionAllowedClosedLoopError(
-            Constants.Shooter.allowedErr,
-            Constants.Shooter.slotID
-        );
+                Constants.Shooter.allowedErr,
+                Constants.Shooter.slotID);
     }
 
     public void shoot() {
@@ -84,5 +77,6 @@ public class Shooter extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+    }
 }
