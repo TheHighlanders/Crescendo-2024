@@ -15,6 +15,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.intake;
 import frc.robot.util.InterpolatableShotData;
+import java.util.function.Consumer;
 
 public class alignShootCMDG extends SequentialCommandGroup {
 
@@ -23,6 +24,12 @@ public class alignShootCMDG extends SequentialCommandGroup {
     public final Pivot m_Pivot;
     public final Swerve m_Swerve;
     public final Localizer m_Localizer;
+
+    Runnable emptyRunnable = () -> {
+    };
+
+    Consumer<Boolean> emptyConsumable = t -> {
+    };
 
     public alignShootCMDG(
             Shooter shoot,
@@ -45,19 +52,16 @@ public class alignShootCMDG extends SequentialCommandGroup {
                 new ParallelCommandGroup(
                         new FunctionalCommand(
                                 () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
-                                () -> {
-                                },
-                                value -> {
-                                },
+                                emptyRunnable::run,
+                                emptyConsumable,
                                 m_Pivot::atSetpoints),
                         new SwerveMoveToCMD(m_Swerve, Double.NaN, Double.NaN, angleToSpeaker)),
                 new ParallelRaceGroup(
                         new StartEndCommand(m_shooter::shoot, m_shooter::shootCancel),
                         new FunctionalCommand(
                                 m_intake::intakeStartout,
-                                () -> {
-                                },
-                                value -> m_intake.intakeStop(),
+                                emptyRunnable::run,
+                                v -> m_intake.intakeStop(),
                                 m_shooter::hasGamePiece)));
     }
 }

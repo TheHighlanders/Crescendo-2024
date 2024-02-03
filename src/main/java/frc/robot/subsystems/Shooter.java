@@ -73,6 +73,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
+        // TODO: tell when the game peace leaves the shooter (could be button press or
+        // check current draw)
         return true;
     }
 

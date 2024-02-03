@@ -4,34 +4,30 @@ import java.util.TreeMap;
 
 public class InterpolatingShotTreeMap {
 
+    // Shot tree map
     private final TreeMap<Double, InterpolatableShotData> STM = new TreeMap<>();
 
     public InterpolatingShotTreeMap() {
     }
 
-    public void put(Double key, InterpolatableShotData value) {
-        STM.put(key, value);
+    public void put(Double distance, InterpolatableShotData value) {
+        STM.put(distance, value);
     }
 
-    public InterpolatableShotData get(Double key) {
-        InterpolatableShotData val = STM.get(key);
+    public InterpolatableShotData get(Double distance) {
+        InterpolatableShotData val = STM.get(distance);
         if (val == null) {
-            Double ceilingKey = STM.ceilingKey(key);
-            Double floorKey = STM.floorKey(key);
+            Double ceilingKey = STM.ceilingKey(distance);
+            Double floorKey = STM.floorKey(distance);
 
-            if (ceilingKey == null && floorKey == null) {
+            if (ceilingKey == null || floorKey == null) {
                 return null;
             }
-            if (ceilingKey == null) {
-                return STM.get(floorKey);
-            }
-            if (floorKey == null) {
-                return STM.get(ceilingKey);
-            }
+
             InterpolatableShotData floor = STM.get(floorKey);
             InterpolatableShotData ceiling = STM.get(ceilingKey);
 
-            return interpolate(floor, ceiling, inverseInterpolate(ceilingKey, key, floorKey));
+            return interpolate(floor, ceiling, inverseInterpolate(ceilingKey, distance, floorKey));
         } else {
             return val;
         }
