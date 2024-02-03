@@ -67,9 +67,12 @@ public class RobotContainer {
     driver.a().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
     
     driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
+    driver.b().onTrue(new InstantCommand(s_Shooter::shootCancel));
   }
 
 private void configureAuton() {
+
+    s_Shooter.shootCancel();
 
     autoChooser = AutoBuilder.buildAutoChooser();
 

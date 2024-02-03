@@ -192,19 +192,26 @@ public final class Constants {
   }
 
   public static class Shooter {
-    public static final int bottomFlywheelMotorID = 98;
-    public static final int topFlywheelMotorID = 99;
-    public static final int kBottomRatio = 69;
-    public static final int kTopRatio = 69;
-    public static class pidValues {
-      public static final double minOut = 0d;
-      public static final double maxOut = 0d;
-      public static final double kP = 0d;
-      public static final double kI = 0d;
-      public static final double kD = 0d;
-      public static final double kMaxI = 0d;
-      public static final double iMaxAccum = 0d;
-      public static final int slotID = 0;
+
+        public static final int bottomFlywheelMotorID = 60; 
+        public static final int topFlywheelMotorID = 61;
+        public static final int kBottomRatio = 1;
+        public static final int kTopRatio = 1;
+        public static final int slotID = 0;
+        public static final double maxVel = 1; // rpm
+        public static final double minVel = 0;
+        public static final double maxAcc = 2000;
+        public static final double allowedErr = 100;
+
+        public static class pidValues {
+
+            public static final double minOut = -1;
+            public static final double maxOut = 1;
+            public static final double kP = 0.01d;
+            public static final double kI = 0d;
+            public static final double kD = 0d;
+            public static final double kMaxI = 0d;
+            public static final double iMaxAccum = 0d;
+        }
     }
-  }
 }

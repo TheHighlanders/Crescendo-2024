@@ -1,101 +1,86 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
 
 public class Shooter extends SubsystemBase {
 
-  public CANSparkMaxCurrent bottomFlywheelMotor;
-  public CANSparkMaxCurrent topFlywheelMotor;
-  public RelativeEncoder bottomFlywheelEncoder;
-  public RelativeEncoder topFlywheelEncoder;
+    private CANSparkMaxCurrent bottomFlywheelMotor;
+    private CANSparkMaxCurrent topFlywheelMotor;
+    private RelativeEncoder bottomFlywheelEncoder;
+    private RelativeEncoder topFlywheelEncoder;
 
-  public SparkPIDController pidBottom;
-  public SparkPIDController pidTop;
+    private SparkPIDController pidBottom;
+    private SparkPIDController pidTop;
 
-  private BooleanSupplier m_hasGamePiece = () -> false;
-  private BooleanSupplier m_pivotAligned = () -> false;
+    public Shooter() {
+        bottomFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID,
+                MotorType.kBrushless);
+        bottomFlywheelMotor.setCurrent(1);
+        bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
+        bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomRatio);
+        bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-  public Shooter() {
-    bottomFlywheelMotor =
-      new CANSparkMaxCurrent(
-        Constants.Shooter.bottomFlywheelMotorID,
-        MotorType.kBrushless
-      );
-    bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
-    bottomFlywheelEncoder.setPositionConversionFactor(
-      Constants.Shooter.kBottomRatio
-    );
-    bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-    pidBottom = bottomFlywheelMotor.getPIDController();
-    pidBottom.setOutputRange(
-      Constants.Shooter.pidValues.minOut,
-      Constants.Shooter.pidValues.maxOut
-    );
-    pidBottom.setP(Constants.Shooter.pidValues.kP);
-    pidBottom.setI(Constants.Shooter.pidValues.kI);
-    pidBottom.setD(Constants.Shooter.pidValues.kD);
-    pidBottom.setIMaxAccum(
-      Constants.Shooter.pidValues.iMaxAccum,
-      Constants.Shooter.pidValues.slotID
-    );
 
-    
+        pidBottom = bottomFlywheelMotor.getPIDController();
+        // pidBottom.setOutputRange(Constants.Shooter.pidValues.minOut,
+        //         Constants.Shooter.pidValues.maxOut);
+        pidBottom.setP(Constants.Shooter.pidValues.kP);
+        pidBottom.setI(Constants.Shooter.pidValues.kI);
+        pidBottom.setD(Constants.Shooter.pidValues.kD);
+        // pidBottom.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
+        // pidBottom.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
+        // pidBottom.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel,
+        //         Constants.Shooter.slotID);
+        // pidBottom.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
+        // pidBottom.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr,
+        //         Constants.Shooter.slotID);
 
-    topFlywheelMotor =
-      new CANSparkMaxCurrent(
-        Constants.Shooter.topFlywheelMotorID,
-        MotorType.kBrushless
-      );
-    topFlywheelEncoder = topFlywheelMotor.getEncoder();
-    topFlywheelEncoder.setPositionConversionFactor(
-      Constants.Shooter.kTopRatio
-    );
-    topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        topFlywheelMotor =
+                new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
+        topFlywheelMotor.setCurrent(1);
+        topFlywheelEncoder = topFlywheelMotor.getEncoder();
+        topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
+        topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-    pidTop = topFlywheelMotor.getPIDController();
-    pidTop.setOutputRange(
-      Constants.Shooter.pidValues.minOut,
-      Constants.Shooter.pidValues.maxOut
-    );
-    pidTop.setP(Constants.Shooter.pidValues.kP);
-    pidTop.setI(Constants.Shooter.pidValues.kI);
-    pidTop.setD(Constants.Shooter.pidValues.kD);
-    pidTop.setIMaxAccum(
-      Constants.Shooter.pidValues.iMaxAccum,
-      Constants.Shooter.pidValues.slotID
-    );
-  }
-
-  public void setSuppliers(
-    BooleanSupplier hasGamePiece,
-    BooleanSupplier pivotAligned
-  ) {
-    m_hasGamePiece = hasGamePiece;
-    m_pivotAligned = pivotAligned;
-  }
-
-  public void shoot() {
-    if (!m_pivotAligned.getAsBoolean()) {
-      //call alignPivot(calcTrajectory());
+        pidTop = topFlywheelMotor.getPIDController();
+        // pidTop.setOutputRange(Constants.Shooter.pidValues.minOut,
+        //         Constants.Shooter.pidValues.maxOut);
+        pidTop.setP(Constants.Shooter.pidValues.kP);
+        pidTop.setI(Constants.Shooter.pidValues.kI);
+        pidTop.setD(Constants.Shooter.pidValues.kD);
+        // pidTop.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
+        // pidTop.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
+        // pidTop.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel, Constants.Shooter.slotID);
+        // pidTop.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
+        // pidTop.setSmartMotionAllowedClosedLoopError(Constants.Shooter.allowedErr,
+        //         Constants.Shooter.slotID);
     }
-    if (!m_hasGamePiece.getAsBoolean()) {
-      // well that sucks
+
+    public void shoot() {
+        pidTop.setReference(1, CANSparkMax.ControlType.kSmartVelocity);
+        pidBottom.setReference(1, CANSparkMax.ControlType.kSmartVelocity);
+        DriverStation.reportWarning("Shooting", false);
     }
-    // tell drive to align shot
-  }
 
-  public double calcTrajectory() {
-    return 1_000;
-  }
+    public void shootCancel() {
+        topFlywheelMotor.set(0);
+        bottomFlywheelMotor.set(0);
+    }
 
-  @Override
-  public void periodic() {}
+    public boolean hasGamePiece() {
+        // TODO: tell when the game peace leaves the shooter (could be button press or
+        // check current draw)
+        return true;
+    }
+
+    @Override
+    public void periodic() {}
 }
