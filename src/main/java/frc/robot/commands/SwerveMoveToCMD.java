@@ -5,9 +5,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class SwerveMoveToCMD extends Command {
@@ -18,26 +23,33 @@ public class SwerveMoveToCMD extends Command {
     PIDController yPID;
     PIDController aPID;
 
-    double endX;
-    double endY;
-    double endAngle;
+  double endX;
+  double endY;
+  double endAngle;
+  
+  /** Creates a new SwerveMoveToCMD. */
+  public SwerveMoveToCMD(Swerve s_Swerve, Pose2d target) {
+    this.s_Swerve = s_Swerve;
+    endX = target.getX();
+    endY = target.getY();
+    endAngle = target.getRotation().getDegrees();
 
-    /** Creates a new SwerveMoveToCMD. */
-    public SwerveMoveToCMD(Swerve s_Swerve, double X, double Y, double angleDeg) {
-        this.s_Swerve = s_Swerve;
-        endX = X;
-        endY = Y;
-        endAngle = angleDeg;
+    xPID = new PIDController(5, 0.1, 0.13);
+    yPID = new PIDController(5, 0.1, 0.13);
+    aPID = new PIDController(5, 0, 0.13);
 
-        xPID = new PIDController(0, 1, 0);
-        yPID = new PIDController(0, 1, 0);
-        aPID = new PIDController(0.5, 0.05, 0);
+    xPID.setIntegratorRange(-100,100);
+    yPID.setIntegratorRange(-100,100);
 
-        aPID.setTolerance(7);
+    xPID.setTolerance(Constants.SwerveMoveConsts.xDeadzone);
+    yPID.setTolerance(Constants.SwerveMoveConsts.yDeadzone);
 
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(s_Swerve);
-    }
+    aPID.setTolerance(Constants.SwerveMoveConsts.aDeadzone);
+    aPID.enableContinuousInput(0, 360);
+    
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(s_Swerve);
+  }
 
     // Called when the command is initially scheduled.
     @Override
@@ -47,27 +59,32 @@ public class SwerveMoveToCMD extends Command {
         aPID.setSetpoint(endAngle);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-        s_Swerve.drive(
-            new Translation2d(
-                xPID.calculate(s_Swerve.getPose().getX()),
-                yPID.calculate(s_Swerve.getPose().getY())
-            ),
-            Rotation2d.fromDegrees(aPID.calculate(s_Swerve.getPose().getRotation().getDegrees())),
-            true,
-            false
-        );
-    }
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    SmartDashboard.putNumber("A PID ERROR", aPID.getPositionError());
+    SmartDashboard.putNumber("X PID ERROR", xPID.getPositionError());
+    SmartDashboard.putNumber("Y PID ERROR", yPID.getPositionError());
 
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {}
+    double aCalc = -aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
+    SmartDashboard.putNumber("A CALC", aCalc);
 
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return /*xPID.atSetpoint() && yPID.atSetpoint() &&*/aPID.atSetpoint();
-    }
+    s_Swerve.drive(
+      new Translation2d( xPID.calculate(s_Swerve.getPose().getX()), yPID.calculate(s_Swerve.getPose().getY() )),
+      Rotation2d.fromDegrees(aCalc),
+      true, 
+      false);
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    DriverStation.reportWarning("POINT MOVE ENDED", false);
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return xPID.atSetpoint() && yPID.atSetpoint() &&  aPID.atSetpoint();
+  }
 }

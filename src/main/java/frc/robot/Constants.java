@@ -22,17 +22,20 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.SwerveModuleConfig;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
 
-    public static class SwerveConst {
-
+  public static class SwerveConst {
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
 
@@ -47,6 +50,11 @@ public final class Constants {
             new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
             new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0)
         );
+    public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+        new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
+        new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0),
+        new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
+        new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0));
 
         public static double speedLimit = 3.0;
         public static double slowSpeedLimit = 1.0;
@@ -123,8 +131,8 @@ public final class Constants {
             public static final int kSmartLimit = 20;
         }
 
-        public static final double kDriveGearRatio = 1.0f / 8.14f;
-        public static final double kAngleGearRatio = 1.0f / 12.8f;
+    public static final double kDriveGearRatio = 1.0f / 8.14f;
+    public static final double kAngleGearRatio = 1.0f / 12.8f;
 
         public static final double kWheelDiameter = Units.inchesToMeters(4);
         public static final double kWheelCircumfrence = kWheelDiameter * Math.PI;
@@ -142,9 +150,10 @@ public final class Constants {
         public static final double kIAngle = 0; // AIR 0;
         public static final double kDAngle = 0.002; // AIR 0.0005;
 
-        public static final double kPDrive = 0.2; //1.1;
-        public static final double kIDrive = 0.0005; //0.0001;
-        public static final double kDDrive = 3; //5;
+  public static class Modules {
+    public static class FrontLeft {
+      public static final int driveMotorID = 10;
+      public static final int angleMotorID = 11;
 
         public static final double kSDrive = 0.375; // 0.375
         public static final double kVDrive = 2.5;
@@ -160,7 +169,18 @@ public final class Constants {
         public static final boolean KAbsoluteEncoderInverted = false;
     }
 
-    public static class Modules {
+  public static class Modules {
+    public static class FrontLeft{
+      public static final int driveMotorID = 10;
+      public static final int angleMotorID = 11;
+
+      public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
+
+      public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(
+          driveMotorID,
+          angleMotorID,
+          absoluteEncoderOffset);
+    }
 
         public static class FrontLeft {
 
@@ -226,4 +246,41 @@ public final class Constants {
             );
         }
     }
+      public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(
+          driveMotorID,
+          angleMotorID,
+          absoluteEncoderOffset);
+    }
+
+    public static class BackLeft {
+      public static final int driveMotorID = 40;
+      public static final int angleMotorID = 41;
+
+      public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(131.00274682044983));
+
+      public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(
+          driveMotorID,
+          angleMotorID,
+          absoluteEncoderOffset);
+    }
+
+    public static class BackRight {
+      public static final int driveMotorID = 30;
+      public static final int angleMotorID = 31;
+
+      public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(170.9482741355896));
+
+      public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(
+          driveMotorID,
+          angleMotorID,
+          absoluteEncoderOffset);
+    }
+  }
+
+  public static final class SwerveMoveConsts {
+    public static final float xDeadzone = 0.011f;
+    public static final float yDeadzone = 0.011f;
+    public static final float aDeadzone = 0.5f;
+
+  }
 }
