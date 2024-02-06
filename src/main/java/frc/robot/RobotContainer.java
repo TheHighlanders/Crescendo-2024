@@ -4,11 +4,7 @@
 
 package frc.robot;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,6 +17,8 @@ import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -32,70 +30,73 @@ import frc.robot.subsystems.Vision;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  /* Controllers */
-  private final CommandXboxController driver = new CommandXboxController(0);
 
-  /* Drive Controls */
-  private static final int translationAxis = XboxController.Axis.kLeftY.value;
-  private static final int strafeAxis = XboxController.Axis.kLeftX.value;
-  private static final int rotationAxis = XboxController.Axis.kRightX.value;
+    /* Controllers */
+    private final CommandXboxController driver = new CommandXboxController(0);
 
-  /* Subsystems */
-  public static final Swerve s_Swerve = new Swerve();
-  public static final Vision s_Vision = new Vision();
+    /* Drive Controls */
+    private static final int translationAxis = XboxController.Axis.kLeftY.value;
+    private static final int strafeAxis = XboxController.Axis.kLeftX.value;
+    private static final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
+    /* Subsystems */
+    public static final Swerve s_Swerve = new Swerve();
+    public static final Vision s_Vision = new Vision();
+
+    public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
-    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
+    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) ->
+        s_Localizer.resetOdoPose2d(pose);
 
-  /* Auton */
-  private SendableChooser<Command> autoChooser;
+    /* Auton */
+    private SendableChooser<Command> autoChooser;
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-    configureAuton();
-    // Set Default commands for subsystems
-    setDefaultCommands();
-  }
-
-  private void configureBindings() {
-    DriverStation.silenceJoystickConnectionWarning(true);
-    driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-
-    driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
-  }
-
-private void configureAuton() {
-
-    autoChooser = AutoBuilder.buildAutoChooser();
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-  }
-
-  private void setDefaultCommands() {
-    s_Swerve.setDefaultCommand(new SwerveTeleCMD(
-        s_Swerve,
-        () -> driver.getRawAxis(translationAxis),
-        () -> driver.getRawAxis(strafeAxis),
-        () -> -driver.getRawAxis(rotationAxis),
-        () -> driver.povDown().getAsBoolean(),
-        () -> driver.leftBumper().getAsBoolean(),
-        () -> driver.rightBumper().getAsBoolean()));
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        // Configure the trigger bindings
+        configureBindings();
+        configureAuton();
+        // Set Default commands for subsystems
+        setDefaultCommands();
     }
 
-    
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // Uses an Auto to assign a starting position
-    //return new PathPlannerAuto("Testing Auton");
-    return autoChooser.getSelected();
-  }
+    private void configureBindings() {
+        DriverStation.silenceJoystickConnectionWarning(true);
+        driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+
+        driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+    }
+
+    private void configureAuton() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+    }
+
+    private void setDefaultCommands() {
+        s_Swerve.setDefaultCommand(
+            new SwerveTeleCMD(
+                s_Swerve,
+                () -> driver.getRawAxis(translationAxis),
+                () -> driver.getRawAxis(strafeAxis),
+                () -> -driver.getRawAxis(rotationAxis),
+                () -> driver.povDown().getAsBoolean(),
+                () -> driver.leftBumper().getAsBoolean(),
+                () -> driver.rightBumper().getAsBoolean()
+            )
+        );
+    }
+
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // Uses an Auto to assign a starting position
+        //return new PathPlannerAuto("Testing Auton");
+        return autoChooser.getSelected();
+    }
 }
