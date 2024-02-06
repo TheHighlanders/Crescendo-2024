@@ -41,9 +41,6 @@ public class Localizer extends SubsystemBase {
   @Override
   public void periodic() {
     swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
-    // swervePoseEstimator.update(this.swerve.getYaw(), new SwerveModulePosition[]
-    // {new SwerveModulePosition(), new SwerveModulePosition(), new
-    // SwerveModulePosition(), new SwerveModulePosition()});
 
     Optional<EstimatedRobotPose> estPose;
 

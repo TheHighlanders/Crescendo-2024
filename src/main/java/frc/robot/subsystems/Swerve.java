@@ -15,7 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,7 +33,7 @@ public class Swerve extends SubsystemBase {
   private AHRS gyro;
   public ChassisSpeeds chassisSpeeds;
 
-  // public SwerveDriveOdometry odometer;
+  public SwerveDriveOdometry odometer;
 
   public Swerve() {
     /* Initializes modules from Constants */
@@ -56,7 +56,7 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("PP O", 6);
 
 
-    // odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
+    odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
 
 
 
@@ -89,8 +89,8 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // odometer.update(gyro.getRotation2d(), getModulePositions());
-    
+    odometer.update(gyro.getRotation2d(), getModulePositions());
+    SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
     
 
     // field.setRobotPose(getPose());
@@ -148,7 +148,7 @@ public class Swerve extends SubsystemBase {
   // For PP
   public void resetPose(Pose2d pose) {
     RobotContainer.s_Localizer.resetOdoPose2d(pose);
-    // odometer.resetPosition(getYaw(), getModulePositions(), pose);
+    odometer.resetPosition(getYaw(), getModulePositions(), pose);
 
     SmartDashboard.putNumber("ResetPoseX", pose.getX());
     SmartDashboard.putNumber("ResetPoseY", pose.getY());
