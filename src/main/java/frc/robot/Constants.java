@@ -35,7 +35,15 @@ import frc.robot.util.SwerveModuleConfig;
  */
 public final class Constants {
 
-  public static class SwerveConst {
+    public static class SwerveConst {
+        public static final double kTranslateP = 5.0;
+        public static final double kTranslateI = 0.1;
+        public static final double kTranslateD = 0.13;
+
+        public static final double kRotateP = 5.0;
+        public static final double kRotateI = 0.0;
+        public static final double kRotateD = 0.13;
+
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
 
@@ -50,11 +58,6 @@ public final class Constants {
             new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
             new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0)
         );
-    public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-        new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
-        new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0),
-        new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
-        new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0));
 
         public static double speedLimit = 3.0;
         public static double slowSpeedLimit = 1.0;
@@ -98,8 +101,8 @@ public final class Constants {
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 2); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
         //TODO: Actual stddevs
 
-        public static final Translation2d kRedSpeaker = new Translation2d(-0.04, 5.55);
-        public static final Translation2d kBlueSpeaker = new Translation2d(16.58, 5.55);
+        public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
+        public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
 
         public static final Translation3d robotCameraTranslation0 = new Translation3d(
             -0.0445,
@@ -131,8 +134,8 @@ public final class Constants {
             public static final int kSmartLimit = 20;
         }
 
-    public static final double kDriveGearRatio = 1.0f / 8.14f;
-    public static final double kAngleGearRatio = 1.0f / 12.8f;
+        public static final double kDriveGearRatio = 1.0f / 8.14f;
+        public static final double kAngleGearRatio = 1.0f / 12.8f;
 
         public static final double kWheelDiameter = Units.inchesToMeters(4);
         public static final double kWheelCircumfrence = kWheelDiameter * Math.PI;
@@ -150,10 +153,9 @@ public final class Constants {
         public static final double kIAngle = 0; // AIR 0;
         public static final double kDAngle = 0.002; // AIR 0.0005;
 
-  public static class Modules {
-    public static class FrontLeft {
-      public static final int driveMotorID = 10;
-      public static final int angleMotorID = 11;
+        public static final double kPDrive = 0.2; //1.1;
+        public static final double kIDrive = 0;// 0.0005; //0.0001;
+        public static final double kDDrive = 3; //5;
 
         public static final double kSDrive = 0.375; // 0.375
         public static final double kVDrive = 2.5;
@@ -169,18 +171,7 @@ public final class Constants {
         public static final boolean KAbsoluteEncoderInverted = false;
     }
 
-  public static class Modules {
-    public static class FrontLeft{
-      public static final int driveMotorID = 10;
-      public static final int angleMotorID = 11;
-
-      public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
-
-      public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
-    }
+    public static class Modules {
 
         public static class FrontLeft {
 
@@ -246,41 +237,13 @@ public final class Constants {
             );
         }
     }
-      public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
+
+    public static final class SwerveMoveConsts {
+
+        public static final float xDeadzone = 0.011f;
+        public static final float yDeadzone = xDeadzone;
+        public static final float aDeadzone = 0.5f;
+
+        public static final float aVelocityDeadzone = 1;
     }
-
-    public static class BackLeft {
-      public static final int driveMotorID = 40;
-      public static final int angleMotorID = 41;
-
-      public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(131.00274682044983));
-
-      public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
-    }
-
-    public static class BackRight {
-      public static final int driveMotorID = 30;
-      public static final int angleMotorID = 31;
-
-      public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(170.9482741355896));
-
-      public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(
-          driveMotorID,
-          angleMotorID,
-          absoluteEncoderOffset);
-    }
-  }
-
-  public static final class SwerveMoveConsts {
-    public static final float xDeadzone = 0.011f;
-    public static final float yDeadzone = 0.011f;
-    public static final float aDeadzone = 0.5f;
-
-  }
 }

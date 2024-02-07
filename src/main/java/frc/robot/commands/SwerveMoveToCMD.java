@@ -11,9 +11,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
+import frc.robot.Constants.SwerveConst;
 import frc.robot.subsystems.Swerve;
+import java.util.function.Supplier;
 
 public class SwerveMoveToCMD extends Command {
 
@@ -23,68 +24,111 @@ public class SwerveMoveToCMD extends Command {
     PIDController yPID;
     PIDController aPID;
 
-  double endX;
-  double endY;
-  double endAngle;
-  
-  /** Creates a new SwerveMoveToCMD. */
-  public SwerveMoveToCMD(Swerve s_Swerve, Pose2d target) {
-    this.s_Swerve = s_Swerve;
-    endX = target.getX();
-    endY = target.getY();
-    endAngle = target.getRotation().getDegrees();
+    Supplier<Pose2d> targetSup;
 
-    xPID = new PIDController(5, 0.1, 0.13);
-    yPID = new PIDController(5, 0.1, 0.13);
-    aPID = new PIDController(5, 0, 0.13);
+    double endX;
+    double endY;
+    double endAngle;
 
-    xPID.setIntegratorRange(-100,100);
-    yPID.setIntegratorRange(-100,100);
+    boolean translate;
 
-    xPID.setTolerance(Constants.SwerveMoveConsts.xDeadzone);
-    yPID.setTolerance(Constants.SwerveMoveConsts.yDeadzone);
+    /** Creates a new SwerveMoveToCMD. */
+    public SwerveMoveToCMD(Swerve s_Swerve, Supplier<Pose2d> target, boolean translate) {
+        this.s_Swerve = s_Swerve;
+        this.translate = translate;
 
-    aPID.setTolerance(Constants.SwerveMoveConsts.aDeadzone);
-    aPID.enableContinuousInput(0, 360);
-    
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(s_Swerve);
-  }
+        // endX = target.get().getX();
+        // endY = target.get().getY();
+        // endAngle = target.get().getRotation().getDegrees();
+
+        this.targetSup = target;
+
+        xPID =
+            new PIDController(
+                SwerveConst.kTranslateP,
+                SwerveConst.kTranslateI,
+                SwerveConst.kTranslateD
+            );
+        yPID =
+            new PIDController(
+                SwerveConst.kTranslateP,
+                SwerveConst.kTranslateI,
+                SwerveConst.kTranslateD
+            );
+
+        aPID = new PIDController(SwerveConst.kRotateP, SwerveConst.kRotateI, SwerveConst.kRotateD);
+
+        xPID.setIntegratorRange(-100, 100);
+        yPID.setIntegratorRange(-100, 100);
+
+        xPID.setTolerance(Constants.SwerveMoveConsts.xDeadzone);
+        yPID.setTolerance(Constants.SwerveMoveConsts.yDeadzone);
+
+        aPID.setTolerance(Constants.SwerveMoveConsts.aDeadzone);
+        aPID.enableContinuousInput(0, 360);
+
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(s_Swerve);
+    }
+
+    public SwerveMoveToCMD(Swerve s_Swerve, Pose2d target, boolean translate) {
+        this(s_Swerve, () -> target, translate);
+    }
+
+    public SwerveMoveToCMD(Swerve s_Swerve, Supplier<Rotation2d> heading) {
+        this(s_Swerve, () -> new Pose2d(new Translation2d(), heading.get()), false);
+    }
+
+    public SwerveMoveToCMD(Swerve s_Swerve, Pose2d pose) {
+        this(s_Swerve, pose, true);
+    }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        xPID.setSetpoint(endX);
-        yPID.setSetpoint(endY);
-        aPID.setSetpoint(endAngle);
+        xPID.setSetpoint(targetSup.get().getX());
+        yPID.setSetpoint(targetSup.get().getY());
+        aPID.setSetpoint(targetSup.get().getRotation().getDegrees());
     }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    SmartDashboard.putNumber("A PID ERROR", aPID.getPositionError());
-    SmartDashboard.putNumber("X PID ERROR", xPID.getPositionError());
-    SmartDashboard.putNumber("Y PID ERROR", yPID.getPositionError());
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        SmartDashboard.putNumber("A PID ERROR", aPID.getPositionError());
+        SmartDashboard.putNumber("X PID ERROR", xPID.getPositionError());
+        SmartDashboard.putNumber("Y PID ERROR", yPID.getPositionError());
 
-    double aCalc = -aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
-    SmartDashboard.putNumber("A CALC", aCalc);
+        double aCalc = -aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("A CALC", aCalc);
 
-    s_Swerve.drive(
-      new Translation2d( xPID.calculate(s_Swerve.getPose().getX()), yPID.calculate(s_Swerve.getPose().getY() )),
-      Rotation2d.fromDegrees(aCalc),
-      true, 
-      false);
-  }
+        if (translate) {
+            s_Swerve.drive(
+                new Translation2d(
+                    xPID.calculate(s_Swerve.getPose().getX()),
+                    yPID.calculate(s_Swerve.getPose().getY())
+                ),
+                Rotation2d.fromDegrees(aCalc),
+                true,
+                false
+            );
+        } else {
+            s_Swerve.drive(new Translation2d(), Rotation2d.fromDegrees(aCalc), true, false);
+        }
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    DriverStation.reportWarning("POINT MOVE ENDED", false);
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        DriverStation.reportWarning("POINT MOVE ENDED", false);
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return xPID.atSetpoint() && yPID.atSetpoint() &&  aPID.atSetpoint();
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        SmartDashboard.putBoolean("xPID.atSetpoint()", xPID.atSetpoint());
+        SmartDashboard.putBoolean("yPID.atSetpoint()", yPID.atSetpoint());
+        SmartDashboard.putBoolean("aPID.atSetpoint()", aPID.atSetpoint());
+
+        return (!translate || (xPID.atSetpoint() && yPID.atSetpoint())) && aPID.atSetpoint();
+    }
 }

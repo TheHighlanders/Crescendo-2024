@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -68,6 +69,9 @@ public class RobotContainer {
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
         driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+
+        //driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, () -> s_Localizer.getAngleToSpeaker()));
+        driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(0.25, 0.25, Rotation2d.fromDegrees(90))));
     }
 
     private void configureAuton() {

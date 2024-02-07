@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -97,7 +98,7 @@ public class Localizer extends SubsystemBase {
         return Math.hypot(robot.getX() - goal.getX(), robot.getY() - goal.getY());
     }
 
-    public double getAngleToSpeaker() {
+    public Rotation2d getAngleToSpeaker() {
         Translation2d robot = getPose().getTranslation();
         Translation2d goal =
             (
@@ -105,7 +106,7 @@ public class Localizer extends SubsystemBase {
                     ? Constants.VisionConstants.kRedSpeaker
                     : Constants.VisionConstants.kBlueSpeaker
             );
-
-        return Math.atan2(robot.getY() - goal.getY(), robot.getX() - goal.getX());
+        SmartDashboard.putNumber("Angle to Speaker", Math.toDegrees(Math.atan2(goal.getY()-robot.getY(), goal.getX() - robot.getX())));
+        return new Rotation2d(Math.atan2(goal.getY()-robot.getY(), goal.getX() - robot.getX()));
     }
 }
