@@ -80,7 +80,7 @@ public class SwerveMoveToCMD extends Command {
     }
 
     public SwerveMoveToCMD(Swerve s_Swerve, Pose2d pose) {
-        this(s_Swerve, pose, true);
+        this(s_Swerve, () -> pose, true);
     }
 
     // Called when the command is initially scheduled.
@@ -99,7 +99,7 @@ public class SwerveMoveToCMD extends Command {
         SmartDashboard.putNumber("Y PID ERROR", yPID.getPositionError());
 
         double aCalc = -aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("A CALC", aCalc);
+        // SmartDashboard.putNumber("A CALC", aCalc);
 
         if (translate) {
             s_Swerve.drive(

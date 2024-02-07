@@ -71,7 +71,7 @@ public class RobotContainer {
         driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
 
         //driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, () -> s_Localizer.getAngleToSpeaker()));
-        driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(0.25, 0.25, Rotation2d.fromDegrees(90))));
+        driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(-0.25, 0, Rotation2d.fromDegrees(90))));
     }
 
     private void configureAuton() {

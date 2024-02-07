@@ -133,7 +133,7 @@ public class Swerve extends SubsystemBase {
         );
 
         for (SwerveModule m : modules) {
-            m.setModuleState(swerveModuleStates[m.moduleNumber], true );//isOpenLoop); //WHY WHY WHY
+            m.setModuleState(swerveModuleStates[m.moduleNumber], true); //isOpenLoop); //WHY WHY WHY
         }
     }
 
