@@ -71,9 +71,9 @@ public class RobotContainer {
 
         driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
 
-        //driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, () -> s_Localizer.getAngleToSpeaker()));
-        // driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(-0.25, 0, s_Swerve.getPose().getRotation())));//Rotation2d.fromDegrees(90))));
-        driver.b().onTrue(new TestMove(s_Swerve));
+        // driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, () -> s_Localizer.getAngleToSpeaker()));
+        driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(0.5, -1, Rotation2d.fromDegrees(180))));
+        //driver.b().onTrue(new TestMove(s_Swerve));
     }
 
     private void configureAuton() {
@@ -86,8 +86,8 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new SwerveTeleCMD(
                 s_Swerve,
-                () -> driver.getRawAxis(translationAxis),
-                () -> driver.getRawAxis(strafeAxis),
+                () -> -driver.getRawAxis(translationAxis),
+                () -> -driver.getRawAxis(strafeAxis),
                 () -> -driver.getRawAxis(rotationAxis),
                 () -> driver.povDown().getAsBoolean(),
                 () -> driver.leftBumper().getAsBoolean(),

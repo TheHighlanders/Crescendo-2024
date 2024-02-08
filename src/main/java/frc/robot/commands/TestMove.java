@@ -6,8 +6,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Swerve;
@@ -16,15 +17,27 @@ import frc.robot.subsystems.Swerve;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TestMove extends SequentialCommandGroup {
-  /** Creates a new TestMove. */
-  public TestMove(Swerve s_Swerve) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      new InstantCommand(() -> s_Swerve.drive(new Translation2d(0.5, 0), new Rotation2d(0), true, false)),
-      new WaitCommand(1),
-      new PrintCommand("Waited"),
-      new InstantCommand(() -> s_Swerve.drive(new Translation2d(0, 0), new Rotation2d(0), true, false))
-    );
-  }
+
+    /** Creates a new TestMove. */
+    public TestMove(Swerve s_Swerve) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
+            new ParallelDeadlineGroup(
+                new WaitCommand(1),
+                new FunctionalCommand(
+                    () -> {},
+                    () ->
+                        s_Swerve.drive(new Translation2d(0.5,0), new Rotation2d(0), true, false),
+                    v -> {},
+                    () -> {
+                        return false;
+                    }
+                )
+            ),
+            new InstantCommand(() ->
+                s_Swerve.drive(new Translation2d(), new Rotation2d(), true, false)
+            )
+        );
+    }
 }

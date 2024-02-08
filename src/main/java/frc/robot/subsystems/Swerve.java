@@ -120,8 +120,8 @@ public class Swerve extends SubsystemBase {
         chassisSpeeds =
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translate.getX(),
-                    translate.getY(),
+                    -translate.getX(),
+                    -translate.getY(),
                     rotate.getRadians(),
                     getYaw()
                 )
