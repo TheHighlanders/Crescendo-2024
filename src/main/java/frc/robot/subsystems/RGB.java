@@ -37,7 +37,7 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.ORANGESOLID, "6");
 
         // setLED(State.RAINBOW);
-        setArmLEDLoadingBar(50);
+        setArmLEDLoadingBar(50, 100);
     }
 
     public void changeString(String str) {
@@ -53,11 +53,12 @@ public class RGB extends SubsystemBase {
      *
      * @param angleDif Angle Difference between arm and pivot !DEG! 100DEG is max
      */
-    public void setArmLEDLoadingBar(double angleDif) {
+    public void setArmLEDLoadingBar(double angleDif, int range) {
+        angleDif = (int)(range / angleDif);
         angleDif = Math.max(Math.min(Math.abs(angleDif), 100), 0);
 
-        int state = ((int) angleDif) + 100;
-        changeString(state + "");
+        // int state = ((int) angleDif) + 100;
+        changeString(angleDif + "");
     }
 
     @Override
