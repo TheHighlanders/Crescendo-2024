@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
+import frc.robot.commands.TestMove;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -71,7 +72,8 @@ public class RobotContainer {
         driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
 
         //driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, () -> s_Localizer.getAngleToSpeaker()));
-        driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(-0.25, 0, Rotation2d.fromDegrees(90))));
+        // driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(-0.25, 0, s_Swerve.getPose().getRotation())));//Rotation2d.fromDegrees(90))));
+        driver.b().onTrue(new TestMove(s_Swerve));
     }
 
     private void configureAuton() {

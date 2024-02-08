@@ -240,10 +240,9 @@ public final class Constants {
 
     public static final class SwerveMoveConsts {
 
-        public static final float xDeadzone = 0.011f;
-        public static final float yDeadzone = xDeadzone;
-        public static final float aDeadzone = 0.5f;
+        public static final float posTolerance = 0.011f;
+        public static final float aTolerance = 0.5f;
 
-        public static final float aVelocityDeadzone = 1;
+        public static final float aVelocityTolerance = 1;
     }
 }

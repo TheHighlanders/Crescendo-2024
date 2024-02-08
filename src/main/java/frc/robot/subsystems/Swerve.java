@@ -93,6 +93,10 @@ public class Swerve extends SubsystemBase {
         odometer.update(gyro.getRotation2d(), getModulePositions());
         SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
 
+        SmartDashboard.putNumber("xCalc", -1);
+        SmartDashboard.putNumber("yCalc", -1);
+        SmartDashboard.putBoolean("Running", false);
+
         // field.setRobotPose(getPose());
         for (SwerveModule m : modules) {
             m.runPeriodicLimiting();
@@ -133,7 +137,7 @@ public class Swerve extends SubsystemBase {
         );
 
         for (SwerveModule m : modules) {
-            m.setModuleState(swerveModuleStates[m.moduleNumber], true); //isOpenLoop); //WHY WHY WHY
+            m.setModuleState(swerveModuleStates[m.moduleNumber], isOpenLoop); //WHY WHY WHY
         }
     }
 
