@@ -37,7 +37,7 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.ORANGESOLID, "6");
 
         // setLED(State.RAINBOW);
-        setArmLEDLoadingBar(99);
+        setArmLEDLoadingBar(50);
     }
 
     public void changeString(String str) {
