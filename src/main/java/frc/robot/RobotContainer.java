@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -41,7 +40,7 @@ public class RobotContainer {
 
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
-    //public RGB s_RGB = new RGB();
+    public RGB s_RGB = new RGB();
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
@@ -91,7 +90,7 @@ public class RobotContainer {
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand(RGB s_RGB) {
+    public Command getAutonomousCommand() {
         // Uses an Auto to assign a starting position
          //return new PathPlannerAuto("Testing Auton");
      return new SequentialCommandGroup(new WaitCommand(.5), new InstantCommand(() -> s_RGB.changeString("7")));

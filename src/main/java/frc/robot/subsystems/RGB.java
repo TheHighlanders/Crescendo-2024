@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.EnumMap;
@@ -35,11 +36,13 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.ORANGEBLINK, "5");
         stateMap.put(State.ORANGESOLID, "6");
 
-        elPuerto.writeString(stateMap.get(State.OFF));
+        // setLED(State.RAINBOW);
+        setArmLEDLoadingBar(99);
     }
 
     public void changeString(String str) {
         elPuerto.writeString(str + "\n");
+        DriverStation.reportWarning(str, false);
     }
 
     public void setLED(State state) {
