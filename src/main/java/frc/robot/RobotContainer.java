@@ -39,6 +39,7 @@ public class RobotContainer {
     private static final int rotationAxis = XboxController.Axis.kRightX.value;
 
     /* Subsystems */
+    int i = 100;
     public final Swerve s_Swerve = new Swerve();
     public RGB s_RGB = new RGB();
 
@@ -61,6 +62,8 @@ public class RobotContainer {
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
         driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+
+        driver.a().onTrue(new InstantCommand(() -> s_RGB.setArmLEDLoadingBar(i--,100)));
     }
 
     private void configureAuton() {
