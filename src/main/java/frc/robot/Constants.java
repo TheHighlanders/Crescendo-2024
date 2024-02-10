@@ -250,8 +250,8 @@ public final class Constants {
 
         public static final int bottomFlywheelMotorID = 103;
         public static final int topFlywheelMotorID = 104;
-        public static final int kBottomRatio = 69;
-        public static final int kTopRatio = 69;
+        public static final double kBottomRatio = (1/5.0f);
+        public static final double kTopRatio = (1/5.0f);
         public static final int slotID = 0;
         public static final double maxVel = 2000; // rpm
         public static final double minVel = 0;
@@ -309,7 +309,7 @@ public final class Constants {
         public static final double readyAngle = 0;
 
         public static final double intakePivotRatio = 0;
-        public static final double shooterPivotRatio = 0;
+        public static final double shooterPivotRatio = 1/7.0f;
 
         public static final float shooterAngleDeadzone = 0.1f;
         public static final float intakeAngleDeadzone = 0.1f;
@@ -370,10 +370,10 @@ public final class Constants {
 
         public static class actuatorConst {
 
-            public static final double inchesToRotationsConversion = 0;
-            public static final double actuatorDist = 0; // Inches
-            public static final double actuatorBaseDistX = 0;
-            public static final double actuatorBaseDistY = 0;
+            public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
+            public static final double actuatorDist = Math.hypot(3.25, 6.68); // Inches
+            public static final double actuatorBaseDistX = 20.25;
+            public static final double actuatorBaseDistY = -4.375;
         }
     }
 }

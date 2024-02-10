@@ -10,6 +10,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.PivotConstants.actuatorConst;
 import frc.robot.util.CANSparkMaxCurrent;
 import frc.robot.util.InterpolatableShotData;
 import frc.robot.util.InterpolatingShotTreeMapContainer;
@@ -169,8 +170,8 @@ public class Pivot extends SubsystemBase {
 
     public double convertAngleToDistanceInches(double angle) {
         return Math.hypot(
-                Constants.PivotConstants.actuatorConst.actuatorBaseDistY - Math.sin(angle),
-                Constants.PivotConstants.actuatorConst.actuatorBaseDistX - Math.cos(angle));
+                actuatorConst.actuatorBaseDistY - Math.sin(angle) * actuatorConst.actuatorDist,
+                actuatorConst.actuatorBaseDistX - Math.cos(angle) * actuatorConst.actuatorDist);
     }
 
     @Override

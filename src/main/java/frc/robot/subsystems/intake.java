@@ -12,13 +12,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
 
-public class intake extends SubsystemBase {
+public class Intake extends SubsystemBase {
 
     public CANSparkMaxCurrent intakeMotor;
     public RelativeEncoder intakeEncoder;
     public SparkPIDController pidIntakeController;
 
-    public intake() {
+    public Intake() {
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         intakeEncoder = intakeMotor.getEncoder();

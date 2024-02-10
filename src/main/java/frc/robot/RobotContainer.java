@@ -20,7 +20,7 @@ import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.intake;
+import frc.robot.subsystems.Intake;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -47,7 +47,7 @@ public class RobotContainer {
     public static final Shooter s_Shooter = new Shooter();
     public static final Swerve s_Swerve = new Swerve();
     public static final Vision s_Vision = new Vision();
-    public static final intake s_Intake = new intake();
+    public static final Intake s_Intake = new Intake();
     public static final Pivot s_Pivot = new Pivot();
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);

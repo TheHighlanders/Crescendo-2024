@@ -13,14 +13,14 @@ import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.intake;
+import frc.robot.subsystems.Intake;
 import frc.robot.util.InterpolatableShotData;
 import java.util.function.Consumer;
 
 public class alignShootCMDG extends SequentialCommandGroup {
 
     private final Shooter m_shooter;
-    public final intake m_intake;
+    public final Intake m_intake;
     public final Pivot m_Pivot;
     public final Swerve m_Swerve;
     public final Localizer m_Localizer;
@@ -33,7 +33,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
 
     public alignShootCMDG(
             Shooter shoot,
-            intake intake,
+            Intake intake,
             Pivot pivot,
             Swerve swerve,
             Localizer localizer) {
