@@ -98,11 +98,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if(val % 50 == 0){
-      m_robotContainer.s_RGB.setArmLEDLoadingBar((Math.sin(val/0)*50)+50, 100);
-    }
+    // if(val % 50 == 0){
+    //   m_robotContainer.s_RGB.setArmLEDLoadingBar((Math.sin(val/0)*50)+50, 100);
+    // }
 
-    val++;
+    // val++;
   }
 
     @Override
