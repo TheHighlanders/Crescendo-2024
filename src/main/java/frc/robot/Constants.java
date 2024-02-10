@@ -308,7 +308,7 @@ public final class Constants {
         public static final double intakeOutAngle = 0;
         public static final double readyAngle = 0;
 
-        public static final double intakePivotRatio = 0;
+        public static final double intakePivotRatio = 1/36.0f;
         public static final double shooterPivotRatio = 1/7.0f;
 
         public static final float shooterAngleDeadzone = 0.1f;
