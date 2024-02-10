@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -13,7 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
+import frc.robot.commands.TestMove;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
@@ -21,6 +24,8 @@ import frc.robot.subsystems.RGB;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import frc.robot.subsystems.intake;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -88,8 +93,8 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new SwerveTeleCMD(
                 s_Swerve,
-                () -> driver.getRawAxis(translationAxis),
-                () -> driver.getRawAxis(strafeAxis),
+                () -> -driver.getRawAxis(translationAxis),
+                () -> -driver.getRawAxis(strafeAxis),
                 () -> -driver.getRawAxis(rotationAxis),
                 () -> driver.povDown().getAsBoolean(),
                 () -> driver.leftBumper().getAsBoolean(),
@@ -108,4 +113,5 @@ public class RobotContainer {
         // return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
     }
+
 }

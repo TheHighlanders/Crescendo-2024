@@ -36,6 +36,13 @@ import frc.robot.util.SwerveModuleConfig;
 public final class Constants {
 
     public static class SwerveConst {
+        public static final double kTranslateP = 5.0;
+        public static final double kTranslateI = 0.1;
+        public static final double kTranslateD = 0.13;
+
+        public static final double kRotateP = 5.0;
+        public static final double kRotateI = 0.0;
+        public static final double kRotateD = 0.13;
 
         public static final double kMaxSpeedTele = 3.0; // Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; // Degrees per Second
@@ -97,18 +104,23 @@ public final class Constants {
 
     public static class VisionConstants {
 
-        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-        // TODO: Actual stddevs
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 2);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 2); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
+        //TODO: Actual stddevs
 
-        public static final Translation2d kRedSpeaker = new Translation2d(-0.04, 5.55);
-        public static final Translation2d kBlueSpeaker = new Translation2d(16.58, 5.55);
+        public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
+        public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
 
-        public static final Translation3d robotCameraTranslation0 = new Translation3d();
-        public static final Rotation3d robotCameraRotation0 = new Rotation3d();
+        public static final Translation3d robotCameraTranslation0 = new Translation3d(
+            -0.0445,
+            -0.3175,
+            0.1778
+        ); //-x, -y, z
+        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, 0, -Math.PI / 2.0f);
         public static final Transform3d kRobotCamera0 = new Transform3d(
-                robotCameraTranslation0,
-                robotCameraRotation0);
+            robotCameraTranslation0,
+            robotCameraRotation0
+        );
     }
 
     public static class Module {
@@ -145,9 +157,9 @@ public final class Constants {
         public static final double kIAngle = 0; // AIR 0;
         public static final double kDAngle = 0.002; // AIR 0.0005;
 
-        public static final double kPDrive = 0.2; // 1.1;
-        public static final double kIDrive = 0.0005; // 0.0001;
-        public static final double kDDrive = 3; // 5;
+        public static final double kPDrive = 0.2; //1.1;
+        public static final double kIDrive = 0;// 0.0005; //0.0001;
+        public static final double kDDrive = 3; //5;
 
         public static final double kSDrive = 0.375; // 0.375
         public static final double kVDrive = 2.5;
@@ -351,5 +363,13 @@ public final class Constants {
             public static final double actuatorBaseDistX = 0;
             public static final double actuatorBaseDistY = 0;
         }
+    }
+
+    public static final class SwerveMoveConsts {
+
+        public static final float posTolerance = 0.011f;
+        public static final float aTolerance = 0.5f;
+
+        public static final float aVelocityTolerance = 1;
     }
 }
