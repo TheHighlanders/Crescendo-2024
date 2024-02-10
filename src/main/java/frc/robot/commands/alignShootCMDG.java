@@ -46,7 +46,6 @@ public class alignShootCMDG extends SequentialCommandGroup {
         InterpolatableShotData currentShotData = m_Pivot.interpolate(
                 m_Localizer.getDistanceToSpeaker());
         // this should resolve before we start rotating hopefully
-        double angleToSpeaker = localizer.getAngleToSpeaker();
 
         addCommands(
                 new ParallelCommandGroup(
@@ -55,7 +54,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
                                 emptyRunnable::run,
                                 emptyConsumable,
                                 m_Pivot::atSetpoints),
-                        new SwerveMoveToCMD(m_Swerve, Double.NaN, Double.NaN, angleToSpeaker)),
+                        new SwerveMoveToCMD(m_Swerve, () -> localizer.getAngleToSpeaker())),
                 new ParallelRaceGroup(
                         new StartEndCommand(m_shooter::shoot, m_shooter::shootCancel),
                         new FunctionalCommand(
