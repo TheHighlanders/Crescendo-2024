@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.LEDloadingBarCMD;
 import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.subsystems.Localizer;
@@ -78,7 +79,7 @@ public class RobotContainer {
         driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(0.5, -1, Rotation2d.fromDegrees(180))));
         //driver.b().onTrue(new TestMove(s_Swerve));
 
-        driver.a().onTrue(new InstantCommand(() -> s_RGB.setArmLEDLoadingBar(i--,100)));
+        driver.a().onTrue(new LEDloadingBarCMD(s_RGB));
     }
 
     private void configureAuton() {

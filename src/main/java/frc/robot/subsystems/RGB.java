@@ -22,6 +22,7 @@ public class RGB extends SubsystemBase {
         RAINBOW,
         ORANGEBLINK,
         ORANGESOLID,
+        POPSICLE
     }
 
     public EnumMap<State, String> stateMap = new EnumMap<>(State.class);
@@ -35,9 +36,10 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.RAINBOW, "4");
         stateMap.put(State.ORANGEBLINK, "5");
         stateMap.put(State.ORANGESOLID, "6");
+        stateMap.put(State.POPSICLE, "7");
 
-        // setLED(State.RAINBOW);
-        setArmLEDLoadingBar(10, 30);
+        setLED(State.POPSICLE);
+        // setArmLEDLoadingBar(10, 30);
     }
 
     public void changeString(String str) {
