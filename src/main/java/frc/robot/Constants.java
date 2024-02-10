@@ -8,23 +8,41 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.SwerveModuleConfig;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
 
     public static class SwerveConst {
+        public static final double kTranslateP = 5.0;
+        public static final double kTranslateI = 0.1;
+        public static final double kTranslateD = 0.13;
+
+        public static final double kRotateP = 5.0;
+        public static final double kRotateI = 0.0;
+        public static final double kRotateD = 0.13;
 
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
@@ -77,6 +95,27 @@ public final class Constants {
         public static final double kGridLineUpAngle = 90;
     }
 
+    public static class VisionConstants {
+
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 2);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 2); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
+        //TODO: Actual stddevs
+
+        public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
+        public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
+
+        public static final Translation3d robotCameraTranslation0 = new Translation3d(
+            -0.0445,
+            -0.3175,
+            0.1778
+        ); //-x, -y, z
+        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, 0, -Math.PI / 2.0f);
+        public static final Transform3d kRobotCamera0 = new Transform3d(
+            robotCameraTranslation0,
+            robotCameraRotation0
+        );
+    }
+
     public static class Module {
 
         public static class DriveCurrentLimit {
@@ -115,7 +154,7 @@ public final class Constants {
         public static final double kDAngle = 0.002; // AIR 0.0005;
 
         public static final double kPDrive = 0.2; //1.1;
-        public static final double kIDrive = 0.0005; //0.0001;
+        public static final double kIDrive = 0;// 0.0005; //0.0001;
         public static final double kDDrive = 3; //5;
 
         public static final double kSDrive = 0.375; // 0.375
@@ -197,5 +236,13 @@ public final class Constants {
                 absoluteEncoderOffset
             );
         }
+    }
+
+    public static final class SwerveMoveConsts {
+
+        public static final float posTolerance = 0.011f;
+        public static final float aTolerance = 0.5f;
+
+        public static final float aVelocityTolerance = 1;
     }
 }
