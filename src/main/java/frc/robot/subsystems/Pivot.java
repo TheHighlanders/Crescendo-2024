@@ -9,8 +9,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.PivotConstants.actuatorConst;
+import frc.robot.Constants.Intake;
+import frc.robot.Constants.Shooter;
 import frc.robot.util.CANSparkMaxCurrent;
 import frc.robot.util.InterpolatableShotData;
 import frc.robot.util.InterpolatingShotTreeMapContainer;
@@ -36,77 +36,46 @@ public class Pivot extends SubsystemBase {
         /*----------------------------------------------------------------------------*/
         /* Intake */
         /*----------------------------------------------------------------------------*/
-        intakeAngleMotor = new CANSparkMaxCurrent(Constants.PivotConstants.INTAKE, MotorType.kBrushless);
+        intakeAngleMotor = new CANSparkMaxCurrent(Intake.Pivot.INTAKE, MotorType.kBrushless);
         intakeAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         intakeAngleEncoder = intakeAngleMotor.getEncoder();
-        intakeAngleEncoder.setPositionConversionFactor(Constants.PivotConstants.intakePivotRatio);
+        intakeAngleEncoder.setPositionConversionFactor(Intake.Pivot.intakePivotRatio);
         pidIntakeAngleController = intakeAngleMotor.getPIDController();
-        pidIntakeAngleController.setOutputRange(
-                Constants.PivotConstants.pidValuesIntake.minOut,
-                Constants.PivotConstants.pidValuesIntake.maxOut);
-        pidIntakeAngleController.setP(Constants.PivotConstants.pidValuesIntake.kP);
-        pidIntakeAngleController.setI(Constants.PivotConstants.pidValuesIntake.kI);
-        pidIntakeAngleController.setD(Constants.PivotConstants.pidValuesIntake.kD);
-        pidIntakeAngleController.setIMaxAccum(
-                Constants.PivotConstants.pidValuesIntake.iMaxAccum,
-                Constants.PivotConstants.slotID);
-        pidIntakeAngleController.setSmartMotionMaxVelocity(
-                Constants.PivotConstants.SmartMotionCoefficientsIntake.maxVel,
-                Constants.PivotConstants.slotID);
-        pidIntakeAngleController.setSmartMotionMinOutputVelocity(
-                Constants.PivotConstants.SmartMotionCoefficientsIntake.minVel,
-                Constants.PivotConstants.slotID);
-        pidIntakeAngleController.setSmartMotionMaxAccel(
-                Constants.PivotConstants.SmartMotionCoefficientsIntake.maxAcc,
-                Constants.PivotConstants.slotID);
-        pidIntakeAngleController.setSmartMotionAllowedClosedLoopError(
-                Constants.PivotConstants.SmartMotionCoefficientsIntake.allowedErr,
-                Constants.PivotConstants.slotID);
+        pidIntakeAngleController.setOutputRange(Intake.Pivot.PIDValues.minOut, Intake.Pivot.PIDValues.maxOut);
+        pidIntakeAngleController.setP(Intake.Pivot.PIDValues.kP);
+        pidIntakeAngleController.setI(Intake.Pivot.PIDValues.kI);
+        pidIntakeAngleController.setD(Intake.Pivot.PIDValues.kD);
+        pidIntakeAngleController.setIMaxAccum(Intake.Pivot.PIDValues.iMaxAccum, Intake.Pivot.slotID);
 
         intakeAngleMotor.setSpikeCurrentLimit(
-                Constants.PivotConstants.IntakeArmCurrentLimit.kLimitToAmps,
-                Constants.PivotConstants.IntakeArmCurrentLimit.kMaxSpikeTime,
-                Constants.PivotConstants.IntakeArmCurrentLimit.kMaxSpikeAmps,
-                Constants.PivotConstants.IntakeArmCurrentLimit.kSmartLimit);
+            Intake.Pivot.ArmCurrentLimit.kLimitToAmps,
+            Intake.Pivot.ArmCurrentLimit.kMaxSpikeTime,
+            Intake.Pivot.ArmCurrentLimit.kMaxSpikeAmps,
+            Intake.Pivot.ArmCurrentLimit.kSmartLimit
+        );
 
         /*----------------------------------------------------------------------------*/
         /* Shooter */
         /*----------------------------------------------------------------------------*/
 
-        shooterAngleMotor = new CANSparkMaxCurrent(Constants.PivotConstants.INTAKE, MotorType.kBrushless);
+        shooterAngleMotor = new CANSparkMaxCurrent(Shooter.Pivot.SHOOTER, MotorType.kBrushless);
         shooterAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         shooterAngleEncoder = shooterAngleMotor.getEncoder();
-        shooterAngleEncoder.setPositionConversionFactor(
-                Constants.PivotConstants.actuatorConst.inchesToRotationsConversion);
+        shooterAngleEncoder.setPositionConversionFactor(Shooter.Pivot.actuatorConst.inchesToRotationsConversion);
         pidShooterAngleController = shooterAngleMotor.getPIDController();
-        shooterAngleEncoder.setPositionConversionFactor(Constants.PivotConstants.shooterPivotRatio);
-        pidShooterAngleController.setOutputRange(
-                Constants.PivotConstants.pidValuesShooter.minOut,
-                Constants.PivotConstants.pidValuesShooter.maxOut);
-        pidShooterAngleController.setP(Constants.PivotConstants.pidValuesShooter.kP);
-        pidShooterAngleController.setI(Constants.PivotConstants.pidValuesShooter.kI);
-        pidShooterAngleController.setD(Constants.PivotConstants.pidValuesShooter.kD);
-        pidShooterAngleController.setIMaxAccum(
-                Constants.PivotConstants.pidValuesShooter.iMaxAccum,
-                Constants.PivotConstants.slotID);
-        pidShooterAngleController.setSmartMotionMaxVelocity(
-                Constants.PivotConstants.SmartMotionCoefficientsShooter.maxVel,
-                Constants.PivotConstants.slotID);
-        pidShooterAngleController.setSmartMotionMinOutputVelocity(
-                Constants.PivotConstants.SmartMotionCoefficientsShooter.minVel,
-                Constants.PivotConstants.slotID);
-        pidShooterAngleController.setSmartMotionMaxAccel(
-                Constants.PivotConstants.SmartMotionCoefficientsShooter.maxAcc,
-                Constants.PivotConstants.slotID);
-        pidShooterAngleController.setSmartMotionAllowedClosedLoopError(
-                Constants.PivotConstants.SmartMotionCoefficientsShooter.allowedErr,
-                Constants.PivotConstants.slotID);
+        shooterAngleEncoder.setPositionConversionFactor(Shooter.Pivot.shooterPivotRatio);
+        pidShooterAngleController.setOutputRange(Shooter.Pivot.PIDValues.minOut, Shooter.Pivot.PIDValues.maxOut);
+        pidShooterAngleController.setP(Shooter.Pivot.PIDValues.kP);
+        pidShooterAngleController.setI(Shooter.Pivot.PIDValues.kI);
+        pidShooterAngleController.setD(Shooter.Pivot.PIDValues.kD);
+        pidShooterAngleController.setIMaxAccum(Shooter.Pivot.PIDValues.iMaxAccum, Shooter.Pivot.slotID);
 
         shooterAngleMotor.setSpikeCurrentLimit(
-                Constants.PivotConstants.ShooterArmCurrentLimit.kLimitToAmps,
-                Constants.PivotConstants.ShooterArmCurrentLimit.kMaxSpikeTime,
-                Constants.PivotConstants.ShooterArmCurrentLimit.kMaxSpikeAmps,
-                Constants.PivotConstants.ShooterArmCurrentLimit.kSmartLimit);
+            Shooter.Pivot.ArmCurrentLimit.kLimitToAmps,
+            Shooter.Pivot.ArmCurrentLimit.kMaxSpikeTime,
+            Shooter.Pivot.ArmCurrentLimit.kMaxSpikeAmps,
+            Shooter.Pivot.ArmCurrentLimit.kSmartLimit
+        );
     }
 
     public InterpolatableShotData interpolate(double dist) {
@@ -118,12 +87,8 @@ public class Pivot extends SubsystemBase {
             double angleSupplied = angle.getAsDouble();
             cachedSetpointShooter = convertAngleToDistanceInches(angleSupplied);
             cachedSetpointIntake = angleSupplied;
-            pidIntakeAngleController.setReference(
-                    angle.getAsDouble(),
-                    CANSparkMax.ControlType.kPosition);
-            pidShooterAngleController.setReference(
-                    angle.getAsDouble(),
-                    CANSparkMax.ControlType.kPosition);
+            pidIntakeAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
+            pidShooterAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
             // call swerve subsystem alignAngle pass in angle
 
             return true;
@@ -134,19 +99,13 @@ public class Pivot extends SubsystemBase {
     }
 
     public void intakeOut() {
-        pidIntakeAngleController.setReference(
-                Constants.PivotConstants.intakeOutAngle,
-                CANSparkMax.ControlType.kPosition);
+        pidIntakeAngleController.setReference(Intake.Pivot.intakeOutAngle, CANSparkMax.ControlType.kPosition);
     }
 
     // Put shooter to avg shootig angle and align the Pivot
     public void readyPositions() {
-        pidIntakeAngleController.setReference(
-                Constants.PivotConstants.readyAngle,
-                CANSparkMax.ControlType.kPosition);
-        pidShooterAngleController.setReference(
-                Constants.PivotConstants.readyAngle,
-                CANSparkMax.ControlType.kPosition);
+        pidIntakeAngleController.setReference(Intake.Pivot.readyAngle, CANSparkMax.ControlType.kPosition);
+        pidShooterAngleController.setReference(Shooter.Pivot.readyAngle, CANSparkMax.ControlType.kPosition);
     }
 
     public boolean atSetpoints() {
@@ -154,27 +113,26 @@ public class Pivot extends SubsystemBase {
     }
 
     public boolean intakeAtSetpoint() {
-        return (Math.abs(
-                cachedSetpointIntake - intakeAngleEncoder.getPosition()) <= Constants.PivotConstants.intakeAngleDeadzone
-                &&
-                Math.abs(intakeAngleEncoder.getVelocity()) == 0);
+        return (
+            Math.abs(cachedSetpointIntake - intakeAngleEncoder.getPosition()) <= Intake.Pivot.intakeAngleDeadzone &&
+            Math.abs(intakeAngleEncoder.getVelocity()) == 0
+        );
     }
 
     public boolean shooterAtSetpoint() {
-        return (Math
-                .abs(cachedSetpointShooter
-                        - shooterAngleEncoder.getPosition()) <= Constants.PivotConstants.shooterAngleDeadzone
-                &&
-                Math.abs(shooterAngleEncoder.getVelocity()) == 0);
+        return (
+            Math.abs(cachedSetpointShooter - shooterAngleEncoder.getPosition()) <= Shooter.Pivot.shooterAngleDeadzone &&
+            Math.abs(shooterAngleEncoder.getVelocity()) == 0
+        );
     }
 
     public double convertAngleToDistanceInches(double angle) {
         return Math.hypot(
-                actuatorConst.actuatorBaseDistY - Math.sin(angle) * actuatorConst.actuatorDist,
-                actuatorConst.actuatorBaseDistX - Math.cos(angle) * actuatorConst.actuatorDist);
+            Shooter.Pivot.actuatorConst.actuatorBaseDistY - Math.sin(angle) * Shooter.Pivot.actuatorConst.actuatorDist,
+            Shooter.Pivot.actuatorConst.actuatorBaseDistX - Math.cos(angle) * Shooter.Pivot.actuatorConst.actuatorDist
+        );
     }
 
     @Override
-    public void periodic() {
-    }
+    public void periodic() {}
 }

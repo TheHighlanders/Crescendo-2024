@@ -36,6 +36,7 @@ import frc.robot.util.SwerveModuleConfig;
 public final class Constants {
 
     public static class SwerveConst {
+
         public static final double kTranslateP = 5.0;
         public static final double kTranslateI = 0.1;
         public static final double kTranslateD = 0.13;
@@ -154,7 +155,7 @@ public final class Constants {
         public static final double kDAngle = 0.002; // AIR 0.0005;
 
         public static final double kPDrive = 0.2; //1.1;
-        public static final double kIDrive = 0;// 0.0005; //0.0001;
+        public static final double kIDrive = 0; // 0.0005; //0.0001;
         public static final double kDDrive = 3; //5;
 
         public static final double kSDrive = 0.375; // 0.375
@@ -238,7 +239,7 @@ public final class Constants {
         }
     }
 
-	    public static final class SwerveMoveConsts {
+    public static final class SwerveMoveConsts {
 
         public static final float posTolerance = 0.011f;
         public static final float aTolerance = 0.5f;
@@ -250,15 +251,11 @@ public final class Constants {
 
         public static final int bottomFlywheelMotorID = 103;
         public static final int topFlywheelMotorID = 104;
-        public static final double kBottomRatio = (1/5.0f);
-        public static final double kTopRatio = (1/5.0f);
+        public static final double kBottomRatio = (1 / 5.0f);
+        public static final double kTopRatio = (1 / 5.0f);
         public static final int slotID = 0;
-        public static final double maxVel = 2000; // rpm
-        public static final double minVel = 0;
-        public static final double maxAcc = 2000;
-        public static final double allowedErr = 100;
 
-        public static class pidValues {
+        public static class PIDValues {
 
             public static final double minOut = -1;
             public static final double maxOut = 1;
@@ -267,6 +264,46 @@ public final class Constants {
             public static final double kD = 0d;
             public static final double kMaxI = 0d;
             public static final double iMaxAccum = 0d;
+        }
+
+        public static class Pivot {
+
+            public static final int SHOOTER = 101;
+            public static final int slotID = 0;
+
+            public static final double readyAngle = 0;
+
+            public static final double shooterPivotRatio = 1 / 7.0f;
+
+            public static final float shooterAngleDeadzone = 0.1f;
+
+            public static class PIDValues {
+
+                public static final double minOut = -1;
+                public static final double maxOut = 1;
+                public static final double kP = 0d;
+                public static final double kI = 0d;
+                public static final double kD = 0d;
+                public static final double kMaxI = 0d;
+                public static final double iMaxAccum = 0d;
+            }
+
+            public static class ArmCurrentLimit {
+
+                public static final double kLimitToAmps = 40.0f;
+                public static final double kMaxSpikeTime = 25.0f;
+                public static final double kMaxSpikeAmps = 40.0f;
+                public static final int kSmartLimit = 40;
+            }
+
+            public static class actuatorConst {
+
+                public static final double inchesToRotationsConversion =
+                    Units.metersToInches(0.012) * shooterPivotRatio;
+                public static final double actuatorDist = Math.hypot(3.25, 6.68); // Inches
+                public static final double actuatorBaseDistX = 20.25;
+                public static final double actuatorBaseDistY = -4.375;
+            }
         }
     }
 
@@ -274,21 +311,6 @@ public final class Constants {
 
         public static final int INTAKE = 0;
         public static final int slotID = 0;
-        public static final double maxVel = 2000; // rpm
-        public static final double minVel = 0;
-        public static final double maxAcc = 2000;
-        public static final double allowedErr = 100;
-
-        public static class pidValues {
-
-            public static final double minOut = -1;
-            public static final double maxOut = 1;
-            public static final double kP = 0d;
-            public static final double kI = 0d;
-            public static final double kD = 0d;
-            public static final double kMaxI = 0d;
-            public static final double iMaxAccum = 0d;
-        }
 
         public static class IntakeCurrentLimit {
 
@@ -297,83 +319,37 @@ public final class Constants {
             public static final double kMaxSpikeAmps = 40.0f;
             public static final int kSmartLimit = 40;
         }
-    }
 
-    public static class PivotConstants {
+        public static class Pivot {
 
-        public static final int INTAKE = 100;
-        public static final int SHOOTER = 101;
-        public static final int slotID = 0;
+            public static final int INTAKE = 100;
+            public static final int slotID = 0;
 
-        public static final double intakeOutAngle = 0;
-        public static final double readyAngle = 0;
+            public static final double intakeOutAngle = 0;
+            public static final double readyAngle = 0;
 
-        public static final double intakePivotRatio = 1/36.0f;
-        public static final double shooterPivotRatio = 1/7.0f;
+            public static final double intakePivotRatio = 1 / 36.0f;
 
-        public static final float shooterAngleDeadzone = 0.1f;
-        public static final float intakeAngleDeadzone = 0.1f;
+            public static final float intakeAngleDeadzone = 0.1f;
 
-        public static class SmartMotionCoefficientsIntake {
+            public static class PIDValues {
 
-            public static final double maxVel = 2000; // rpm
-            public static final double minVel = 0;
-            public static final double maxAcc = 2000;
-            public static final double allowedErr = 100;
-        }
+                public static final double minOut = -1;
+                public static final double maxOut = 1;
+                public static final double kP = 0d;
+                public static final double kI = 0d;
+                public static final double kD = 0d;
+                public static final double kMaxI = 0d;
+                public static final double iMaxAccum = 0d;
+            }
 
-        public static class SmartMotionCoefficientsShooter {
+            public static class ArmCurrentLimit {
 
-            public static final double maxVel = 2000; // rpm
-            public static final double minVel = 0;
-            public static final double maxAcc = 2000;
-            public static final double allowedErr = 100;
-        }
-
-        public static class pidValuesIntake {
-
-            public static final double minOut = -1;
-            public static final double maxOut = 1;
-            public static final double kP = 0d;
-            public static final double kI = 0d;
-            public static final double kD = 0d;
-            public static final double kMaxI = 0d;
-            public static final double iMaxAccum = 0d;
-        }
-
-        public static class pidValuesShooter {
-
-            public static final double minOut = -1;
-            public static final double maxOut = 1;
-            public static final double kP = 0d;
-            public static final double kI = 0d;
-            public static final double kD = 0d;
-            public static final double kMaxI = 0d;
-            public static final double iMaxAccum = 0d;
-        }
-
-        public static class IntakeArmCurrentLimit {
-
-            public static final double kLimitToAmps = 40.0f;
-            public static final double kMaxSpikeTime = 25.0f;
-            public static final double kMaxSpikeAmps = 40.0f;
-            public static final int kSmartLimit = 40;
-        }
-
-        public static class ShooterArmCurrentLimit {
-
-            public static final double kLimitToAmps = 40.0f;
-            public static final double kMaxSpikeTime = 25.0f;
-            public static final double kMaxSpikeAmps = 40.0f;
-            public static final int kSmartLimit = 40;
-        }
-
-        public static class actuatorConst {
-
-            public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
-            public static final double actuatorDist = Math.hypot(3.25, 6.68); // Inches
-            public static final double actuatorBaseDistX = 20.25;
-            public static final double actuatorBaseDistY = -4.375;
+                public static final double kLimitToAmps = 40.0f;
+                public static final double kMaxSpikeTime = 25.0f;
+                public static final double kMaxSpikeAmps = 40.0f;
+                public static final int kSmartLimit = 40;
+            }
         }
     }
 }
