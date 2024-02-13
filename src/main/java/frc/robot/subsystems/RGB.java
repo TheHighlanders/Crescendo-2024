@@ -40,7 +40,7 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.POPSICLE, "7");
         stateMap.put(State.BROWN, "8");
 
-        setLED(State.ORANGEBLINK);
+        setLED(State.OFF);
         // setArmLEDLoadingBar(10, 30);
     }
 
