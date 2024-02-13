@@ -243,6 +243,9 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /**
+     *  Sends actual angle encoder data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendAngleTargetDiagnostic()
+     */
     public void sendAngleDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber(
@@ -252,6 +255,9 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /**
+     *  Sends angle PID target data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendAngleDiagnostic()
+     */
     public void sendAngleTargetDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber(
@@ -261,6 +267,9 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /**
+     *  Sends actual drive encoder data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendDriveTargetDiagnostic()
+     */
     public void sendDriveDiagnostic() {
         double[] wheelSpeeds = new double[4];
         for (SwerveModule m : modules) {
@@ -278,6 +287,9 @@ public class Swerve extends SubsystemBase {
         );
     }
 
+    /**
+     *  Sends drive PID target data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendDriveDiagnostic()
+     */
     public void sendDriveTargetDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber(
