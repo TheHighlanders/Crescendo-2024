@@ -312,6 +312,8 @@ public final class Constants {
         public static final int INTAKE = 0;
         public static final int slotID = 0;
 
+        public static final double kGamePieceDetectionCurrent = 1;
+
         public static class IntakeCurrentLimit {
 
             public static final double kLimitToAmps = 40.0f;

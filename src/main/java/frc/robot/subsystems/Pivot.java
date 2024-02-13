@@ -31,6 +31,8 @@ public class Pivot extends SubsystemBase {
     private double cachedSetpointIntake = 0;
     private double cachedSetpointShooter = 0;
 
+    private boolean intakeDeployed;
+
     public Pivot() {
         iTreeMapContainer = new InterpolatingShotTreeMapContainer();
         /*----------------------------------------------------------------------------*/
@@ -53,6 +55,8 @@ public class Pivot extends SubsystemBase {
             Intake.Pivot.ArmCurrentLimit.kMaxSpikeAmps,
             Intake.Pivot.ArmCurrentLimit.kSmartLimit
         );
+
+        intakeDeployed = false;
 
         /*----------------------------------------------------------------------------*/
         /* Shooter */
@@ -88,24 +92,25 @@ public class Pivot extends SubsystemBase {
             cachedSetpointShooter = convertAngleToDistanceInches(angleSupplied);
             cachedSetpointIntake = angleSupplied;
             pidIntakeAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
-            pidShooterAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
-            // call swerve subsystem alignAngle pass in angle
+            intakeDeployed = false;
 
+            pidShooterAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
             return true;
         } catch (Exception e) {
-            // TODO: pass e to error logger
             return false;
         }
     }
 
     public void intakeOut() {
         pidIntakeAngleController.setReference(Intake.Pivot.intakeOutAngle, CANSparkMax.ControlType.kPosition);
+        intakeDeployed = true;
     }
 
     // Put shooter to avg shootig angle and align the Pivot
     public void readyPositions() {
         pidIntakeAngleController.setReference(Intake.Pivot.readyAngle, CANSparkMax.ControlType.kPosition);
         pidShooterAngleController.setReference(Shooter.Pivot.readyAngle, CANSparkMax.ControlType.kPosition);
+        intakeDeployed = false;
     }
 
     public boolean atSetpoints() {
@@ -131,6 +136,10 @@ public class Pivot extends SubsystemBase {
             Shooter.Pivot.actuatorConst.actuatorBaseDistY - Math.sin(angle) * Shooter.Pivot.actuatorConst.actuatorDist,
             Shooter.Pivot.actuatorConst.actuatorBaseDistX - Math.cos(angle) * Shooter.Pivot.actuatorConst.actuatorDist
         );
+    }
+    
+    public boolean getIntakeDeploy(){
+        return intakeDeployed;
     }
 
     @Override

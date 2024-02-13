@@ -47,8 +47,8 @@ public class RobotContainer {
     public static final Shooter s_Shooter = new Shooter();
     public static final Swerve s_Swerve = new Swerve();
     public static final Vision s_Vision = new Vision();
-    public static final Intake s_Intake = new Intake();
-    public static final Pivot s_Pivot = new Pivot();
+        public static final Pivot s_Pivot = new Pivot();
+    public static final Intake s_Intake = new Intake(s_Pivot);
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();

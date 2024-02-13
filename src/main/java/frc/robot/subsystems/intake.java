@@ -18,10 +18,18 @@ public class Intake extends SubsystemBase {
     public RelativeEncoder intakeEncoder;
     public SparkPIDController pidIntakeController;
 
-    public Intake() {
+    public boolean hasGamePiece;
+
+    public Pivot pivot;
+
+    public Intake(Pivot pivot) {
+        this.hasGamePiece = true;
+
+        this.pivot = pivot;
+
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
 
-        intakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         intakeEncoder = intakeMotor.getEncoder();
 
@@ -34,7 +42,19 @@ public class Intake extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        if (pivot.getIntakeDeploy()) {
+            hasGamePiece = intakeMotor.getOutputCurrent() >= Constants.Intake.kGamePieceDetectionCurrent;
+        }
+
+        if (hasGamePiece) {
+            intakeStop();
+        }
+    }
+
+    public boolean hasGamePiece() {
+        return hasGamePiece;
+    }
 
     public void intakeStop() {
         intakeMotor.set(0);
