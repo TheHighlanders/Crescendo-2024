@@ -5,12 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.SwerveConst;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.SlewRateLimiter;
@@ -26,14 +24,9 @@ public class SwerveTeleCMD extends Command {
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier leftBumper;
-    // private BooleanSupplier gridLineUp;
 
     private SlewRateLimiter translationLimiter;
     private SlewRateLimiter strafeLimiter;
-
-    private PIDController translationController;
-    private PIDController rotationController;
-
     private enum Speed {
         SLOW,
         NORMAL,
@@ -45,8 +38,7 @@ public class SwerveTeleCMD extends Command {
         DoubleSupplier strafeSup,
         DoubleSupplier rotationSup,
         BooleanSupplier robotCentricSup,
-        BooleanSupplier leftBumper,
-        BooleanSupplier gridLineUp
+        BooleanSupplier leftBumper
     ) {
         this.s_Swerve = s_Swerve;
         this.translationSup = translationSup;
@@ -54,7 +46,6 @@ public class SwerveTeleCMD extends Command {
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
         this.leftBumper = leftBumper;
-        // this.gridLineUp = gridLineUp;
 
         addRequirements(s_Swerve);
     }
@@ -63,19 +54,6 @@ public class SwerveTeleCMD extends Command {
     public void initialize() {
         translationLimiter = new SlewRateLimiter(3.0);
         strafeLimiter = new SlewRateLimiter(3.0);
-
-        translationController =
-            new PIDController(Autonomous.kPGrid, Autonomous.kIGrid, Autonomous.kDGrid);
-        translationController.setTolerance(Autonomous.kGridTranslateTol);
-
-        rotationController =
-            new PIDController(
-                Autonomous.kPGridTheta,
-                Autonomous.kIGridTheta,
-                Autonomous.kDGridTheta
-            );
-        rotationController.setTolerance(Autonomous.kGridThetaTol);
-        rotationController.enableContinuousInput(0, 360);
     }
 
     public void execute() {
@@ -112,15 +90,6 @@ public class SwerveTeleCMD extends Command {
             MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.SwerveConst.kStickDeadband)
         );
 
-        // if(gridLineUp.getAsBoolean()){
-        //   translationVal = MathUtil.clamp(translationController.calculate(s_Swerve.getPose().getX(), Constants.Autonomous.kGridLineUpPos), -1, 1);
-
-        //   rotationVal = MathUtil.clamp(translationController.calculate(s_Swerve.getYaw().getDegrees(), Constants.Autonomous.kGridLineUpAngle), -1, 1);
-
-        //   if(translationController.atSetpoint()){
-        //     translationVal = 0;
-        //   }
-        // } else {
         rotationVal =
             MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.SwerveConst.kStickDeadband);
         translationVal =
