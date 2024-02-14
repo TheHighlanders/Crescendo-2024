@@ -107,7 +107,7 @@ public class SwerveTeleCMD extends Command {
                 .times(speedLimit),
             Rotation2d.fromDegrees(rotationVal * (angularSpeedLimit)),
             !robotCentricSup.getAsBoolean(),
-            false
+            true
         );
     }
 
