@@ -271,6 +271,8 @@ public final class Constants {
             public static final int SHOOTER = 101;
             public static final int slotID = 0;
 
+            public static final int kAbsolDutyCycleDIOPin = 0;
+
             public static final double readyAngle = 0;
 
             public static final double shooterPivotRatio = 1 / 7.0f;

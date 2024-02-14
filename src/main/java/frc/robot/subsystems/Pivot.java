@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
@@ -27,6 +28,8 @@ public class Pivot extends SubsystemBase {
     private CANSparkMaxCurrent shooterAngleMotor;
     private RelativeEncoder shooterAngleEncoder;
     private SparkPIDController pidShooterAngleController;
+
+    private DutyCycleEncoder absolShooter;
 
     private double cachedSetpointIntake = 0;
     private double cachedSetpointShooter = 0;
@@ -61,6 +64,7 @@ public class Pivot extends SubsystemBase {
         /*----------------------------------------------------------------------------*/
         /* Shooter */
         /*----------------------------------------------------------------------------*/
+        absolShooter = new DutyCycleEncoder(Shooter.Pivot.kAbsolDutyCycleDIOPin);
 
         shooterAngleMotor = new CANSparkMaxCurrent(Shooter.Pivot.SHOOTER, MotorType.kBrushless);
         shooterAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -80,6 +84,8 @@ public class Pivot extends SubsystemBase {
             Shooter.Pivot.ArmCurrentLimit.kMaxSpikeAmps,
             Shooter.Pivot.ArmCurrentLimit.kSmartLimit
         );
+
+        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(absolShooter.get()));
     }
 
     public InterpolatableShotData interpolate(double dist) {
