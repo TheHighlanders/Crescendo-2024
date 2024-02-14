@@ -36,6 +36,9 @@ import frc.robot.util.SwerveModuleConfig;
 public final class Constants {
 
     public static class SwerveConst {
+
+        public static final boolean kOpenLoop = true;
+
         public static final double kTranslateP = 5.0;
         public static final double kTranslateI = 0.1;
         public static final double kTranslateD = 0.13;
