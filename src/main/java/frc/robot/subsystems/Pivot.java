@@ -30,6 +30,7 @@ public class Pivot extends SubsystemBase {
     private SparkPIDController pidShooterAngleController;
 
     private DutyCycleEncoder absolShooter;
+    private DutyCycleEncoder absolIntake;
 
     private double cachedSetpointIntake = 0;
     private double cachedSetpointShooter = 0;
@@ -41,6 +42,9 @@ public class Pivot extends SubsystemBase {
         /*----------------------------------------------------------------------------*/
         /* Intake */
         /*----------------------------------------------------------------------------*/
+
+        absolIntake = new DutyCycleEncoder(Intake.Pivot.kAbsolDutyCycleDIOPin);
+
         intakeAngleMotor = new CANSparkMaxCurrent(Intake.Pivot.INTAKE, MotorType.kBrushless);
         intakeAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         intakeAngleEncoder = intakeAngleMotor.getEncoder();
@@ -58,6 +62,8 @@ public class Pivot extends SubsystemBase {
             Intake.Pivot.ArmCurrentLimit.kMaxSpikeAmps,
             Intake.Pivot.ArmCurrentLimit.kSmartLimit
         );
+
+        intakeAngleEncoder.setPosition(absolIntake.get());
 
         intakeDeployed = false;
 
@@ -85,7 +91,7 @@ public class Pivot extends SubsystemBase {
             Shooter.Pivot.ArmCurrentLimit.kSmartLimit
         );
 
-        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(absolShooter.get()));
+        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(absolShooter.get() + absolIntake.get()));
     }
 
     public InterpolatableShotData interpolate(double dist) {

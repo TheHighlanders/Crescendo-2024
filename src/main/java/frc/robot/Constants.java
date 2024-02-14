@@ -329,6 +329,8 @@ public final class Constants {
             public static final int INTAKE = 100;
             public static final int slotID = 0;
 
+            public static final int kAbsolDutyCycleDIOPin = 1;
+
             public static final double intakeOutAngle = 0;
             public static final double readyAngle = 0;
 
