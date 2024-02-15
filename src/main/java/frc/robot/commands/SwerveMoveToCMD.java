@@ -43,18 +43,8 @@ public class SwerveMoveToCMD extends Command {
 
         this.targetSup = target;
 
-        xPID =
-            new PIDController(
-                SwerveConst.kTranslateP,
-                SwerveConst.kTranslateI,
-                SwerveConst.kTranslateD
-            );
-        yPID =
-            new PIDController(
-                SwerveConst.kTranslateP,
-                SwerveConst.kTranslateI,
-                SwerveConst.kTranslateD
-            );
+        xPID = new PIDController(SwerveConst.kTranslateP, SwerveConst.kTranslateI, SwerveConst.kTranslateD);
+        yPID = new PIDController(SwerveConst.kTranslateP, SwerveConst.kTranslateI, SwerveConst.kTranslateD);
 
         aPID = new PIDController(SwerveConst.kRotateP, SwerveConst.kRotateI, SwerveConst.kRotateD);
 
@@ -106,19 +96,11 @@ public class SwerveMoveToCMD extends Command {
         if (translate) {
             double xCalc = xPID.calculate(s_Swerve.getPose().getX());
             double yCalc = yPID.calculate(s_Swerve.getPose().getY());
-    
+
             SmartDashboard.putNumber("xCalc", xCalc);
             SmartDashboard.putNumber("yCalc", yCalc);
 
-            s_Swerve.drive(
-                new Translation2d(
-                    xCalc,
-                    yCalc
-                ),
-                Rotation2d.fromDegrees(aCalc),
-                true,
-                false
-            );
+            s_Swerve.drive(new Translation2d(xCalc, yCalc), Rotation2d.fromDegrees(aCalc), true, false);
         } else {
             s_Swerve.drive(new Translation2d(), Rotation2d.fromDegrees(aCalc), true, false);
         }
@@ -139,12 +121,11 @@ public class SwerveMoveToCMD extends Command {
         SmartDashboard.putNumber("yPID.atSetpoint()", yPID.atSetpoint() ? 1 : 0);
         SmartDashboard.putNumber("aPID.atSetpoint()", aPID.atSetpoint() ? 1 : 0);
 
-        if(translate){
+        if (translate) {
             return xPID.atSetpoint() && yPID.atSetpoint() && aPID.atSetpoint();
         } else {
             return aPID.atSetpoint();
         }
-
         // return (!translate || (xPID.atSetpoint() && yPID.atSetpoint())) && aPID.atSetpoint();
     }
 }
