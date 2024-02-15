@@ -42,12 +42,7 @@ public class CANSparkMaxCurrent extends CANSparkMax {
         this.setCurrent(currentLimit);
     }
 
-    public void setSpikeCurrentLimit(
-        double limitTo,
-        double spikeMaxTime,
-        double spikeMaxAmps,
-        int smartLimit
-    ) {
+    public void setSpikeCurrentLimit(double limitTo, double spikeMaxTime, double spikeMaxAmps, int smartLimit) {
         this.limitTo = limitTo;
         this.spikeMaxTime = spikeMaxTime;
         this.spikeMaxAmps = spikeMaxAmps;

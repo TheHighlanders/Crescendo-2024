@@ -27,6 +27,7 @@ public class SwerveTeleCMD extends Command {
 
     private SlewRateLimiter translationLimiter;
     private SlewRateLimiter strafeLimiter;
+
     private enum Speed {
         SLOW,
         NORMAL,
@@ -86,25 +87,14 @@ public class SwerveTeleCMD extends Command {
         /* Deadbanding */
         double translationVal;
         double rotationVal;
-        double strafeVal = strafeLimiter.calculate(
-            MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.SwerveConst.kStickDeadband)
-        );
+        double strafeVal = strafeLimiter.calculate(MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.SwerveConst.kStickDeadband));
 
-        rotationVal =
-            MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.SwerveConst.kStickDeadband);
-        translationVal =
-            MathUtil.applyDeadband(
-                translationSup.getAsDouble(),
-                Constants.SwerveConst.kStickDeadband
-            );
+        rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.SwerveConst.kStickDeadband);
+        translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.SwerveConst.kStickDeadband);
         // }
 
         s_Swerve.drive(
-            new Translation2d(
-                translationLimiter.calculate(translationVal),
-                strafeLimiter.calculate(strafeVal)
-            )
-                .times(speedLimit),
+            new Translation2d(translationLimiter.calculate(translationVal), strafeLimiter.calculate(strafeVal)).times(speedLimit),
             Rotation2d.fromDegrees(rotationVal * (angularSpeedLimit)),
             !robotCentricSup.getAsBoolean(),
             Constants.SwerveConst.kOpenLoop
