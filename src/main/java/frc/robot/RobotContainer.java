@@ -18,12 +18,12 @@ import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.Intake;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -51,13 +51,12 @@ public class RobotContainer {
     public static final Shooter s_Shooter = new Shooter();
     public static final Swerve s_Swerve = new Swerve();
     public static final Vision s_Vision = new Vision();
-        public static final Pivot s_Pivot = new Pivot();
+    public static final Pivot s_Pivot = new Pivot();
     public static final Intake s_Intake = new Intake(s_Pivot);
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
-    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) ->
-        s_Localizer.resetOdoPose2d(pose);
+    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
@@ -81,12 +80,24 @@ public class RobotContainer {
         /* Shooter Button Bindings */
         operator.y().onTrue(new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer));
         // ADD Manual flywheel code after lex finished the shooter and shooterCMDG
-        operator.rightStick().onTrue(new FunctionalCommand(()->{}, ()-> s_Pivot.driveShooterAngleManual(operator.getRightY()), t->{}, ()->{return false;}, s_Pivot));
+        operator
+            .rightStick()
+            .onTrue(
+                new FunctionalCommand(
+                    () -> {},
+                    () -> s_Pivot.driveShooterAngleManual(operator.getRightY()),
+                    t -> {},
+                    () -> {
+                        return false;
+                    },
+                    s_Pivot
+                )
+            );
 
         /* Intake Button Bindings */
         driver.start().onTrue(new runIntakeCMD(s_Intake, false)); // Runs intake out
-        driver.rightBumper().onTrue(new runIntakeCMD(s_Intake, true));// Runs intake in
-        driver.leftBumper().onTrue(new deployIntakeCMD(s_Pivot));        
+        driver.rightBumper().onTrue(new runIntakeCMD(s_Intake, true)); // Runs intake in
+        driver.leftBumper().onTrue(new deployIntakeCMD(s_Pivot));
         operator.x().onTrue(new InstantCommand(() -> s_Intake.gamePieceDetectionOverride()));
     }
 
@@ -120,5 +131,4 @@ public class RobotContainer {
         // return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
     }
-
 }

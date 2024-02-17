@@ -9,22 +9,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RGB extends SubsystemBase {
 
-  /** Creates a new RGB. */
-  private SerialPort elPuerto;
+    /** Creates a new RGB. */
+    private SerialPort elPuerto;
 
-  public RGB() {
-    elPuerto = new SerialPort(9600, SerialPort.Port.kMXP);
-    elPuerto.writeString("5\n");
-  }
+    public RGB() {
+        elPuerto = new SerialPort(9600, SerialPort.Port.kMXP);
+        elPuerto.writeString("5\n");
+    }
 
-  public void changeString(String str) {
-    elPuerto.writeString(str + "\n");
-  }
+    public void changeString(String str) {
+        elPuerto.writeString(str + "\n");
+    }
 
-  @Override
-  public void periodic() {
-
-    // DriverStation.reportWarning("something", false);
-    // This method will be called once per scheduler run
-  }
+    @Override
+    public void periodic() {
+        // DriverStation.reportWarning("something", false);
+        // This method will be called once per scheduler run
+    }
 }

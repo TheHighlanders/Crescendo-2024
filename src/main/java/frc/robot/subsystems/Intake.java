@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
         }
     }
 
-    public boolean gamePieceDetectionOverride(){
+    public boolean gamePieceDetectionOverride() {
         hasGamePiece = !hasGamePiece;
         return hasGamePiece;
     }

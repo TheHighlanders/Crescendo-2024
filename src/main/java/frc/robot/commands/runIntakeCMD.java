@@ -8,40 +8,42 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
 public class runIntakeCMD extends Command {
-  /** Creates a new runIntakeCMD. */
-  Intake intake;
-  boolean speed;
-  public runIntakeCMD(Intake intake, boolean speed) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.intake = intake;
-    this.speed = speed;
 
-    addRequirements(intake);
-  }
+    /** Creates a new runIntakeCMD. */
+    Intake intake;
+    boolean speed;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    if(speed){
-      intake.intakeForward();
-    } else{
-      intake.intakeReverse();
+    public runIntakeCMD(Intake intake, boolean speed) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.intake = intake;
+        this.speed = speed;
+
+        addRequirements(intake);
     }
-  }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        if (speed) {
+            intake.intakeForward();
+        } else {
+            intake.intakeReverse();
+        }
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    intake.intakeStop();
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {}
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        intake.intakeStop();
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

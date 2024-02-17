@@ -20,22 +20,17 @@ public class Shooter extends SubsystemBase {
     private SparkPIDController pidTop;
 
     public Shooter() {
-
         /*----------------------------------------------------------------------------*/
         /* Bottom */
         /*----------------------------------------------------------------------------*/
-        bottomFlywheelMotor =
-            new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
+        bottomFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
         bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
         bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomGearRatio);
         bottomFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
         bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidBottom = bottomFlywheelMotor.getPIDController();
-        pidBottom.setOutputRange(
-            Constants.Shooter.PIDValues.minOut,
-            Constants.Shooter.PIDValues.maxOut
-        );
+        pidBottom.setOutputRange(Constants.Shooter.PIDValues.minOut, Constants.Shooter.PIDValues.maxOut);
         pidBottom.setP(Constants.Shooter.PIDValues.kP);
         pidBottom.setI(Constants.Shooter.PIDValues.kI);
         pidBottom.setD(Constants.Shooter.PIDValues.kD);
@@ -43,17 +38,13 @@ public class Shooter extends SubsystemBase {
         /*----------------------------------------------------------------------------*/
         /* Top */
         /*----------------------------------------------------------------------------*/
-        topFlywheelMotor =
-            new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
+        topFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
         topFlywheelEncoder = topFlywheelMotor.getEncoder();
         topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
         topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidTop = topFlywheelMotor.getPIDController();
-        pidTop.setOutputRange(
-            Constants.Shooter.PIDValues.minOut,
-            Constants.Shooter.PIDValues.maxOut
-        );
+        pidTop.setOutputRange(Constants.Shooter.PIDValues.minOut, Constants.Shooter.PIDValues.maxOut);
         pidTop.setP(Constants.Shooter.PIDValues.kP);
         pidTop.setI(Constants.Shooter.PIDValues.kI);
         pidTop.setD(Constants.Shooter.PIDValues.kD);

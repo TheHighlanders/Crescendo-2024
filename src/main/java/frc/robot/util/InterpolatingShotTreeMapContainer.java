@@ -4,9 +4,9 @@ public class InterpolatingShotTreeMapContainer {
 
     public static final InterpolatingShotTreeMap shotMap = new InterpolatingShotTreeMap();
     double[][] values = {
-            { 10.0, 20.0, 30.0, 40.0, 50.0 }, // Distances
-            { 45.0, 30.0, 60.0, 45.0, 75.0 }, // Angles
-            { 1000.0, 1200.0, 900.0, 1100.0, 800.0 }, // PID refrence values
+        { 10.0, 20.0, 30.0, 40.0, 50.0 }, // Distances
+        { 45.0, 30.0, 60.0, 45.0, 75.0 }, // Angles
+        { 1000.0, 1200.0, 900.0, 1100.0, 800.0 }, // PID refrence values
     };
 
     public InterpolatingShotTreeMapContainer() {

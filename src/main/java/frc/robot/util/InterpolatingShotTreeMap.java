@@ -7,8 +7,7 @@ public class InterpolatingShotTreeMap {
     // Shot tree map
     private final TreeMap<Double, InterpolatableShotData> STM = new TreeMap<>();
 
-    public InterpolatingShotTreeMap() {
-    }
+    public InterpolatingShotTreeMap() {}
 
     public void put(Double distance, InterpolatableShotData value) {
         STM.put(distance, value);
@@ -33,13 +32,11 @@ public class InterpolatingShotTreeMap {
         }
     }
 
-    private InterpolatableShotData interpolate(
-            InterpolatableShotData startValue,
-            InterpolatableShotData endValue,
-            double t) {
+    private InterpolatableShotData interpolate(InterpolatableShotData startValue, InterpolatableShotData endValue, double t) {
         return new InterpolatableShotData(
-                ((endValue.getArmAngle() - startValue.getArmAngle()) * t) + startValue.getArmAngle(),
-                ((endValue.getRPM() - startValue.getRPM()) * t) + startValue.getRPM());
+            ((endValue.getArmAngle() - startValue.getArmAngle()) * t) + startValue.getArmAngle(),
+            ((endValue.getRPM() - startValue.getRPM()) * t) + startValue.getRPM()
+        );
     }
 
     private double inverseInterpolate(Double up, Double q, Double down) {

@@ -86,10 +86,11 @@ public class SwerveModule {
             driveMotor.set(motorPercent);
         } else {
             driveController.setReference(
-                    state.speedMetersPerSecond,
-                    ControlType.kVelocity,
-                    0,
-                    driveFeedforward.calculate(state.speedMetersPerSecond));
+                state.speedMetersPerSecond,
+                ControlType.kVelocity,
+                0,
+                driveFeedforward.calculate(state.speedMetersPerSecond)
+            );
             driveReference = state.speedMetersPerSecond;
         }
     }
@@ -102,9 +103,7 @@ public class SwerveModule {
      */
     public void setAngleState(SwerveModuleState state) {
         // Anti Jitter Code, not sure if it works, need to test and review
-        Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001)
-                ? lastAngle
-                : state.angle;
+        Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001) ? lastAngle : state.angle;
         // Rotation2d angle = state.angle;
         if (angle != null) {
             angleController.setReference(angle.getDegrees(), ControlType.kPosition);
@@ -201,10 +200,11 @@ public class SwerveModule {
 
         // driveMotor.setSmartCurrentLimit(Module.kDriveCurrentLimit);
         driveMotor.setSpikeCurrentLimit(
-                Module.DriveCurrentLimit.kLimitToAmps,
-                Module.DriveCurrentLimit.kMaxSpikeTime,
-                Module.DriveCurrentLimit.kMaxSpikeAmps,
-                Module.DriveCurrentLimit.kSmartLimit);
+            Module.DriveCurrentLimit.kLimitToAmps,
+            Module.DriveCurrentLimit.kMaxSpikeTime,
+            Module.DriveCurrentLimit.kMaxSpikeAmps,
+            Module.DriveCurrentLimit.kSmartLimit
+        );
 
         driveMotor.burnFlash();
         driveEncoder.setPosition(0.0);
@@ -235,10 +235,11 @@ public class SwerveModule {
 
         // angleMotor.setSmartCurrentLimit(Module.kAngleCurrentLimit);
         angleMotor.setSpikeCurrentLimit(
-                Module.AngleCurrentLimit.kLimitToAmps,
-                Module.AngleCurrentLimit.kMaxSpikeTime,
-                Module.AngleCurrentLimit.kMaxSpikeAmps,
-                Module.AngleCurrentLimit.kSmartLimit);
+            Module.AngleCurrentLimit.kLimitToAmps,
+            Module.AngleCurrentLimit.kMaxSpikeTime,
+            Module.AngleCurrentLimit.kMaxSpikeAmps,
+            Module.AngleCurrentLimit.kSmartLimit
+        );
 
         angleMotor.burnFlash();
 

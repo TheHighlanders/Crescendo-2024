@@ -24,7 +24,8 @@ public class InterpolatableShotData implements Interpolatable<InterpolatableShot
     public InterpolatableShotData interpolate(InterpolatableShotData endValue, double t) {
         // Unused actual code in ISTM
         return new InterpolatableShotData(
-                ((endValue.getArmAngle() - armAngle) * t) + armAngle,
-                ((endValue.getRPM() - rotationsPerSecond) * t) + rotationsPerSecond);
+            ((endValue.getArmAngle() - armAngle) * t) + armAngle,
+            ((endValue.getRPM() - rotationsPerSecond) * t) + rotationsPerSecond
+        );
     }
 }

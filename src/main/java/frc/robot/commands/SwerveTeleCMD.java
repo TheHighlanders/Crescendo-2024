@@ -40,13 +40,14 @@ public class SwerveTeleCMD extends Command {
     }
 
     public SwerveTeleCMD(
-            Swerve s_Swerve,
-            DoubleSupplier translationSup,
-            DoubleSupplier strafeSup,
-            DoubleSupplier rotationSup,
-            BooleanSupplier robotCentricSup,
-            BooleanSupplier leftBumper,
-            BooleanSupplier gridLineUp) {
+        Swerve s_Swerve,
+        DoubleSupplier translationSup,
+        DoubleSupplier strafeSup,
+        DoubleSupplier rotationSup,
+        BooleanSupplier robotCentricSup,
+        BooleanSupplier leftBumper,
+        BooleanSupplier gridLineUp
+    ) {
         this.s_Swerve = s_Swerve;
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
@@ -66,10 +67,7 @@ public class SwerveTeleCMD extends Command {
         translationController = new PIDController(Autonomous.kPGrid, Autonomous.kIGrid, Autonomous.kDGrid);
         translationController.setTolerance(Autonomous.kGridTranslateTol);
 
-        rotationController = new PIDController(
-                Autonomous.kPGridTheta,
-                Autonomous.kIGridTheta,
-                Autonomous.kDGridTheta);
+        rotationController = new PIDController(Autonomous.kPGridTheta, Autonomous.kIGridTheta, Autonomous.kDGridTheta);
         rotationController.setTolerance(Autonomous.kGridThetaTol);
         rotationController.enableContinuousInput(0, 360);
     }
@@ -104,8 +102,7 @@ public class SwerveTeleCMD extends Command {
         /* Deadbanding */
         double translationVal;
         double rotationVal;
-        double strafeVal = strafeLimiter.calculate(
-                MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.SwerveConst.kStickDeadband));
+        double strafeVal = strafeLimiter.calculate(MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.SwerveConst.kStickDeadband));
 
         // if(gridLineUp.getAsBoolean()){
         // translationVal =
@@ -121,24 +118,19 @@ public class SwerveTeleCMD extends Command {
         // }
         // } else {
         rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.SwerveConst.kStickDeadband);
-        translationVal = MathUtil.applyDeadband(
-                translationSup.getAsDouble(),
-                Constants.SwerveConst.kStickDeadband);
+        translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.SwerveConst.kStickDeadband);
         // }
 
         s_Swerve.drive(
-                new Translation2d(
-                        translationLimiter.calculate(translationVal),
-                        strafeLimiter.calculate(strafeVal))
-                        .times(speedLimit),
-                Rotation2d.fromDegrees(rotationVal * (angularSpeedLimit)),
-                !robotCentricSup.getAsBoolean(),
-                false);
+            new Translation2d(translationLimiter.calculate(translationVal), strafeLimiter.calculate(strafeVal)).times(speedLimit),
+            Rotation2d.fromDegrees(rotationVal * (angularSpeedLimit)),
+            !robotCentricSup.getAsBoolean(),
+            false
+        );
     }
 
     @Override
-    public void end(boolean interrupted) {
-    }
+    public void end(boolean interrupted) {}
 
     @Override
     public boolean isFinished() {

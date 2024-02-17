@@ -27,17 +27,14 @@ public class TestMove extends SequentialCommandGroup {
                 new WaitCommand(1),
                 new FunctionalCommand(
                     () -> {},
-                    () ->
-                        s_Swerve.drive(new Translation2d(0.5,0), new Rotation2d(0), true, false),
+                    () -> s_Swerve.drive(new Translation2d(0.5, 0), new Rotation2d(0), true, false),
                     v -> {},
                     () -> {
                         return false;
                     }
                 )
             ),
-            new InstantCommand(() ->
-                s_Swerve.drive(new Translation2d(), new Rotation2d(), true, false)
-            )
+            new InstantCommand(() -> s_Swerve.drive(new Translation2d(), new Rotation2d(), true, false))
         );
     }
 }
