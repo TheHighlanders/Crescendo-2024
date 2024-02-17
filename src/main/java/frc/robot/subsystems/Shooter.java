@@ -61,10 +61,6 @@ public class Shooter extends SubsystemBase {
         pidTop.setReference(0, CANSparkMax.ControlType.kVelocity);
     }
 
-    public boolean hasGamePiece() {
-        return true;
-    }
-
     @Override
     public void periodic() {}
 }

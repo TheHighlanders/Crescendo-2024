@@ -215,6 +215,8 @@ public final class Constants {
 
     public static class Shooter {
 
+        public static double kWaitTimeBeforeStop = 3; //seconds
+
         public static final int bottomFlywheelMotorID = 103;
         public static final int topFlywheelMotorID = 104;
         public static final double kBottomGearRatio = (1 / 5.0f);
