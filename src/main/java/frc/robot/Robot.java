@@ -58,17 +58,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        String data = SmartDashboard.getString("RGB send value", "0");
-        if (!data.equals(rbgData)) {
-            rbgData = data;
-            s_RGB.changeString(data);
-        }
-        // Runs the Scheduler. This is responsible for polling buttons, adding
-        // newly-scheduled
-        // commands, running already-scheduled commands, removing finished or
-        // interrupted commands,
-        // and running subsystem periodic() methods. This must be called from the
-        // robot's periodic
+        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
         RobotContainer.s_Swerve.sendSmartDashboardDiagnostics();
@@ -82,10 +74,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {}
 
-    /**
-     * This autonomous runs the autonomous command selected by your
-     * {@link RobotContainer} class.
-     */
+    /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
     @Override
     public void autonomousInit() {
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -98,7 +87,12 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        // SequentialCommandGroup(new InstantCommand(()-> new WaitCommand(15)));
+        DriverStation.reportError("TACO CAT", false);
+        //  new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), new WaitCommand(1),new InstantCommand(()->s_RGB.changeString("7")), new WaitCommand(1));
+
+    }
 
     @Override
     public void teleopInit() {

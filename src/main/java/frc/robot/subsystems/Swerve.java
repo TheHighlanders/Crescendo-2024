@@ -133,7 +133,7 @@ public class Swerve extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConst.kMaxSpeedTele);
 
         for (SwerveModule m : modules) {
-            m.setModuleState(swerveModuleStates[m.moduleNumber], false);
+            m.setModuleState(swerveModuleStates[m.moduleNumber], Constants.SwerveConst.kOpenLoop);
         }
     }
 
@@ -209,18 +209,27 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /**
+     *  Sends actual angle encoder data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendAngleTargetDiagnostic()
+     */
     public void sendAngleDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Angle Actual", m.angleEncoder.getPosition());
         }
     }
 
+    /**
+     *  Sends angle PID target data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendAngleDiagnostic()
+     */
     public void sendAngleTargetDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Angle Target", m.angleReference);
         }
     }
 
+    /**
+     *  Sends actual drive encoder data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendDriveTargetDiagnostic()
+     */
     public void sendDriveDiagnostic() {
         double[] wheelSpeeds = new double[4];
         for (SwerveModule m : modules) {
@@ -234,6 +243,9 @@ public class Swerve extends SubsystemBase {
         );
     }
 
+    /**
+     *  Sends drive PID target data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendDriveDiagnostic()
+     */
     public void sendDriveTargetDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Target", m.driveReference);

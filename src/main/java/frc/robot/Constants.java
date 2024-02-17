@@ -37,6 +37,8 @@ public final class Constants {
 
     public static class SwerveConst {
 
+        public static final boolean kOpenLoop = true;
+
         public static final double kTranslateP = 5.0;
         public static final double kTranslateI = 0.1;
         public static final double kTranslateD = 0.13;
@@ -79,21 +81,6 @@ public final class Constants {
             0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         );
-
-        public static final double kPGrid = 0;
-        public static final double kIGrid = 0;
-        public static final double kDGrid = 0;
-
-        public static final double kGridTranslateTol = 0;
-
-        public static final double kPGridTheta = 0;
-        public static final double kIGridTheta = 0;
-        public static final double kDGridTheta = 0;
-
-        public static final double kGridThetaTol = 0;
-
-        public static final double kGridLineUpPos = 0.5;
-        public static final double kGridLineUpAngle = 90;
     }
 
     public static class VisionConstants {
