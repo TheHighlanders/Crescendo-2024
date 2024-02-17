@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {

@@ -7,9 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
@@ -56,7 +58,10 @@ public class alignShootCMDG extends SequentialCommandGroup {
             ),
             // runs the intake and the shooter for 3 seconds and then stops them when the time us up
             new ParallelDeadlineGroup(
-                new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop),
+                new ParallelRaceGroup(
+                    new SequentialCommandGroup(new WaitUntilCommand(() -> !(shoot.getBeamBreak() || intake.hasGamePiece())), new WaitCommand(0.5)),
+                    new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop)
+                ),
                 new StartEndCommand(() -> m_shooter.shoot(currentShotData::getRPM), m_shooter::shootCancel),
                 new StartEndCommand(m_intake::intakeReverse, m_intake::intakeStop)
             )
