@@ -52,7 +52,7 @@ public class RobotContainer {
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
     public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
-    public RGB s_RGB = new RGB();
+    public static RGB s_RGB = new RGB();
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
@@ -76,7 +76,7 @@ public class RobotContainer {
 
         // driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, () -> s_Localizer.getAngleToSpeaker()));
         driver.b().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(0.5, -1, Rotation2d.fromDegrees(180))));
-        //driver.b().onTrue(new TestMove(s_Swerve));
+        // driver.b().onTrue(new TestMove(s_Swerve));
 
         driver.a().onTrue(new LEDloadingBarCMD(s_RGB));
     }
