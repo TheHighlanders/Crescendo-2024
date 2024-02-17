@@ -98,7 +98,7 @@ public class RobotContainer {
         driver.start().onTrue(new runIntakeCMD(s_Intake, false)); // Runs intake out
         driver.rightBumper().onTrue(new runIntakeCMD(s_Intake, true)); // Runs intake in
         driver.leftBumper().onTrue(new deployIntakeCMD(s_Pivot));
-        operator.x().onTrue(new InstantCommand(() -> s_Intake.gamePieceDetectionOverride()));
+        operator.x().onTrue(new InstantCommand(s_Intake::gamePieceDetectionOverride));
     }
 
     private void configureAuton() {

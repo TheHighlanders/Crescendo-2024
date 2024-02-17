@@ -50,7 +50,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
                     emptyConsumable,
                     m_Pivot::atSetpoints
                 ),
-                new SwerveMoveToCMD(m_Swerve, () -> localizer.getAngleToSpeaker())
+                new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker)
             ),
             new ParallelDeadlineGroup(
                 new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop),
