@@ -8,11 +8,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
-    
+
     private CANSparkMaxCurrent bottomFlywheelMotor;
     private CANSparkMaxCurrent topFlywheelMotor;
     private RelativeEncoder bottomFlywheelEncoder;
@@ -20,9 +19,9 @@ public class Shooter extends SubsystemBase {
 
     private SparkPIDController pidBottom;
     private SparkPIDController pidTop;
-    
+
     private DigitalInput beamBreak;
-    
+
     public Shooter() {
         beamBreak = new DigitalInput(1);
         /*----------------------------------------------------------------------------*/
@@ -54,7 +53,6 @@ public class Shooter extends SubsystemBase {
         pidTop.setI(Constants.Shooter.PIDValues.kI);
         pidTop.setD(Constants.Shooter.PIDValues.kD);
         pidTop.setIMaxAccum(Constants.Shooter.PIDValues.iMaxAccum, Constants.Shooter.slotID);
-        
     }
 
     public void shoot(DoubleSupplier speed) {
@@ -67,7 +65,7 @@ public class Shooter extends SubsystemBase {
         pidTop.setReference(0, CANSparkMax.ControlType.kVelocity);
     }
 
-    public boolean getBeamBreak(){
+    public boolean getBeamBreak() {
         return beamBreak.get();
     }
 
