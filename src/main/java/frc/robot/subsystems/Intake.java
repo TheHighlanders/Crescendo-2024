@@ -52,6 +52,11 @@ public class Intake extends SubsystemBase {
         }
     }
 
+    public boolean gamePieceDetectionOverride(){
+        hasGamePiece = !hasGamePiece;
+        return hasGamePiece;
+    }
+
     public boolean hasGamePiece() {
         return hasGamePiece;
     }
@@ -60,11 +65,11 @@ public class Intake extends SubsystemBase {
         intakeMotor.set(0);
     }
 
-    public void intakeStarting() {
+    public void intakeForward() {
         intakeMotor.set(1);
     }
 
-    public void intakeStartout() {
+    public void intakeReverse() {
         intakeMotor.set(-1);
     }
 }

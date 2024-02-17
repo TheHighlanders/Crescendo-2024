@@ -58,7 +58,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
                 new ParallelRaceGroup(
                         new StartEndCommand(m_shooter::shoot, m_shooter::shootCancel),
                         new FunctionalCommand(
-                                m_intake::intakeStartout,
+                                m_intake::intakeReverse,
                                 emptyRunnable::run,
                                 v -> m_intake.intakeStop(),
                                 m_shooter::hasGamePiece)));

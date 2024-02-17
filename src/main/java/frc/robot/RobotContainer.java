@@ -11,10 +11,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
+import frc.robot.commands.deployIntakeCMD;
+import frc.robot.commands.runIntakeCMD;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
@@ -37,6 +40,7 @@ public class RobotContainer {
 
     /* Controllers */
     private final CommandXboxController driver = new CommandXboxController(0);
+    private final CommandXboxController operator = new CommandXboxController(1);
 
     /* Drive Controls */
     private static final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -74,7 +78,16 @@ public class RobotContainer {
         driver.y().onTrue(new InstantCommand(s_Swerve::zeroGyro));
         driver.a().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
 
-        driver.x().onTrue(new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer));
+        /* Shooter Button Bindings */
+        operator.y().onTrue(new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer));
+        // ADD Manual flywheel code after lex finished the shooter and shooterCMDG
+        operator.rightStick().onTrue(new FunctionalCommand(()->{}, ()-> s_Pivot.driveShooterAngleManual(operator.getRightY()), t->{}, ()->{return false;}, s_Pivot));
+
+        /* Intake Button Bindings */
+        driver.start().onTrue(new runIntakeCMD(s_Intake, false)); // Runs intake out
+        driver.rightBumper().onTrue(new runIntakeCMD(s_Intake, true));// Runs intake in
+        driver.leftBumper().onTrue(new deployIntakeCMD(s_Pivot));        
+        operator.x().onTrue(new InstantCommand(() -> s_Intake.gamePieceDetectionOverride()));
     }
 
     private void configureAuton() {

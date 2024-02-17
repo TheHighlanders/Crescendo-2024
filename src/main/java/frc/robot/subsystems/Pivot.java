@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake;
@@ -98,6 +99,7 @@ public class Pivot extends SubsystemBase {
         return iTreeMapContainer.interpolate(dist);
     }
 
+    /**Aligns both intake and shooter to a given angle */
     public boolean alignPivot(DoubleSupplier angle) {
         try {
             double angleSupplied = angle.getAsDouble();
@@ -113,8 +115,16 @@ public class Pivot extends SubsystemBase {
         }
     }
 
+    /** Moves intake back into robot, matching its angle to the shooter */
+    public void intakeIn(){
+        pidIntakeAngleController.setReference(shooterAngleEncoder.getPosition(), ControlType.kPosition);
+        cachedSetpointIntake = shooterAngleEncoder.getPosition();
+        intakeDeployed = false;
+    }
+
     public void intakeOut() {
         pidIntakeAngleController.setReference(Intake.Pivot.intakeOutAngle, CANSparkMax.ControlType.kPosition);
+        cachedSetpointIntake = shooterAngleEncoder.getPosition();
         intakeDeployed = true;
     }
 
@@ -141,6 +151,10 @@ public class Pivot extends SubsystemBase {
             Math.abs(cachedSetpointShooter - shooterAngleEncoder.getPosition()) <= Shooter.Pivot.shooterAngleDeadzone &&
             Math.abs(shooterAngleEncoder.getVelocity()) == 0
         );
+    }
+
+    public void driveShooterAngleManual(double speed){
+        shooterAngleMotor.set(speed);
     }
 
     public double convertAngleToDistanceInches(double angle) {
