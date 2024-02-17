@@ -199,4 +199,55 @@ public final class Constants {
 
         public static final float aVelocityTolerance = 1;
     }
+
+    public static class Intake {
+
+        public static final int INTAKE = 0;
+        public static final int slotID = 0;
+
+        public static final double kGamePieceDetectionCurrent = 1;
+
+        public static class IntakeCurrentLimit {
+
+            public static final double kLimitToAmps = 40.0f;
+            public static final double kMaxSpikeTime = 25.0f;
+            public static final double kMaxSpikeAmps = 40.0f;
+            public static final int kSmartLimit = 40;
+        }
+
+        public static class Pivot {
+
+            public static final int INTAKE = 100;
+            public static final int slotID = 0;
+
+            public static final int kAbsolDutyCycleDIOPin = 1;
+
+            public static final double intakeOutAngle = 0;
+            public static final double readyAngle = 0;
+
+            public static final double intakePivotRatio = 1 / 36.0f;
+
+            public static final float intakeAngleDeadzone = 0.1f;
+
+            public static class PIDValues {
+
+                public static final double minOut = -1;
+                public static final double maxOut = 1;
+                public static final double kP = 0d;
+                public static final double kI = 0d;
+                public static final double kD = 0d;
+                public static final double kMaxI = 0d;
+                public static final double iMaxAccum = 0d;
+            }
+
+            public static class ArmCurrentLimit {
+
+                public static final double kLimitToAmps = 40.0f;
+                public static final double kMaxSpikeTime = 25.0f;
+                public static final double kMaxSpikeAmps = 40.0f;
+                public static final int kSmartLimit = 40;
+            }
+        }
+    }
+
 }
