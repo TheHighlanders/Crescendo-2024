@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -16,6 +15,7 @@ import frc.robot.util.CANSparkMaxCurrent;
 import frc.robot.util.SwerveModuleConfig;
 
 public class SwerveModule {
+
     public CANSparkMaxCurrent angleMotor;
     public CANSparkMaxCurrent driveMotor;
 
@@ -61,7 +61,7 @@ public class SwerveModule {
 
     /**
      * Sets both Angle and Drive to desired states
-     * 
+     *
      * @param state:      Desired module state
      * @param isOpenLoop: Controls if the drive motor use a PID loop
      */
@@ -76,7 +76,7 @@ public class SwerveModule {
      * Sets the Drive Motor to a desired state,
      * if isOpenLoop is true, it will be set as a percent, if it is false, than it
      * will use a velocity PIDF loop
-     * 
+     *
      * @param state:      Desired module state
      * @param isOpenLoop: Whether or not to use a PID loop
      */
@@ -85,8 +85,12 @@ public class SwerveModule {
             double motorPercent = state.speedMetersPerSecond / SwerveConst.kMaxSpeedTele;
             driveMotor.set(motorPercent);
         } else {
-            driveController.setReference(state.speedMetersPerSecond, ControlType.kVelocity, 0,
-                    driveFeedforward.calculate(state.speedMetersPerSecond));
+            driveController.setReference(
+                state.speedMetersPerSecond,
+                ControlType.kVelocity,
+                0,
+                driveFeedforward.calculate(state.speedMetersPerSecond)
+            );
             driveReference = state.speedMetersPerSecond;
         }
     }
@@ -94,14 +98,12 @@ public class SwerveModule {
     /**
      * Sets the Angle Motor to a desired state, does not set the state if speed is
      * too low, to stop wheel jitter
-     * 
+     *
      * @param state: Desired module state
      */
     public void setAngleState(SwerveModuleState state) {
         // Anti Jitter Code, not sure if it works, need to test and review
-        Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001)
-                ? lastAngle
-                : state.angle;
+        Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001) ? lastAngle : state.angle;
         // Rotation2d angle = state.angle;
         if (angle != null) {
             angleController.setReference(angle.getDegrees(), ControlType.kPosition);
@@ -112,7 +114,7 @@ public class SwerveModule {
 
     /**
      * Returns the position of the Angle Motor, measured with integrated encoder
-     * 
+     *
      * @return Angle Motor Position
      */
     public Rotation2d getAnglePosition() {
@@ -121,7 +123,7 @@ public class SwerveModule {
 
     /**
      * Returns the velocity of the Drive Motor, measured with integrated encoder
-     * 
+     *
      * @return Drive Motor Velocity
      */
     public double getDriveVelocity() {
@@ -130,7 +132,7 @@ public class SwerveModule {
 
     /**
      * Gets the position of the Drive Motor, measured with integrated encoder
-     * 
+     *
      * @return Drive Motor Position
      */
     public double getDrivePosition() {
@@ -139,7 +141,7 @@ public class SwerveModule {
 
     /**
      * Gets the position of the module using the absolute encoder
-     * 
+     *
      * @return Position of the module between 0 and 360, as a Rotation2d
      */
     public Rotation2d getAbsolutePosition() {
@@ -156,15 +158,15 @@ public class SwerveModule {
     }
 
     /**
-     * 
+     *
      * @return Swerve Module Position (Position & Angle)
      */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
+        return new SwerveModulePosition(-getDrivePosition(), getAnglePosition());
     }
 
     /**
-     * 
+     *
      * @return Swerve Module State (Velocity & Angle)
      */
     public SwerveModuleState getState() {
@@ -197,8 +199,12 @@ public class SwerveModule {
         driveController.setD(Module.kDDrive);
 
         // driveMotor.setSmartCurrentLimit(Module.kDriveCurrentLimit);
-        driveMotor.setSpikeCurrentLimit(Module.DriveCurrentLimit.kLimitToAmps, Module.DriveCurrentLimit.kMaxSpikeTime,
-                Module.DriveCurrentLimit.kMaxSpikeAmps, Module.DriveCurrentLimit.kSmartLimit);
+        driveMotor.setSpikeCurrentLimit(
+            Module.DriveCurrentLimit.kLimitToAmps,
+            Module.DriveCurrentLimit.kMaxSpikeTime,
+            Module.DriveCurrentLimit.kMaxSpikeAmps,
+            Module.DriveCurrentLimit.kSmartLimit
+        );
 
         driveMotor.burnFlash();
         driveEncoder.setPosition(0.0);
@@ -228,8 +234,12 @@ public class SwerveModule {
         angleController.setPositionPIDWrappingEnabled(true);
 
         // angleMotor.setSmartCurrentLimit(Module.kAngleCurrentLimit);
-        angleMotor.setSpikeCurrentLimit(Module.AngleCurrentLimit.kLimitToAmps, Module.AngleCurrentLimit.kMaxSpikeTime,
-                Module.AngleCurrentLimit.kMaxSpikeAmps, Module.AngleCurrentLimit.kSmartLimit);
+        angleMotor.setSpikeCurrentLimit(
+            Module.AngleCurrentLimit.kLimitToAmps,
+            Module.AngleCurrentLimit.kMaxSpikeTime,
+            Module.AngleCurrentLimit.kMaxSpikeAmps,
+            Module.AngleCurrentLimit.kSmartLimit
+        );
 
         angleMotor.burnFlash();
 
