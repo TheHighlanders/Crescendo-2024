@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -13,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.LEDloadingBarCMD;
+import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
@@ -56,7 +59,7 @@ public class RobotContainer {
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
     public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
-    public RGB s_RGB = new RGB();
+    public static RGB s_RGB = new RGB();
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
@@ -111,7 +114,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // Uses an Auto to assign a starting position
-        // return new PathPlannerAuto("Testing Auton");
+        //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
     }
 }
