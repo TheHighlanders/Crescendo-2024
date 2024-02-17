@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
@@ -43,13 +44,13 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (pivot.getIntakeDeploy()) {
-            hasGamePiece = intakeMotor.getOutputCurrent() >= Constants.Intake.kGamePieceDetectionCurrent;
-        }
-
-        if (hasGamePiece) {
+        if (pivot.getIntakeDeploy() && (intakeMotor.getOutputCurrent() >= Constants.Intake.kGamePieceDetectionCurrent)) {
+            //TODO: Tune CURRENT
+            hasGamePiece = true;
             intakeStop();
         }
+
+        SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
     }
 
     public boolean gamePieceDetectionOverride() {
