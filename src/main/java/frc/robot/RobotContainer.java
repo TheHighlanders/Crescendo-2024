@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.LEDloadingBarCMD;
 import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
+import frc.robot.commands.climbCMD;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.RGB;
 //import frc.robot.subsystems.RGB;
@@ -38,6 +40,7 @@ public class RobotContainer {
 
     /* Controllers */
     private final CommandXboxController driver = new CommandXboxController(0);
+    private final CommandXboxController operator = new CommandXboxController(1);
 
     /* Drive Controls */
     private static final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -48,6 +51,7 @@ public class RobotContainer {
     int i = 100;
     public static final Swerve s_Swerve = new Swerve();
     public static final Vision s_Vision = new Vision();
+    public static final Climber S_Climber = new Climber();
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
@@ -79,6 +83,10 @@ public class RobotContainer {
         //driver.b().onTrue(new TestMove(s_Swerve));
 
         driver.a().onTrue(new LEDloadingBarCMD(s_RGB));
+
+        /* Climber Button Bindings */
+        operator.leftBumper().onTrue(new climbCMD(true, S_Climber));
+        operator.rightBumper().onTrue(new climbCMD(false, S_Climber));
     }
 
     private void configureAuton() {

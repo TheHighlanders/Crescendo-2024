@@ -202,6 +202,9 @@ public final class Constants {
 
     public static final class ClimberConsts {
 
-        public static final int CLIMBER = 50;
+        public static final int CLIMBER_LEFT = 50;
+        public static final int CLIMBER_RIGHT = 51;
+
+        public static final double kClimbSpeed = 0.5;
     }
 }

@@ -6,33 +6,43 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
 
 public class Climber extends SubsystemBase {
 
-    public CANSparkMaxCurrent climberMotor;
-    public RelativeEncoder intakEncoder;
-    public SparkPIDController pidIntakeEncoder;
+    public CANSparkMaxCurrent climberMotorRight;
+    public CANSparkMaxCurrent climberMotorLeft;
+
 
     /** Creates a new intake. */
     public Climber() {
-        climberMotor = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER, MotorType.kBrushless);
-        climberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        intakEncoder = climberMotor.getEncoder();
+        climberMotorRight = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER_LEFT, MotorType.kBrushless);
+        climberMotorLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
+
+        climberMotorRight = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER_RIGHT, MotorType.kBrushless);
+        climberMotorRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
 
     @Override
     public void periodic() {}
 
-    public void climberStarting(double speed) {
-        climberMotor.set(speed);
+    public void climbBoth(double speed) {
+        climberMotorRight.set(speed);
+        climberMotorLeft.set(-speed);
+    }
+
+    public void climbLeft(double speed){
+        climberMotorLeft.set(-speed);
+    }
+
+    public void climbRight(double speed){
+        climberMotorRight.set(speed);
     }
 
     public void climberStop() {
-        climberMotor.set(0);
+        climberMotorRight.set(0);
+        climberMotorLeft.set(0);
     }
 }
