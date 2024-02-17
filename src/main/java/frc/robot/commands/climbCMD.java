@@ -7,39 +7,52 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ClimberConsts;
 import frc.robot.subsystems.Climber;
+import java.util.function.BooleanSupplier;
 
 public class climbCMD extends Command {
-  /** Creates a new climbCMD. */
-  Climber climber;
-  boolean left;
-  public climbCMD(boolean left, Climber climber) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.climber = climber;
-    this.left = left;
-    addRequirements(climber);
-  }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    /** Creates a new climbCMD. */
+    Climber climber;
+    BooleanSupplier left;
+    BooleanSupplier right;
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    if(left){
-      climber.climbLeft(ClimberConsts.kClimbSpeed);
-    } else{
-      climber.climbRight(ClimberConsts.kClimbSpeed);
+    public climbCMD(BooleanSupplier left, BooleanSupplier right, Climber climber) {
+        this.climber = climber;
+        this.left = left;
+        this.right = right;
+        addRequirements(climber);
     }
-  }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {}
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        boolean rightButtonDown = right.getAsBoolean();
+        boolean leftButtonDown = left.getAsBoolean();
+
+        if (leftButtonDown && rightButtonDown) {
+            climber.climbBoth(ClimberConsts.kClimbSpeed);
+        } else if (rightButtonDown) {
+            climber.climbRight(ClimberConsts.kClimbSpeed);
+        }
+        else if (leftButtonDown) {
+            climber.climbLeft(ClimberConsts.kClimbSpeed);
+        }
+        else {
+          climber.climberStop();
+        }
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {}
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

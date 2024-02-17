@@ -24,6 +24,7 @@ import frc.robot.subsystems.RGB;
 //import frc.robot.subsystems.RGB;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -38,9 +39,10 @@ import java.util.function.Supplier;
  */
 public class RobotContainer {
 
+
     /* Controllers */
-    private final CommandXboxController driver = new CommandXboxController(0);
-    private final CommandXboxController operator = new CommandXboxController(1);
+    private static final CommandXboxController driver = new CommandXboxController(0);
+    private static final CommandXboxController operator = new CommandXboxController(1);
 
     /* Drive Controls */
     private static final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -48,7 +50,7 @@ public class RobotContainer {
     private static final int rotationAxis = XboxController.Axis.kRightX.value;
 
     /* Subsystems */
-    int i = 100;
+
     public static final Swerve s_Swerve = new Swerve();
     public static final Vision s_Vision = new Vision();
     public static final Climber S_Climber = new Climber();
@@ -57,6 +59,9 @@ public class RobotContainer {
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
     public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
     public RGB s_RGB = new RGB();
+
+    /* Commands */
+    private static final Command climbCMD = new climbCMD(operator.leftBumper(), operator.rightBumper(), S_Climber);
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
@@ -83,10 +88,6 @@ public class RobotContainer {
         //driver.b().onTrue(new TestMove(s_Swerve));
 
         driver.a().onTrue(new LEDloadingBarCMD(s_RGB));
-
-        /* Climber Button Bindings */
-        operator.leftBumper().onTrue(new climbCMD(true, S_Climber));
-        operator.rightBumper().onTrue(new climbCMD(false, S_Climber));
     }
 
     private void configureAuton() {
@@ -96,6 +97,7 @@ public class RobotContainer {
     }
 
     private void setDefaultCommands() {
+        S_Climber.setDefaultCommand(climbCMD);
         s_Swerve.setDefaultCommand(
             new SwerveTeleCMD(
                 s_Swerve,
