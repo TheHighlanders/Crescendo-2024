@@ -12,49 +12,37 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
 
-public class intake extends SubsystemBase {
+public class Intake extends SubsystemBase {
 
     public CANSparkMaxCurrent intakeMotor;
     public RelativeEncoder intakeEncoder;
     public SparkPIDController pidIntakeController;
 
-    public intake() {
+    public Intake() {
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         intakeEncoder = intakeMotor.getEncoder();
         pidIntakeController = intakeMotor.getPIDController();
-        pidIntakeController.setOutputRange(
-                Constants.Intake.pidValues.minOut,
-                Constants.Intake.pidValues.maxOut);
+        pidIntakeController.setOutputRange(Constants.Intake.pidValues.minOut, Constants.Intake.pidValues.maxOut);
         pidIntakeController.setP(Constants.Intake.pidValues.kP);
         pidIntakeController.setI(Constants.Intake.pidValues.kI);
         pidIntakeController.setD(Constants.Intake.pidValues.kD);
-        pidIntakeController.setIMaxAccum(
-                Constants.Intake.pidValues.iMaxAccum,
-                Constants.Intake.slotID);
-        pidIntakeController.setSmartMotionMaxVelocity(
-                Constants.Intake.maxVel,
-                Constants.Intake.slotID);
-        pidIntakeController.setSmartMotionMinOutputVelocity(
-                Constants.Intake.minVel,
-                Constants.Intake.slotID);
-        pidIntakeController.setSmartMotionMaxAccel(
-                Constants.Intake.maxAcc,
-                Constants.Intake.slotID);
-        pidIntakeController.setSmartMotionAllowedClosedLoopError(
-                Constants.Intake.allowedErr,
-                Constants.Intake.slotID);
+        pidIntakeController.setIMaxAccum(Constants.Intake.pidValues.iMaxAccum, Constants.Intake.slotID);
+        pidIntakeController.setSmartMotionMaxVelocity(Constants.Intake.maxVel, Constants.Intake.slotID);
+        pidIntakeController.setSmartMotionMinOutputVelocity(Constants.Intake.minVel, Constants.Intake.slotID);
+        pidIntakeController.setSmartMotionMaxAccel(Constants.Intake.maxAcc, Constants.Intake.slotID);
+        pidIntakeController.setSmartMotionAllowedClosedLoopError(Constants.Intake.allowedErr, Constants.Intake.slotID);
 
         intakeMotor.setSpikeCurrentLimit(
-                Constants.Intake.IntakeCurrentLimit.kLimitToAmps,
-                Constants.Intake.IntakeCurrentLimit.kMaxSpikeTime,
-                Constants.Intake.IntakeCurrentLimit.kMaxSpikeAmps,
-                Constants.Intake.IntakeCurrentLimit.kSmartLimit);
+            Constants.Intake.IntakeCurrentLimit.kLimitToAmps,
+            Constants.Intake.IntakeCurrentLimit.kMaxSpikeTime,
+            Constants.Intake.IntakeCurrentLimit.kMaxSpikeAmps,
+            Constants.Intake.IntakeCurrentLimit.kSmartLimit
+        );
     }
 
     @Override
-    public void periodic() {
-    }
+    public void periodic() {}
 
     public void intakeStop() {
         pidIntakeController.setReference(0, CANSparkMax.ControlType.kSmartVelocity);
