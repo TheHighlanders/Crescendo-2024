@@ -11,7 +11,7 @@ import frc.robot.util.CANSparkMaxCurrent;
 import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
-
+    
     private CANSparkMaxCurrent bottomFlywheelMotor;
     private CANSparkMaxCurrent topFlywheelMotor;
     private RelativeEncoder bottomFlywheelEncoder;
@@ -19,10 +19,11 @@ public class Shooter extends SubsystemBase {
 
     private SparkPIDController pidBottom;
     private SparkPIDController pidTop;
-
+    
     private DigitalInput beamBreak;
-
+    
     public Shooter() {
+        beamBreak = new DigitalInput(1);
         /*----------------------------------------------------------------------------*/
         /* Bottom */
         /*----------------------------------------------------------------------------*/
@@ -52,8 +53,7 @@ public class Shooter extends SubsystemBase {
         pidTop.setI(Constants.Shooter.PIDValues.kI);
         pidTop.setD(Constants.Shooter.PIDValues.kD);
         pidTop.setIMaxAccum(Constants.Shooter.PIDValues.iMaxAccum, Constants.Shooter.slotID);
-
-        beamBreak = new DigitalInput(1);
+        
     }
 
     public void shoot(DoubleSupplier speed) {

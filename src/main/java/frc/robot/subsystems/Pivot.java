@@ -139,6 +139,7 @@ public class Pivot extends SubsystemBase {
         return intakeAtSetpoint() && shooterAtSetpoint();
     }
 
+    // must be still at specified position to be true
     public boolean intakeAtSetpoint() {
         return (
             Math.abs(cachedSetpointIntake - intakeAngleEncoder.getPosition()) <= Intake.Pivot.intakeAngleDeadzone &&
@@ -146,6 +147,7 @@ public class Pivot extends SubsystemBase {
         );
     }
 
+    // must be still at specified position to be true
     public boolean shooterAtSetpoint() {
         return (
             Math.abs(cachedSetpointShooter - shooterAngleEncoder.getPosition()) <= Shooter.Pivot.shooterAngleDeadzone &&
@@ -157,6 +159,7 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.set(speed);
     }
 
+    // used for linear actuator conversion
     public double convertAngleToDistanceInches(double angle) {
         return Math.hypot(
             Shooter.Pivot.actuatorConst.actuatorBaseDistY - Math.sin(angle) * Shooter.Pivot.actuatorConst.actuatorDist,

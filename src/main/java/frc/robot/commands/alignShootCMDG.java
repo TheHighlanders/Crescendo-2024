@@ -42,15 +42,19 @@ public class alignShootCMDG extends SequentialCommandGroup {
         // this should resolve before we start rotating hopefully
 
         addCommands(
+            // move swere to face speaker and align pivot
             new ParallelCommandGroup(
+                // align pivot, is finished when asSetpoints returns true
                 new FunctionalCommand(
                     () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
                     emptyRunnable::run,
                     emptyConsumable,
                     m_Pivot::atSetpoints
                 ),
+                // runs the swerve move to command to the angle of the speaker
                 new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker)
             ),
+            // runs the intake and the shooter for 3 seconds and then stops them when the time us up
             new ParallelDeadlineGroup(
                 new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop),
                 new StartEndCommand(() -> m_shooter.shoot(currentShotData::getRPM), m_shooter::shootCancel),
