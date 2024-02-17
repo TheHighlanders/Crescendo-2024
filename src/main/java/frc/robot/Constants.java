@@ -105,16 +105,9 @@ public final class Constants {
         public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
         public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
 
-        public static final Translation3d robotCameraTranslation0 = new Translation3d(
-            -0.0445,
-            -0.3175,
-            0.1778
-        ); //-x, -y, z
+        public static final Translation3d robotCameraTranslation0 = new Translation3d(-0.0445, -0.3175, 0.1778); //-x, -y, z
         public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, 0, -Math.PI / 2.0f);
-        public static final Transform3d kRobotCamera0 = new Transform3d(
-            robotCameraTranslation0,
-            robotCameraRotation0
-        );
+        public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
     }
 
     public static class Module {
@@ -141,14 +134,11 @@ public final class Constants {
         public static final double kWheelDiameter = Units.inchesToMeters(4);
         public static final double kWheelCircumfrence = kWheelDiameter * Math.PI;
 
-        public static final double kDrivePositionConversionFactor =
-            kDriveGearRatio * kWheelCircumfrence;
-        public static final double kDriveVelocityConverstionFactor =
-            kDrivePositionConversionFactor / 60.0f;
+        public static final double kDrivePositionConversionFactor = kDriveGearRatio * kWheelCircumfrence;
+        public static final double kDriveVelocityConverstionFactor = kDrivePositionConversionFactor / 60.0f;
 
         public static final double kAnglePositionConversionFactor = kAngleGearRatio * 360.0;
-        public static final double kAngleVelocityConverstionFactor =
-            kAnglePositionConversionFactor / 60.0f;
+        public static final double kAngleVelocityConverstionFactor = kAnglePositionConversionFactor / 60.0f;
 
         public static final double kPAngle = 0.05; // AIR 0.01;
         public static final double kIAngle = 0; // AIR 0;
@@ -179,15 +169,9 @@ public final class Constants {
             public static final int driveMotorID = 10;
             public static final int angleMotorID = 11;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-                Math.toRadians(76.97476923465729)
-            );
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
 
-            public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(
-                driveMotorID,
-                angleMotorID,
-                absoluteEncoderOffset
-            );
+            public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
 
         public static class FrontRight {
@@ -195,15 +179,9 @@ public final class Constants {
             public static final int driveMotorID = 20;
             public static final int angleMotorID = 21;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-                Math.toRadians(59.69142973423005)
-            );
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(59.69142973423005));
 
-            public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(
-                driveMotorID,
-                angleMotorID,
-                absoluteEncoderOffset
-            );
+            public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
 
         public static class BackLeft {
@@ -211,15 +189,9 @@ public final class Constants {
             public static final int driveMotorID = 40;
             public static final int angleMotorID = 41;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-                Math.toRadians(131.00274682044983)
-            );
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(131.00274682044983));
 
-            public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(
-                driveMotorID,
-                angleMotorID,
-                absoluteEncoderOffset
-            );
+            public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
 
         public static class BackRight {
@@ -227,15 +199,9 @@ public final class Constants {
             public static final int driveMotorID = 30;
             public static final int angleMotorID = 31;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(
-                Math.toRadians(170.9482741355896)
-            );
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(170.9482741355896));
 
-            public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(
-                driveMotorID,
-                angleMotorID,
-                absoluteEncoderOffset
-            );
+            public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
     }
 
@@ -251,7 +217,8 @@ public final class Constants {
 
         public static final int bottomFlywheelMotorID = 103;
         public static final int topFlywheelMotorID = 104;
-        public static final double kBottomRatio = (1 / 5.0f);
+        public static final double kBottomGearRatio = (1 / 5.0f);
+        public static final double kBottomVelocityConversionFactor = kBottomGearRatio / 60f;
         public static final double kTopRatio = (1 / 5.0f);
         public static final int slotID = 0;
 
@@ -300,8 +267,7 @@ public final class Constants {
 
             public static class actuatorConst {
 
-                public static final double inchesToRotationsConversion =
-                    Units.metersToInches(0.012) * shooterPivotRatio;
+                public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
                 public static final double actuatorDist = Math.hypot(3.25, 6.68); // Inches
                 public static final double actuatorBaseDistX = 20.25;
                 public static final double actuatorBaseDistY = -4.375;

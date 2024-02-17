@@ -7,6 +7,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
+import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
 
@@ -26,7 +27,8 @@ public class Shooter extends SubsystemBase {
         bottomFlywheelMotor =
             new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
         bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
-        bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomRatio);
+        bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomGearRatio);
+        bottomFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
         bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidBottom = bottomFlywheelMotor.getPIDController();
@@ -58,9 +60,9 @@ public class Shooter extends SubsystemBase {
         pidTop.setIMaxAccum(Constants.Shooter.PIDValues.iMaxAccum, Constants.Shooter.slotID);
     }
 
-    public void shoot() {
-        pidBottom.setReference(1, CANSparkMax.ControlType.kVelocity);
-        pidTop.setReference(1, CANSparkMax.ControlType.kVelocity);
+    public void shoot(DoubleSupplier speed) {
+        pidBottom.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        pidTop.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
     }
 
     public void shootCancel() {
@@ -69,8 +71,6 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        // TODO: tell when the game peace leaves the shooter (could be button press or
-        // check current draw)
         return true;
     }
 

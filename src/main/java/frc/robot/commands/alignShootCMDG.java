@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Intake;
 import frc.robot.util.InterpolatableShotData;
 import java.util.function.Consumer;
 
@@ -25,42 +25,34 @@ public class alignShootCMDG extends SequentialCommandGroup {
     public final Swerve m_Swerve;
     public final Localizer m_Localizer;
 
-    Runnable emptyRunnable = () -> {
-    };
+    Runnable emptyRunnable = () -> {};
 
-    Consumer<Boolean> emptyConsumable = t -> {
-    };
+    Consumer<Boolean> emptyConsumable = t -> {};
 
-    public alignShootCMDG(
-            Shooter shoot,
-            Intake intake,
-            Pivot pivot,
-            Swerve swerve,
-            Localizer localizer) {
+    public alignShootCMDG(Shooter shoot, Intake intake, Pivot pivot, Swerve swerve, Localizer localizer) {
         m_shooter = shoot;
         m_intake = intake;
         m_Pivot = pivot;
         m_Swerve = swerve;
         m_Localizer = localizer;
 
-        InterpolatableShotData currentShotData = m_Pivot.interpolate(
-                m_Localizer.getDistanceToSpeaker());
+        InterpolatableShotData currentShotData = m_Pivot.interpolate(m_Localizer.getDistanceToSpeaker());
         // this should resolve before we start rotating hopefully
 
         addCommands(
-                new ParallelCommandGroup(
-                        new FunctionalCommand(
-                                () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
-                                emptyRunnable::run,
-                                emptyConsumable,
-                                m_Pivot::atSetpoints),
-                        new SwerveMoveToCMD(m_Swerve, () -> localizer.getAngleToSpeaker())),
-                new ParallelRaceGroup(
-                        new StartEndCommand(m_shooter::shoot, m_shooter::shootCancel),
-                        new FunctionalCommand(
-                                m_intake::intakeReverse,
-                                emptyRunnable::run,
-                                v -> m_intake.intakeStop(),
-                                m_shooter::hasGamePiece)));
+            new ParallelCommandGroup(
+                new FunctionalCommand(
+                    () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
+                    emptyRunnable::run,
+                    emptyConsumable,
+                    m_Pivot::atSetpoints
+                ),
+                new SwerveMoveToCMD(m_Swerve, () -> localizer.getAngleToSpeaker())
+            ),
+            new ParallelRaceGroup(
+                new StartEndCommand(() -> m_shooter.shoot(currentShotData::getRPM), m_shooter::shootCancel),
+                new FunctionalCommand(m_intake::intakeReverse, emptyRunnable::run, v -> m_intake.intakeStop(), m_shooter::hasGamePiece)
+            )
+        );
     }
 }
