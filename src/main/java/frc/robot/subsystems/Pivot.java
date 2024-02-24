@@ -24,14 +24,14 @@ public class Pivot extends SubsystemBase {
 
     //private CANSparkMaxCurrent intakeAngleMotor;
     //private RelativeEncoder intakeAngleEncoder;
-    private SparkPIDController pidIntakeAngleController;
+    //private SparkPIDController pidIntakeAngleController;
 
     private CANSparkMaxCurrent shooterAngleMotor;
     private RelativeEncoder shooterAngleEncoder;
     private SparkPIDController pidShooterAngleController;
 
-    private DutyCycleEncoder absolShooter;
-    private DutyCycleEncoder absolIntake;
+    //private DutyCycleEncoder absolShooter;
+    //private DutyCycleEncoder absolIntake;
 
     //private double cachedSetpointIntake = 0;
     private double cachedSetpointShooter = 0;
@@ -71,7 +71,7 @@ public class Pivot extends SubsystemBase {
         /*----------------------------------------------------------------------------*/
         /* Shooter */
         /*----------------------------------------------------------------------------*/
-        absolShooter = new DutyCycleEncoder(Shooter.Pivot.kAbsolDutyCycleDIOPin);
+        //absolShooter = new DutyCycleEncoder(Shooter.Pivot.kAbsolDutyCycleDIOPin);
 
         shooterAngleMotor = new CANSparkMaxCurrent(Shooter.Pivot.SHOOTER, MotorType.kBrushless);
         shooterAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -92,7 +92,7 @@ public class Pivot extends SubsystemBase {
             Shooter.Pivot.ArmCurrentLimit.kSmartLimit
         );
 
-        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(absolShooter.get() + absolIntake.get()));
+        //shooterAngleEncoder.setPosition(convertAngleToDistanceInches(absolShooter.get() + absolIntake.get()));
     }
 
     public InterpolatableShotData interpolate(double dist) {
@@ -105,8 +105,8 @@ public class Pivot extends SubsystemBase {
             double angleSupplied = angle.getAsDouble();
             cachedSetpointShooter = convertAngleToDistanceInches(angleSupplied);
             //cachedSetpointIntake = angleSupplied;
-            pidIntakeAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
-            intakeDeployed = false;
+            //pidIntakeAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
+            //intakeDeployed = false;
 
             pidShooterAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
             return true;
@@ -117,7 +117,7 @@ public class Pivot extends SubsystemBase {
 
     /** Moves intake back into robot, matching its angle to the shooter */
     public void intakeIn() {
-        pidIntakeAngleController.setReference(shooterAngleEncoder.getPosition(), ControlType.kPosition);
+        //pidIntakeAngleController.setReference(shooterAngleEncoder.getPosition(), ControlType.kPosition);
         //cachedSetpointIntake = shooterAngleEncoder.getPosition();
         intakeDeployed = false;
     }

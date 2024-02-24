@@ -22,6 +22,7 @@ import frc.robot.commands.PIDweird;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.InterpolatableShotData;
 import frc.robot.subsystems.Pivot;
 
 import java.sql.Driver;
@@ -53,6 +54,7 @@ public class RobotContainer {
     /* Auton */
     private SendableChooser<Command> autoChooser;
 
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -71,6 +73,9 @@ public class RobotContainer {
 
         driver.y().onTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(1)));
         driver.x().onTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(-1)));
+
+        driver.a().onTrue(new InstantCommand(() -> s_Pivot.alignPivot(s_Pivot.interpolate(30)::getArmAngle)));
+        driver.b().onTrue(new InstantCommand(() -> s_Pivot.alignPivot(s_Pivot.interpolate(20)::getArmAngle)));
 
         //driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
         //driver.b().onTrue(new InstantCommand(s_Shooter::shootCancel));
