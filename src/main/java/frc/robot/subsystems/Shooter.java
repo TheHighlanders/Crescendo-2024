@@ -24,18 +24,18 @@ public class Shooter extends SubsystemBase {
                 MotorType.kBrushless);
         bottomFlywheelMotor.setCurrent(1);
         bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
-        bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomRatio);
+        bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomGearRatio);
         bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
 
 
         pidBottom = bottomFlywheelMotor.getPIDController();
-        // pidBottom.setOutputRange(Constants.Shooter.pidValues.minOut,
-        //         Constants.Shooter.pidValues.maxOut);
-        pidBottom.setP(Constants.Shooter.pidValues.kP);
-        pidBottom.setI(Constants.Shooter.pidValues.kI);
-        pidBottom.setD(Constants.Shooter.pidValues.kD);
-        // pidBottom.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
+        // pidBottom.setOutputRange(Constants.Shooter.PIDValues.minOut,
+        //         Constants.Shooter.PIDValues.maxOut);
+        pidBottom.setP(Constants.Shooter.PIDValues.kP);
+        pidBottom.setI(Constants.Shooter.PIDValues.kI);
+        pidBottom.setD(Constants.Shooter.PIDValues.kD);
+        // pidBottom.setIMaxAccum(Constants.Shooter.PIDValues.iMaxAccum, Constants.Shooter.slotID);
         // pidBottom.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
         // pidBottom.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel,
         //         Constants.Shooter.slotID);
@@ -51,12 +51,12 @@ public class Shooter extends SubsystemBase {
         topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         pidTop = topFlywheelMotor.getPIDController();
-        // pidTop.setOutputRange(Constants.Shooter.pidValues.minOut,
-        //         Constants.Shooter.pidValues.maxOut);
-        pidTop.setP(Constants.Shooter.pidValues.kP);
-        pidTop.setI(Constants.Shooter.pidValues.kI);
-        pidTop.setD(Constants.Shooter.pidValues.kD);
-        // pidTop.setIMaxAccum(Constants.Shooter.pidValues.iMaxAccum, Constants.Shooter.slotID);
+        // pidTop.setOutputRange(Constants.Shooter.PIDValues.minOut,
+        //         Constants.Shooter.PIDValues.maxOut);
+        pidTop.setP(Constants.Shooter.PIDValues.kP);
+        pidTop.setI(Constants.Shooter.PIDValues.kI);
+        pidTop.setD(Constants.Shooter.PIDValues.kD);
+        // pidTop.setIMaxAccum(Constants.Shooter.PIDValues.iMaxAccum, Constants.Shooter.slotID);
         // pidTop.setSmartMotionMaxVelocity(Constants.Shooter.maxVel, Constants.Shooter.slotID);
         // pidTop.setSmartMotionMinOutputVelocity(Constants.Shooter.minVel, Constants.Shooter.slotID);
         // pidTop.setSmartMotionMaxAccel(Constants.Shooter.maxAcc, Constants.Shooter.slotID);
