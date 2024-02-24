@@ -47,7 +47,7 @@ public class RobotContainer {
 
     /* Subsystems */
     //public final Swerve s_Swerve = new Swerve();
-    public final Shooter s_Shooter = new Shooter();
+    //public final Shooter s_Shooter = new Shooter();
     public final Pivot s_Pivot = new Pivot();
 
     /* Auton */
@@ -70,14 +70,14 @@ public class RobotContainer {
         //driver.a().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
 
         driver.y().onTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(1)));
-        driver.a().onTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(-1)));
+        driver.x().onTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(-1)));
 
-        driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
-        driver.b().onTrue(new InstantCommand(s_Shooter::shootCancel));
+        //driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
+        //driver.b().onTrue(new InstantCommand(s_Shooter::shootCancel));
     }
 
     private void configureAuton() {
-        s_Shooter.shootCancel();
+        //s_Shooter.shootCancel();
 
         autoChooser = AutoBuilder.buildAutoChooser();
 
