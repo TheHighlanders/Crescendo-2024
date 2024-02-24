@@ -69,6 +69,9 @@ public class RobotContainer {
         //driver.y().onTrue(new InstantCommand(s_Swerve::zeroGyro));
         //driver.a().onTrue(new InstantCommand(s_Swerve::resetAllModulestoAbsol));
 
+        driver.y().onTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(1)));
+        driver.a().onTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(-1)));
+
         driver.x().onTrue(new InstantCommand(s_Shooter::shoot));
         driver.b().onTrue(new InstantCommand(s_Shooter::shootCancel));
     }

@@ -159,6 +159,10 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.set(speed.getAsDouble());
     }
 
+    public void driveShooterAngleManual(double speed) {
+        shooterAngleMotor.set(speed);
+    }
+
     // used for linear actuator conversion
     public double convertAngleToDistanceInches(double angle) {
         return Math.hypot(
