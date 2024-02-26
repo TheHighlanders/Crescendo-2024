@@ -27,8 +27,6 @@ public class Robot extends TimedRobot {
     private double currentVeloc = 2.5;
     private RobotContainer m_robotContainer;
 
-    private static String rbgData = "0";
-
     /**
      * This function is run when the robot is first started up and should be used
      * for any
@@ -36,7 +34,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        SmartDashboard.putString("RGB send value", rbgData);
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our
         // autonomous chooser on the dashboard.
@@ -84,12 +81,7 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {
-        // SequentialCommandGroup(new InstantCommand(()-> new WaitCommand(15)));
-        DriverStation.reportError("TACO CAT", false);
-        //  new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), new WaitCommand(1),new InstantCommand(()->s_RGB.changeString("7")), new WaitCommand(1));
-
-    }
+    public void autonomousPeriodic() {}
 
     @Override
     public void teleopInit() {

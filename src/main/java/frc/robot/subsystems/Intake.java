@@ -6,9 +6,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -18,13 +17,12 @@ import frc.robot.util.CANSparkMaxCurrent;
 
 public class Intake extends SubsystemBase {
 
-    public CANSparkMaxCurrent intakeMotor;
-    public RelativeEncoder intakeEncoder;
-    public SparkPIDController pidIntakeController;
+    private CANSparkMaxCurrent intakeMotor;
 
-    public DigitalInput beamBreak;
+    private DigitalInput beamBreak;
 
-    public boolean hasGamePiece;
+    private boolean hasGamePiece;
+    private boolean override = false;
 
     public Intake() {
         this.hasGamePiece = true;
@@ -34,8 +32,6 @@ public class Intake extends SubsystemBase {
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
 
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-
-        intakeEncoder = intakeMotor.getEncoder();
 
         intakeMotor.setSpikeCurrentLimit(
             Constants.Intake.IntakeCurrentLimit.kLimitToAmps,
@@ -55,12 +51,13 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean gamePieceDetectionOverride() {
-        hasGamePiece = !hasGamePiece;
-        return hasGamePiece;
+        override = !override;
+        DriverStation.reportWarning("Gamepiece override " + override, false);
+        return hasGamePiece();
     }
 
     public boolean hasGamePiece() {
-        return hasGamePiece;
+        return hasGamePiece == !override;
     }
 
     public void intakeStop() {

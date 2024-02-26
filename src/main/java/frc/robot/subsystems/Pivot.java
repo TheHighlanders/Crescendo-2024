@@ -64,7 +64,7 @@ public class Pivot extends SubsystemBase {
             Intake.Pivot.ArmCurrentLimit.kSmartLimit
         );
 
-        intakeAngleEncoder.setPosition(absolIntake.get());
+        intakeAngleEncoder.setPosition(getIntakeAbsolutePosition());
 
         intakeDeployed = false;
 
@@ -92,11 +92,20 @@ public class Pivot extends SubsystemBase {
             Shooter.Pivot.ArmCurrentLimit.kSmartLimit
         );
 
-        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(absolShooter.get() + absolIntake.get()));
+        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(getShooterAbsolutePosition() + getIntakeAbsolutePosition()));
     }
 
     public InterpolatableShotData interpolate(double dist) {
         return iTreeMapContainer.interpolate(dist);
+    }
+
+    // Encoder offsets
+    public double getShooterAbsolutePosition() {
+        return (absolShooter.get() * 360 + Shooter.Pivot.absoluteEncoderOffset) * Shooter.Pivot.multiplicand;
+    }
+
+    public double getIntakeAbsolutePosition() {
+        return (absolIntake.get() * 360 + Intake.Pivot.absoluteEncoderOffset) * Intake.Pivot.multiplicand;
     }
 
     /**Aligns both intake and shooter to a given angle */
