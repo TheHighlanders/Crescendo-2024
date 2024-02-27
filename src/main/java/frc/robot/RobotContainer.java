@@ -106,20 +106,20 @@ public class RobotContainer {
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
         operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY()))); // Manual Pivot Angle Control
         operator
-            .rightTrigger()
+            .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1 
             .whileTrue(
                 new FunctionalCommand(
-                    () -> {},
+                    () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000);
+                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000); //Execute
                     },
                     v -> {
-                        s_Shooter.shootCancel();
+                        s_Shooter.shootCancel(); // End
                     },
                     () -> {
-                        return false;
+                        return false; // Is Finished
                     },
-                    s_Shooter
+                    s_Shooter // Requirements
                 )
             );
     }
