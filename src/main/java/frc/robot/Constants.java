@@ -231,7 +231,7 @@ public final class Constants {
 
             public static final boolean isInversed = false;
             public static final int multiplicand = (isInversed ? -1 : 1);
-            public static final int kAbsolDutyCycleDIOPin = 0;
+            public static final int kAbsolDutyCycleDIOPin = 1;
             public static final double absoluteEncoderOffset = 0d;
 
             public static final double readyAngle = 0;
@@ -291,7 +291,7 @@ public final class Constants {
 
             public static final boolean isInversed = false;
             public static final int multiplicand = (isInversed ? -1 : 1);
-            public static final int kAbsolDutyCycleDIOPin = 1;
+            public static final int kAbsolDutyCycleDIOPin = 0;
             public static final double absoluteEncoderOffset = 0d;
 
             public static final double intakeOutAngle = 0;
