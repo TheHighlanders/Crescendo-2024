@@ -202,8 +202,8 @@ public final class Constants {
 
     public static final class ClimberConsts {
 
-        public static final int CLIMBER_LEFT = 50;
-        public static final int CLIMBER_RIGHT = 51;
+        public static final int CLIMBER_LEFT = 61;
+        public static final int CLIMBER_RIGHT = 62;
 
         public static final int kServoRightID = 3;
         public static final int kServoLeftID = 4;
