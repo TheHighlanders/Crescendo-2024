@@ -211,6 +211,8 @@ public final class Constants {
         public static final double kTopRatio = (1 / 5.0f);
         public static final int slotID = 0;
 
+        public static final int kShooterBeamBreakDIOPin = 0;
+
         public static class PIDValues {
 
             public static final double minOut = -1;
@@ -272,7 +274,7 @@ public final class Constants {
         public static final int INTAKE = 0;
         public static final int slotID = 0;
 
-        public static final double kGamePieceDetectionCurrent = 1;
+        public static final int kIntakeBeamBreakDIOPin = 0;
 
         public static class IntakeCurrentLimit {
 

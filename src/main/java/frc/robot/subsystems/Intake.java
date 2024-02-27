@@ -28,7 +28,7 @@ public class Intake extends SubsystemBase {
         this.hasGamePiece = true;
         this.override = false;
 
-        beamBreak = new DigitalInput(0);
+        beamBreak = new DigitalInput(Constants.Intake.kIntakeBeamBreakDIOPin);
 
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
 

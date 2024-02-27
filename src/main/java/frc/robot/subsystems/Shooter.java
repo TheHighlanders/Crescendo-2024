@@ -23,7 +23,7 @@ public class Shooter extends SubsystemBase {
     private DigitalInput beamBreak;
 
     public Shooter() {
-        beamBreak = new DigitalInput(1);
+        beamBreak = new DigitalInput(Constants.Shooter.kShooterBeamBreakDIOPin);
         /*----------------------------------------------------------------------------*/
         /* Bottom */
         /*----------------------------------------------------------------------------*/
