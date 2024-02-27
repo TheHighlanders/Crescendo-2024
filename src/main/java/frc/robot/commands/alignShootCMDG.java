@@ -4,10 +4,11 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -47,20 +48,16 @@ public class alignShootCMDG extends SequentialCommandGroup {
             // move swere to face speaker and align pivot
             new ParallelCommandGroup(
                 // align pivot, is finished when asSetpoints returns true
-                new FunctionalCommand(
-                    () -> m_Pivot.alignPivot(currentShotData::getArmAngle),
-                    emptyRunnable::run,
-                    emptyConsumable,
-                    m_Pivot::atSetpoints
-                ),
+                new InstantCommand(() -> m_Pivot.alignPivot(currentShotData::getArmAngle)),
                 // runs the swerve move to command to the angle of the speaker
-                new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker)
+                new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker),
+                new WaitUntilCommand(m_Pivot::atSetpoints)
             ),
             // runs the intake and the shooter for 3 seconds and then stops them when the time us up
             new ParallelDeadlineGroup(
                 new ParallelRaceGroup(
-                    new SequentialCommandGroup(new WaitUntilCommand(() -> !(shoot.getBeamBreak() || intake.hasGamePiece())), new WaitCommand(0.5)),
-                    new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop)
+                    new WaitUntilCommand(() -> !(shoot.getBeamBreak() || intake.hasGamePiece())).andThen(new WaitCommand(0.5)),
+                    new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()))
                 ),
                 new StartEndCommand(() -> m_shooter.shoot(currentShotData::getRPM), m_shooter::shootCancel),
                 new StartEndCommand(m_intake::intakeReverse, m_intake::intakeStop)

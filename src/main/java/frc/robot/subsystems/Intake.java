@@ -73,4 +73,8 @@ public class Intake extends SubsystemBase {
         override = false;
         intakeMotor.set(-1);
     }
+
+    public boolean getGamePieceDetectionOverride() {
+        return override;
+    }
 }
