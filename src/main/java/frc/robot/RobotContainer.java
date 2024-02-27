@@ -11,15 +11,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
-import frc.robot.commands.deployIntakeCMD;
-import frc.robot.commands.runIntakeCMD;
+import frc.robot.commands.alignShootCMDG;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
@@ -61,10 +58,9 @@ public class RobotContainer {
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
     public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
     public static RGB s_RGB = new RGB();
-    
+
     /* Auton */
     private SendableChooser<Command> autoChooser;
-
 
     public static Command deployIntakeCMD = new InstantCommand(
         () -> {
@@ -81,8 +77,8 @@ public class RobotContainer {
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
     public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
 
+    public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer);
 
-    
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -105,6 +101,27 @@ public class RobotContainer {
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
         driver.leftBumper().whileTrue(deployIntakeCMD); //new deployIntakeCMD(s_Pivot)
         operator.x().onTrue(gamePieceOverrideCMD);
+
+        /* Shooter Button Bindings */
+        operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
+        operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY()))); // Manual Pivot Angle Control
+        operator
+            .rightTrigger()
+            .whileTrue(
+                new FunctionalCommand(
+                    () -> {},
+                    () -> {
+                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000);
+                    },
+                    v -> {
+                        s_Shooter.shootCancel();
+                    },
+                    () -> {
+                        return false;
+                    },
+                    s_Shooter
+                )
+            );
     }
 
     private void configureAuton() {
