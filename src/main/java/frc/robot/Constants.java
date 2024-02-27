@@ -153,8 +153,8 @@ public final class Constants {
 
         public static class FrontLeft {
 
-            public static final int driveMotorID = 10;
-            public static final int angleMotorID = 11;
+            public static final int driveMotorID = 1;
+            public static final int angleMotorID = 2;
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
 
@@ -163,8 +163,8 @@ public final class Constants {
 
         public static class FrontRight {
 
-            public static final int driveMotorID = 20;
-            public static final int angleMotorID = 21;
+            public static final int driveMotorID = 11;
+            public static final int angleMotorID = 12;
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(59.69142973423005));
 
@@ -173,8 +173,8 @@ public final class Constants {
 
         public static class BackLeft {
 
-            public static final int driveMotorID = 40;
-            public static final int angleMotorID = 41;
+            public static final int driveMotorID = 21;
+            public static final int angleMotorID = 22;
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(131.00274682044983));
 
@@ -183,8 +183,8 @@ public final class Constants {
 
         public static class BackRight {
 
-            public static final int driveMotorID = 30;
-            public static final int angleMotorID = 31;
+            public static final int driveMotorID = 31;
+            public static final int angleMotorID = 32;
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(170.9482741355896));
 
@@ -198,6 +198,128 @@ public final class Constants {
         public static final float aTolerance = 0.5f;
 
         public static final float aVelocityTolerance = 1;
+    }
+
+    public static class Shooter {
+
+        public static double kWaitTimeBeforeStop = 3; //seconds
+
+        public static final int bottomFlywheelMotorID = 51;
+        public static final int topFlywheelMotorID = 52;
+        public static final double kBottomGearRatio = (1 / 5.0f);
+        public static final double kBottomVelocityConversionFactor = kBottomGearRatio / 60f;
+        public static final double kTopRatio = (1 / 5.0f);
+        public static final int slotID = 0;
+
+        public static final int kShooterBeamBreakDIOPin = 0;
+
+        public static class PIDValues {
+
+            public static final double minOut = -1;
+            public static final double maxOut = 1;
+            public static final double kP = 0d;
+            public static final double kI = 0d;
+            public static final double kD = 0d;
+            public static final double kMaxI = 0d;
+            public static final double iMaxAccum = 0d;
+        }
+
+        public static class Pivot {
+
+            public static final int SHOOTER = 41;
+            public static final int slotID = 0;
+
+            public static final boolean isInversed = false;
+            public static final int multiplicand = (isInversed ? -1 : 1);
+            public static final int kAbsolDutyCycleDIOPin = 1;
+            public static final double absoluteEncoderOffset = 0d;
+
+            public static final double readyAngle = 0;
+
+            public static final double shooterPivotRatio = 1 / 7.0f;
+
+            public static final float shooterAngleDeadzone = 0.1f;
+
+            public static class PIDValues {
+
+                public static final double minOut = -1;
+                public static final double maxOut = 1;
+                public static final double kP = 0d;
+                public static final double kI = 0d;
+                public static final double kD = 0d;
+                public static final double kMaxI = 0d;
+                public static final double iMaxAccum = 0d;
+            }
+
+            public static class ArmCurrentLimit {
+
+                public static final double kLimitToAmps = 40.0f;
+                public static final double kMaxSpikeTime = 25.0f;
+                public static final double kMaxSpikeAmps = 40.0f;
+                public static final int kSmartLimit = 40;
+            }
+
+            public static class actuatorConst {
+
+                public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
+                public static final double actuatorDist = Math.hypot(3.25, 6.68); // Inches
+                public static final double actuatorBaseDistX = 20.25;
+                public static final double actuatorBaseDistY = -4.375;
+            }
+        }
+    }
+
+    public static class Intake {
+
+        public static final int INTAKE = 53;
+        public static final int slotID = 0;
+
+        public static final int kIntakeBeamBreakDIOPin = 0;
+
+        public static class IntakeCurrentLimit {
+
+            public static final double kLimitToAmps = 40.0f;
+            public static final double kMaxSpikeTime = 25.0f;
+            public static final double kMaxSpikeAmps = 40.0f;
+            public static final int kSmartLimit = 40;
+        }
+
+        public static class Pivot {
+
+            public static final int INTAKE = 42;
+            public static final int slotID = 0;
+
+            public static final boolean isInversed = false;
+            public static final int multiplicand = (isInversed ? -1 : 1);
+            public static final int kAbsolDutyCycleDIOPin = 0;
+            public static final double absoluteEncoderOffset = 0d;
+
+            public static final double intakeOutAngle = 0;
+            public static final double readyAngle = 0;
+
+            public static final double intakePivotRatio = 1 / 36.0f;
+
+            public static final float intakeAngleDeadzone = 0.1f;
+
+            public static class PIDValues {
+
+                public static final double minOut = -1;
+                public static final double maxOut = 1;
+                public static final double kP = 0d;
+                public static final double kI = 0d;
+                public static final double kD = 0d;
+                public static final double kMaxI = 0d;
+                public static final double iMaxAccum = 0d;
+            }
+
+            public static class ArmCurrentLimit {
+
+                public static final double kLimitToAmps = 40.0f;
+                public static final double kMaxSpikeTime = 25.0f;
+                public static final double kMaxSpikeAmps = 40.0f;
+                public static final int kSmartLimit = 40;
+            }
+        }
     }
 
     public static final class ClimberConsts {

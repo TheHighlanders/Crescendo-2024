@@ -23,10 +23,9 @@ public class Climber extends SubsystemBase {
     public boolean servoLeftOut = false;
     public boolean servoRightOut = false;
 
-
     /** Creates a new intake. */
     public Climber() {
-        climberMotorRight = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER_LEFT, MotorType.kBrushless);
+        climberMotorLeft = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER_LEFT, MotorType.kBrushless);
         climberMotorLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         climberMotorRight = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER_RIGHT, MotorType.kBrushless);
@@ -46,30 +45,30 @@ public class Climber extends SubsystemBase {
         climberMotorRight.set(speed);
         climberMotorLeft.set(-speed);
 
-        if(!servoLeftOut){
+        if (!servoLeftOut) {
             servoLeft.set(1);
             servoLeftOut = true;
         }
 
-        if(!servoRightOut){
+        if (!servoRightOut) {
             servoRight.set(1);
             servoRightOut = true;
         }
     }
 
-    public void climbLeft(double speed){
+    public void climbLeft(double speed) {
         climberMotorLeft.set(-speed);
 
-        if(!servoLeftOut){
+        if (!servoLeftOut) {
             servoLeft.set(1);
             servoLeftOut = true;
         }
     }
 
-    public void climbRight(double speed){
+    public void climbRight(double speed) {
         climberMotorRight.set(speed);
-        
-        if(!servoRightOut){
+
+        if (!servoRightOut) {
             servoRight.set(1);
             servoRightOut = true;
         }
