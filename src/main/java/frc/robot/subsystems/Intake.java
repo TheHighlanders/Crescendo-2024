@@ -22,10 +22,11 @@ public class Intake extends SubsystemBase {
     private DigitalInput beamBreak;
 
     private boolean hasGamePiece;
-    private boolean override = false;
+    private boolean override;
 
     public Intake() {
         this.hasGamePiece = true;
+        this.override = false;
 
         beamBreak = new DigitalInput(0);
 
@@ -57,7 +58,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        return hasGamePiece == !override;
+        return hasGamePiece || override;
     }
 
     public void intakeStop() {
@@ -69,6 +70,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void intakeReverse() {
+        override = false;
         intakeMotor.set(-1);
     }
 }

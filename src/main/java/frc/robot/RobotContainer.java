@@ -11,7 +11,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.deployIntakeCMD;
@@ -57,10 +61,28 @@ public class RobotContainer {
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
     public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
     public static RGB s_RGB = new RGB();
-
+    
     /* Auton */
     private SendableChooser<Command> autoChooser;
 
+
+    public static Command deployIntakeCMD = new InstantCommand(
+        () -> {
+            if (s_Pivot.getIntakeDeploy()) {
+                s_Pivot.intakeIn();
+            } else {
+                s_Pivot.intakeOut();
+            }
+        },
+        s_Pivot
+    );
+
+    public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
+    public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
+    public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
+
+
+    
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -79,10 +101,10 @@ public class RobotContainer {
         driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
 
         /* Intake Button Bindings */
-        driver.start().onTrue(new runIntakeCMD(s_Intake, false)); // Runs intake out
-        driver.rightBumper().onTrue(new runIntakeCMD(s_Intake, true)); // Runs intake in
-        driver.leftBumper().onTrue(new deployIntakeCMD(s_Pivot));
-        operator.x().onTrue(new InstantCommand(s_Intake::gamePieceDetectionOverride));
+        driver.start().whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
+        driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
+        driver.leftBumper().whileTrue(deployIntakeCMD); //new deployIntakeCMD(s_Pivot)
+        operator.x().onTrue(gamePieceOverrideCMD);
     }
 
     private void configureAuton() {
