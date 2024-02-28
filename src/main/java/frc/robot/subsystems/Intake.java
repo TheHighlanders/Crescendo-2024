@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         hasGamePiece = beamBreak.get();
 
-        RobotContainer.s_RGB.setLED((hasGamePiece ? State.ORANGESOLID : State.ORANGEBLINK));
+        // RobotContainer.s_RGB.setLED((hasGamePiece ? State.ORANGESOLID : State.ORANGEBLINK));
 
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
     }

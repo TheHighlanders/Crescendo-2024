@@ -102,11 +102,11 @@ public class Pivot extends SubsystemBase {
 
     // Encoder offsets
     public double getShooterAbsolutePosition() {
-        return (absolShooter.get() * 360 + Shooter.Pivot.absoluteEncoderOffset) * Shooter.Pivot.multiplicand;
+        return ((absolShooter.get() * 360) - Shooter.Pivot.absoluteEncoderOffset) * Shooter.Pivot.multiplicand;
     }
 
     public double getIntakeAbsolutePosition() {
-        return (absolIntake.get() * 360 + Intake.Pivot.absoluteEncoderOffset) * Intake.Pivot.multiplicand;
+        return ((absolIntake.get() * 360) - Intake.Pivot.absoluteEncoderOffset) * Intake.Pivot.multiplicand;
     }
 
     /**Aligns both intake and shooter to a given angle */
@@ -186,7 +186,10 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
 
-        SmartDashboard.putNumber("Intake Encoder Value", absolIntake.get());
-        SmartDashboard.putNumber("Shooter Encoder Value", absolShooter.get());
+        SmartDashboard.putNumber("Intake Angle Value", getIntakeAbsolutePosition());
+        SmartDashboard.putNumber("Shooter Composed Angle Value", getShooterAbsolutePosition() + getIntakeAbsolutePosition());
+        SmartDashboard.putNumber("Shooter Measured Angle Value", getShooterAbsolutePosition());
+        SmartDashboard.putNumber("Intake Rots", absolIntake.get());
+        SmartDashboard.putNumber("Shooter Rots", absolShooter.get());
     }
 }

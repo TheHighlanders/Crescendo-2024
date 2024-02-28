@@ -234,7 +234,7 @@ public class Swerve extends SubsystemBase {
         double[] wheelSpeeds = new double[4];
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Actual", m.driveEncoder.getVelocity());
-            wheelSpeeds[m.driveMotor.getDeviceId() / 10 - 1] = m.driveEncoder.getVelocity();
+            wheelSpeeds[m.driveMotor.getDeviceId() / 10] = m.driveEncoder.getVelocity();
         }
 
         SmartDashboard.putNumber(
