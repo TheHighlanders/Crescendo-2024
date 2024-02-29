@@ -56,8 +56,10 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot(DoubleSupplier speed) {
-        pidBottom.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
-        pidTop.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        //pidBottom.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        //pidTop.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        topFlywheelMotor.set(speed.getAsDouble());
+        bottomFlywheelMotor.set(speed.getAsDouble());
     }
 
     public void shootCancel() {

@@ -211,7 +211,7 @@ public final class Constants {
         public static final double kTopRatio = (1 / 5.0f);
         public static final int slotID = 0;
 
-        public static final int kShooterBeamBreakDIOPin = 2;
+        public static final int kShooterBeamBreakDIOPin = 6;
 
         public static class PIDValues {
 
@@ -230,8 +230,8 @@ public final class Constants {
             public static final int slotID = 0;
 
             public static final boolean isInversed = true;
-            public static final int multiplicand = (isInversed ? -1 : 1);
-            public static final int kAbsolDutyCycleDIOPin = 1;
+            public static final int inversionFactor = (isInversed ? -1 : 1);
+            public static final int kAbsolDutyCycleDIOPin = 2;
             public static final double absoluteEncoderOffset = 69.86439174660984;
 
             public static final double readyAngle = 0;
@@ -244,7 +244,7 @@ public final class Constants {
 
                 public static final double minOut = -1;
                 public static final double maxOut = 1;
-                public static final double kP = 0d;
+                public static final double kP = 0.1d;
                 public static final double kI = 0d;
                 public static final double kD = 0d;
                 public static final double kMaxI = 0d;
@@ -274,7 +274,7 @@ public final class Constants {
         public static final int INTAKE = 53;
         public static final int slotID = 0;
 
-        public static final int kIntakeBeamBreakDIOPin = 3;
+        public static final int kIntakeBeamBreakDIOPin = 7;
 
         public static class IntakeCurrentLimit {
 
@@ -290,8 +290,8 @@ public final class Constants {
             public static final int slotID = 0;
 
             public static final boolean isInversed = false;
-            public static final int multiplicand = (isInversed ? -1 : 1);
-            public static final int kAbsolDutyCycleDIOPin = 0;
+            public static final int inversionFactor = (isInversed ? -1 : 1);
+            public static final int kAbsolDutyCycleDIOPin = 3;
             public static final double absoluteEncoderOffset = 206.4615531615389 - 90d;
 
             public static final double intakeOutAngle = 0;

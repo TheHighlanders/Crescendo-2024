@@ -30,7 +30,7 @@ public class Intake extends SubsystemBase {
 
         beamBreak = new DigitalInput(Constants.Intake.kIntakeBeamBreakDIOPin);
 
-        intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
+        intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushed);
 
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 

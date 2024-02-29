@@ -104,24 +104,24 @@ public class RobotContainer {
 
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
-        operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY()))); // Manual Pivot Angle Control
-        operator
-            .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1 
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> {}, // Initialize
-                    () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000); //Execute
-                    },
-                    v -> {
-                        s_Shooter.shootCancel(); // End
-                    },
-                    () -> {
-                        return false; // Is Finished
-                    },
-                    s_Shooter // Requirements
-                )
-            );
+        operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25))); // Manual Pivot Angle Control
+        operator.rightTrigger(0.5).whileTrue(new InstantCommand(() -> s_Shooter.shoot(() -> 0.1)));
+            // .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1 
+            // .whileTrue(
+            //     new FunctionalCommand(
+            //         () -> {}, // Initialize
+            //         () -> {
+            //             s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000); //Execute
+            //         },
+            //         v -> {
+            //             s_Shooter.shootCancel(); // End
+            //         },
+            //         () -> {
+            //             return false; // Is Finished
+            //         },
+            //         s_Shooter // Requirements
+            //     )
+            // );
     }
 
     private void configureAuton() {
