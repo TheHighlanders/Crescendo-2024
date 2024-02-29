@@ -30,7 +30,8 @@ public class Intake extends SubsystemBase {
         this.hasGamePiece = true;
 
         beamBreak = new DigitalInput(0);
-
+        // intake angle motor 42
+        // spin wheels 53
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushless);
 
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
