@@ -152,9 +152,9 @@ public final class Constants {
     public static class Modules {
 
         public static class FrontLeft {
-
             public static final int driveMotorID = 01;
             public static final int angleMotorID = 02;
+
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
 
@@ -234,17 +234,20 @@ public final class Constants {
             public static final int kAbsolDutyCycleDIOPin = 2;
             public static final double absoluteEncoderOffset = 69.86439174660984;
 
-            public static final double readyAngle = 0;
+            public static final double initAngle = 42.5; //deg
+            public static final double readyAngle = 50; //deg
 
             public static final double shooterPivotRatio = 1 / 7.0f;
 
             public static final float shooterAngleDeadzone = 0.1f;
 
+            public static final double shooterBaseToArmPivotAxis = 7.4353; //inches
+
             public static class PIDValues {
 
                 public static final double minOut = -1;
                 public static final double maxOut = 1;
-                public static final double kP = 0.1d;
+                public static final double kP = 0d;
                 public static final double kI = 0d;
                 public static final double kD = 0d;
                 public static final double kMaxI = 0d;
@@ -265,6 +268,11 @@ public final class Constants {
                 public static final double actuatorDist = Math.hypot(3.25, 6.68); // Inches
                 public static final double actuatorBaseDistX = 20.25;
                 public static final double actuatorBaseDistY = -4.375;
+                public static final double actuatorHypot = Math.sqrt(
+                    Math.pow(Shooter.Pivot.actuatorConst.actuatorBaseDistY, 2) + Math.pow(Shooter.Pivot.actuatorConst.actuatorBaseDistX, 2)
+                );
+                public static final double actuatorAngleBaseDist = Math.atan(actuatorBaseDistY / actuatorBaseDistX);
+                public static final double pivotToActuatorCenterAxis = 2; //inches
             }
         }
     }
@@ -294,8 +302,8 @@ public final class Constants {
             public static final int kAbsolDutyCycleDIOPin = 3;
             public static final double absoluteEncoderOffset = 206.4615531615389 - 90d;
 
-            public static final double intakeOutAngle = 0;
-            public static final double readyAngle = 0;
+            public static final double intakeOutAngle = -35; //deg
+            public static final double readyAngle = 50; //deg
 
             public static final double intakePivotRatio = 1 / 36.0f;
 

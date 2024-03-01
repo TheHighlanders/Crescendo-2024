@@ -73,9 +73,10 @@ public class RobotContainer {
         s_Pivot
     );
 
-    public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
-    public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
+    public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
+    public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
     public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
+    public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer);
 
@@ -99,29 +100,30 @@ public class RobotContainer {
         /* Intake Button Bindings */
         driver.start().whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
-        driver.leftBumper().whileTrue(deployIntakeCMD); //new deployIntakeCMD(s_Pivot)
+        driver.leftBumper().whileTrue(new frc.robot.commands.deployIntakeCMD(s_Pivot));
         operator.x().onTrue(gamePieceOverrideCMD);
+        operator.back().onTrue(readyPositionsCMD);
 
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
         operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25))); // Manual Pivot Angle Control
-        operator.rightTrigger(0.5).whileTrue(new InstantCommand(() -> s_Shooter.shoot(() -> 0.1)));
-            // .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1 
-            // .whileTrue(
-            //     new FunctionalCommand(
-            //         () -> {}, // Initialize
-            //         () -> {
-            //             s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000); //Execute
-            //         },
-            //         v -> {
-            //             s_Shooter.shootCancel(); // End
-            //         },
-            //         () -> {
-            //             return false; // Is Finished
-            //         },
-            //         s_Shooter // Requirements
-            //     )
-            // );
+        operator/* .whileTrue(new InstantCommand(() -> s_Shooter.shoot(() -> 1)));*/
+            .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1
+            .whileTrue(
+                new FunctionalCommand(
+                    () -> {}, // Initialize
+                    () -> {
+                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000); //Execute
+                    },
+                    v -> {
+                        s_Shooter.shootCancel(); // End
+                    },
+                    () -> {
+                        return false; // Is Finished
+                    },
+                    s_Shooter // Requirements
+                )
+            );
     }
 
     private void configureAuton() {
@@ -141,6 +143,22 @@ public class RobotContainer {
                 () -> driver.leftBumper().getAsBoolean()
             )
         );
+
+        // s_Pivot.setDefaultCommand(
+        //     new FunctionalCommand(
+        //         () -> {}, // Initialize
+        //         () -> {
+        //             s_Pivot.driveShooterAngleManual(() -> operator.getRawAxis(translationAxis) / 10); //Execute
+        //         },
+        //         v -> {
+        //             s_Pivot.stopShooterAngle(); // End
+        //         },
+        //         () -> {
+        //             return false; // Is Finished
+        //         },
+        //         s_Shooter // Requirements
+        //     )
+        // );
     }
 
     /**
