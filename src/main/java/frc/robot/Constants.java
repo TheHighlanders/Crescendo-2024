@@ -152,9 +152,9 @@ public final class Constants {
     public static class Modules {
 
         public static class FrontLeft {
+
             public static final int driveMotorID = 01;
             public static final int angleMotorID = 02;
-
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
 

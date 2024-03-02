@@ -18,9 +18,7 @@ import frc.robot.Constants.Shooter;
 import frc.robot.util.CANSparkMaxCurrent;
 import frc.robot.util.InterpolatableShotData;
 import frc.robot.util.InterpolatingShotTreeMapContainer;
-import java.util.Map;
 import java.util.function.DoubleSupplier;
-import org.opencv.core.Mat;
 
 public class Pivot extends SubsystemBase {
 
@@ -113,48 +111,48 @@ public class Pivot extends SubsystemBase {
     }
 
     public double getShooterRelativePosition() {
-        return convertDistanceInchesToAngleRad(shooterAngleEncoder.getPosition()) * 180/Math.PI;//convert to deg
+        return convertDistanceInchesToAngleRad(shooterAngleEncoder.getPosition()) * 180 / Math.PI; //convert to deg
     }
 
     public double getIntakeRelativePosition() {
-        return convertDistanceInchesToAngleRad(intakeAngleEncoder.getPosition()) * 180/Math.PI;//convert to deg
+        return convertDistanceInchesToAngleRad(intakeAngleEncoder.getPosition()) * 180 / Math.PI; //convert to deg
     }
 
     /**Aligns both intake and shooter to a given angle */
     public boolean alignPivot(DoubleSupplier angle) {
         try {
             double angleSupplied = angle.getAsDouble();
-            cachedSetpointShooter = convertAngleToDistanceInches(angleSupplied);
-            cachedSetpointIntake = angleSupplied;
-            pidIntakeAngleController.setReference(angleSupplied, CANSparkMax.ControlType.kPosition);
-            pidShooterAngleController.setReference(cachedSetpointShooter, CANSparkMax.ControlType.kPosition);
-            intakeDeployed = false;
-
-            pidShooterAngleController.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
+    public void alignShooterToAngle(double angle) {
+        cachedSetpointShooter = convertAngleToDistanceInches(angle);
+        pidShooterAngleController.setReference(cachedSetpointShooter, CANSparkMax.ControlType.kPosition);
+    }
+
+    public void alignIntakeToAngle(double angle, boolean deployed) {
+        cachedSetpointIntake = angle;
+        pidIntakeAngleController.setReference(angle, CANSparkMax.ControlType.kPosition);
+        intakeDeployed = deployed;
+    }
+
     /** Moves intake back into robot, matching its angle to the shooter */
     public void intakeIn() {
-        pidIntakeAngleController.setReference(shooterAngleEncoder.getPosition(), ControlType.kPosition);
-        cachedSetpointIntake = shooterAngleEncoder.getPosition();
-        intakeDeployed = false;
+        alignIntakeToAngle(getShooterRelativePosition(), false);
     }
 
     public void intakeOut() {
-        pidIntakeAngleController.setReference(Intake.Pivot.intakeOutAngle, CANSparkMax.ControlType.kPosition);
-        cachedSetpointIntake = shooterAngleEncoder.getPosition();
-        intakeDeployed = true;
+        alignIntakeToAngle(Intake.Pivot.intakeOutAngle, true);
     }
 
     // Put shooter to avg shootig angle and align the Pivot
     public void readyPositions() {
-        pidIntakeAngleController.setReference(Intake.Pivot.readyAngle, CANSparkMax.ControlType.kPosition);
-        pidShooterAngleController.setReference(Shooter.Pivot.readyAngle, CANSparkMax.ControlType.kPosition);
-        intakeDeployed = false;
+        alignIntakeToAngle(Intake.Pivot.readyAngle, false);
+        alignShooterToAngle(Shooter.Pivot.readyAngle);
+
     }
 
     public boolean atSetpoints() {
@@ -164,7 +162,7 @@ public class Pivot extends SubsystemBase {
     // must be still at specified position to be true
     public boolean intakeAtSetpoint() {
         return (
-            Math.abs(cachedSetpointIntake - intakeAngleEncoder.getPosition()) <= Intake.Pivot.intakeAngleDeadzone &&
+            Math.abs(cachedSetpointIntake - getIntakeAbsolutePosition()) <= Intake.Pivot.intakeAngleDeadzone &&
             Math.abs(intakeAngleEncoder.getVelocity()) == 0
         );
     }
@@ -172,7 +170,7 @@ public class Pivot extends SubsystemBase {
     // must be still at specified position to be true
     public boolean shooterAtSetpoint() {
         return (
-            Math.abs(cachedSetpointShooter - shooterAngleEncoder.getPosition()) <= Shooter.Pivot.shooterAngleDeadzone &&
+            Math.abs(cachedSetpointShooter - getShooterRelativePosition()) <= Shooter.Pivot.shooterAngleDeadzone &&
             Math.abs(shooterAngleEncoder.getVelocity()) == 0
         );
     }
@@ -181,7 +179,7 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.set(speed);
     }
 
-     public void driveShooterAngleManual(DoubleSupplier speed) {
+    public void driveShooterAngleManual(DoubleSupplier speed) {
         shooterAngleMotor.set(speed.getAsDouble());
     }
 

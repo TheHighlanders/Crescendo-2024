@@ -57,7 +57,8 @@ public class alignShootCMDG extends SequentialCommandGroup {
             new ParallelDeadlineGroup(
                 new ParallelRaceGroup(
                     new WaitUntilCommand(() -> !(shoot.getBeamBreak() || intake.hasGamePiece())).andThen(new WaitCommand(0.5)),
-                    new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()))
+                    new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop)
+                        .andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()))
                 ),
                 new StartEndCommand(() -> m_shooter.shoot(currentShotData::getRPM), m_shooter::shootCancel),
                 new StartEndCommand(m_intake::intakeReverse, m_intake::intakeStop)

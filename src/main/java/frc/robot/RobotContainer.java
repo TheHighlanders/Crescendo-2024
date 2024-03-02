@@ -148,7 +148,7 @@ public class RobotContainer {
         //     new FunctionalCommand(
         //         () -> {}, // Initialize
         //         () -> {
-        //             s_Pivot.driveShooterAngleManual(() -> operator.getRawAxis(translationAxis) / 10); //Execute
+        //             s_Pivot.driveShooterAngleManual(() -> operator.getRawAxis(translationAxis) / 10); // Execute
         //         },
         //         v -> {
         //             s_Pivot.stopShooterAngle(); // End
