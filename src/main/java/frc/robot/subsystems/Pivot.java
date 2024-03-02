@@ -94,7 +94,7 @@ public class Pivot extends SubsystemBase {
             Shooter.Pivot.ArmCurrentLimit.kSmartLimit
         );
 
-        shooterAngleEncoder.setPosition(Constants.Shooter.Pivot.initAngle);
+        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(Constants.Shooter.Pivot.initAngle));
     }
 
     public InterpolatableShotData interpolate(double dist) {
@@ -111,17 +111,19 @@ public class Pivot extends SubsystemBase {
     }
 
     public double getShooterRelativePosition() {
-        return convertDistanceInchesToAngleRad(shooterAngleEncoder.getPosition()) * 180 / Math.PI; //convert to deg
+        return convertDistanceInchesToAngleDeg(shooterAngleEncoder.getPosition()); //convert to deg
     }
 
     public double getIntakeRelativePosition() {
-        return convertDistanceInchesToAngleRad(intakeAngleEncoder.getPosition()) * 180 / Math.PI; //convert to deg
+        return convertDistanceInchesToAngleDeg(intakeAngleEncoder.getPosition()); //convert to deg
     }
 
     /**Aligns both intake and shooter to a given angle */
     public boolean alignPivot(DoubleSupplier angle) {
         try {
             double angleSupplied = angle.getAsDouble();
+            alignShooterToAngle(angleSupplied);
+            alignIntakeToAngle(angleSupplied, false);
             return true;
         } catch (Exception e) {
             return false;
@@ -152,7 +154,6 @@ public class Pivot extends SubsystemBase {
     public void readyPositions() {
         alignIntakeToAngle(Intake.Pivot.readyAngle, false);
         alignShooterToAngle(Shooter.Pivot.readyAngle);
-
     }
 
     public boolean atSetpoints() {
@@ -203,18 +204,21 @@ public class Pivot extends SubsystemBase {
         );
     }
 
-    public double convertDistanceInchesToAngleRad(double dist) {
+    public double convertDistanceInchesToAngleDeg(double dist) {
         return (
-            Math.acos(
-                (
-                    Math.pow(dist, 2) -
-                    Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2) -
-                    Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2) +
-                    Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2)
-                ) /
-                (-2 * Shooter.Pivot.actuatorConst.actuatorHypot * dist)
+            Math.toDegrees(
+                Math.acos(
+                    (
+                        Math.pow(dist, 2) -
+                        Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2) -
+                        Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2) +
+                        Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2)
+                    ) /
+                    (-2 * Shooter.Pivot.actuatorConst.actuatorHypot * dist)
+                )
             ) -
             Shooter.Pivot.actuatorConst.actuatorAngleBaseDist
+            //+ Shooter.Pivot.actuatorConst.secretAngleDeg
         );
     }
 
@@ -226,13 +230,28 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
+        SmartDashboard.putNumber("length", shooterAngleEncoder.getPosition());
+        SmartDashboard.putNumber("1", Math.cos(Math.toRadians(3) + Math.toRadians(Shooter.Pivot.actuatorConst.actuatorAngleBaseDist)));
+        SmartDashboard.putNumber("2", Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2));
+        SmartDashboard.putNumber("3", Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2));
+        SmartDashboard.putNumber("4", Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2));
+        SmartDashboard.putNumber("5", Shooter.Pivot.actuatorConst.actuatorHypot);
+        SmartDashboard.putNumber("math", Math.sqrt(
+            Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2) +
+            Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2) -
+            Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2) -
+            (
+                2 *
+                Shooter.Pivot.shooterBaseToArmPivotAxis *
+                Shooter.Pivot.actuatorConst.actuatorHypot *
+                Math.cos(Math.toRadians(3) + Shooter.Pivot.actuatorConst.actuatorAngleBaseDist)
+            )
+        ));
+        SmartDashboard.putNumber("meth", convertAngleToDistanceInches(3));
 
-        SmartDashboard.putNumber("Intake Angle Value", getIntakeAbsolutePosition());
-        //SmartDashboard.putNumber("Shooter Composed Angle Value", getShooterRelativePosition() + getIntakeAbsolutePosition());
+        //SmartDashboard.putNumber("Intake Angle Value absolute", getIntakeAbsolutePosition());
+        //SmartDashboard.putNumber("Intake Angle Value relative", getIntakeRelativePosition());
+
         SmartDashboard.putNumber("Shooter Measured Angle Value", getShooterRelativePosition());
-        SmartDashboard.putNumber("Intake Rots", absolIntake.get());
-        SmartDashboard.putNumber("Shooter Rots", absolShooter.get());
-        SmartDashboard.putNumber("Sum of Rots", absolIntake.get() - absolShooter.get());
-        SmartDashboard.putNumber("Relative Shooter Encoder Pivot", shooterAngleEncoder.getPosition());
     }
 }

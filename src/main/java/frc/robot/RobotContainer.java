@@ -77,6 +77,7 @@ public class RobotContainer {
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
     public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
     public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
+    public static Command alignIntakeTest = new InstantCommand(() -> s_Pivot.alignShooterToAngle(90));
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer);
 
@@ -84,6 +85,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        s_RGB.changeString("7");
         // Configure the trigger bindings
         configureBindings();
         configureAuton();
@@ -102,7 +104,7 @@ public class RobotContainer {
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
         driver.leftBumper().whileTrue(new frc.robot.commands.deployIntakeCMD(s_Pivot));
         operator.x().onTrue(gamePieceOverrideCMD);
-        operator.back().onTrue(readyPositionsCMD);
+        operator.back().onTrue(alignIntakeTest);
 
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine

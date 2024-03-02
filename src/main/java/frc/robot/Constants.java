@@ -247,8 +247,8 @@ public final class Constants {
 
                 public static final double minOut = -1;
                 public static final double maxOut = 1;
-                public static final double kP = 0d;
-                public static final double kI = 0d;
+                public static final double kP = 0.5d;
+                public static final double kI = 0.1d;
                 public static final double kD = 0d;
                 public static final double kMaxI = 0d;
                 public static final double iMaxAccum = 0d;
@@ -266,13 +266,14 @@ public final class Constants {
 
                 public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
                 public static final double actuatorDist = Math.hypot(3.25, 6.68); // Inches
-                public static final double actuatorBaseDistX = 20.25;
-                public static final double actuatorBaseDistY = -4.375;
+                public static final double actuatorBaseDistX = 19.25;
+                public static final double actuatorBaseDistY = 5.375;
                 public static final double actuatorHypot = Math.sqrt(
                     Math.pow(Shooter.Pivot.actuatorConst.actuatorBaseDistY, 2) + Math.pow(Shooter.Pivot.actuatorConst.actuatorBaseDistX, 2)
                 );
-                public static final double actuatorAngleBaseDist = Math.atan(actuatorBaseDistY / actuatorBaseDistX);
+                public static final double actuatorAngleBaseDist = Math.toDegrees(Math.atan(actuatorBaseDistY / actuatorBaseDistX));
                 public static final double pivotToActuatorCenterAxis = 2; //inches
+                public static final double secretAngleDeg = 25.919;
             }
         }
     }
@@ -313,7 +314,7 @@ public final class Constants {
 
                 public static final double minOut = -1;
                 public static final double maxOut = 1;
-                public static final double kP = 0d;
+                public static final double kP = 0.1d;
                 public static final double kI = 0d;
                 public static final double kD = 0d;
                 public static final double kMaxI = 0d;
