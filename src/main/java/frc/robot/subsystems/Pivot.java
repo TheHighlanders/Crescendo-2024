@@ -214,11 +214,10 @@ public class Pivot extends SubsystemBase {
                         Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2) +
                         Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2)
                     ) /
-                    (-2 * Shooter.Pivot.actuatorConst.actuatorHypot * dist)
-                )
-            ) -
-            Shooter.Pivot.actuatorConst.actuatorAngleBaseDist
-            //+ Shooter.Pivot.actuatorConst.secretAngleDeg
+                    (-2 * Shooter.Pivot.shooterBaseToArmPivotAxis * Shooter.Pivot.actuatorConst.actuatorHypot)
+                ) -
+                Shooter.Pivot.actuatorConst.actuatorAngleBaseDist
+            )
         );
     }
 
@@ -230,24 +229,6 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
-        SmartDashboard.putNumber("length", shooterAngleEncoder.getPosition());
-        SmartDashboard.putNumber("1", Math.cos(Math.toRadians(3) + Math.toRadians(Shooter.Pivot.actuatorConst.actuatorAngleBaseDist)));
-        SmartDashboard.putNumber("2", Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2));
-        SmartDashboard.putNumber("3", Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2));
-        SmartDashboard.putNumber("4", Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2));
-        SmartDashboard.putNumber("5", Shooter.Pivot.actuatorConst.actuatorHypot);
-        SmartDashboard.putNumber("math", Math.sqrt(
-            Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2) +
-            Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2) -
-            Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2) -
-            (
-                2 *
-                Shooter.Pivot.shooterBaseToArmPivotAxis *
-                Shooter.Pivot.actuatorConst.actuatorHypot *
-                Math.cos(Math.toRadians(3) + Shooter.Pivot.actuatorConst.actuatorAngleBaseDist)
-            )
-        ));
-        SmartDashboard.putNumber("meth", convertAngleToDistanceInches(3));
 
         //SmartDashboard.putNumber("Intake Angle Value absolute", getIntakeAbsolutePosition());
         //SmartDashboard.putNumber("Intake Angle Value relative", getIntakeRelativePosition());
