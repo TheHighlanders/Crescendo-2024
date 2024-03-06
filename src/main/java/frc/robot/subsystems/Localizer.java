@@ -87,6 +87,7 @@ public class Localizer extends SubsystemBase {
     }
 
     public Rotation2d getAngleToSpeaker() {
+        if(DriverStation.getAlliance.isEmpty()){return new Rotation2d();}
         Translation2d robot = getPose().getTranslation();
         Translation2d goal =
             (
