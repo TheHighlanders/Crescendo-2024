@@ -72,8 +72,9 @@ public class Localizer extends SubsystemBase {
     public Field2d getField() {
         return field;
     }
-
+    
     public double getDistanceToSpeaker() {
+        if(DriverStation.getAlliance.isEmpty()){return -1;}
         Translation2d robot = getPose().getTranslation();
         Translation2d goal =
             (
