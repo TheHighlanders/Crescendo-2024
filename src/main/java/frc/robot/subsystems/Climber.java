@@ -30,12 +30,6 @@ public class Climber extends SubsystemBase {
 
         climberMotorRight = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER_RIGHT, MotorType.kBrushless);
         climberMotorRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
-
-        servoLeft = new Servo(ClimberConsts.kServoRightID);
-        servoRight = new Servo(ClimberConsts.kServoLeftID);
-
-        servoLeft.set(0);
-        servoRight.set(0);
     }
 
     @Override
@@ -44,34 +38,14 @@ public class Climber extends SubsystemBase {
     public void climbBoth(double speed) {
         climberMotorRight.set(speed);
         climberMotorLeft.set(-speed);
-
-        if (!servoLeftOut) {
-            servoLeft.set(1);
-            servoLeftOut = true;
-        }
-
-        if (!servoRightOut) {
-            servoRight.set(1);
-            servoRightOut = true;
-        }
     }
 
     public void climbLeft(double speed) {
         climberMotorLeft.set(-speed);
-
-        if (!servoLeftOut) {
-            servoLeft.set(1);
-            servoLeftOut = true;
-        }
     }
 
     public void climbRight(double speed) {
         climberMotorRight.set(speed);
-
-        if (!servoRightOut) {
-            servoRight.set(1);
-            servoRightOut = true;
-        }
     }
 
     public void climberStop() {
