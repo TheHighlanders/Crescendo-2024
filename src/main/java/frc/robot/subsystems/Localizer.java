@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import java.util.Optional;
@@ -74,6 +73,7 @@ public class Localizer extends SubsystemBase {
     }
 
     public double getDistanceToSpeaker() {
+        if(DriverStation.getAlliance().isEmpty()){return -1;}
         Translation2d robot = getPose().getTranslation();
         Translation2d goal =
             (
@@ -86,6 +86,7 @@ public class Localizer extends SubsystemBase {
     }
 
     public Rotation2d getAngleToSpeaker() {
+        if(DriverStation.getAlliance().isEmpty()){return new Rotation2d();}
         Translation2d robot = getPose().getTranslation();
         Translation2d goal =
             (

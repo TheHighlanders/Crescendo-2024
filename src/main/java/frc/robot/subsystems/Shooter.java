@@ -31,7 +31,9 @@ public class Shooter extends SubsystemBase {
         bottomFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
         bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
         bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomGearRatio);
-        //bottomFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
+        bottomFlywheelMotor.setSpikeCurrentLimit(Constants.Shooter.ShooterCurrentLimit.kLimitToAmps, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeTime, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeAmps, Constants.Shooter.ShooterCurrentLimit.kSmartLimit);
+        // bottomFlywheelMotor.setSmartCurrentLimit(frc.robot.Constants.Shooter.kCurrentLimit);
+        bottomFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
         bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidBottom = bottomFlywheelMotor.getPIDController();
@@ -44,8 +46,11 @@ public class Shooter extends SubsystemBase {
         /* Top */
         /*----------------------------------------------------------------------------*/
         topFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
+        topFlywheelMotor.setSpikeCurrentLimit(Constants.Shooter.ShooterCurrentLimit.kLimitToAmps, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeTime, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeAmps, Constants.Shooter.ShooterCurrentLimit.kSmartLimit);
+        // topFlywheelMotor.setSmartCurrentLimit(frc.robot.Constants.Shooter.kCurrentLimit);
         topFlywheelEncoder = topFlywheelMotor.getEncoder();
         topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
+        topFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
         topFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidTop = topFlywheelMotor.getPIDController();
@@ -64,8 +69,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shootCancel() {
-        pidBottom.setReference(0, CANSparkMax.ControlType.kVelocity);
-        pidTop.setReference(0, CANSparkMax.ControlType.kVelocity);
+        pidBottom.setReference(0, CANSparkMax.ControlType.kDutyCycle);
+        pidTop.setReference(0, CANSparkMax.ControlType.kDutyCycle);
     }
 
     public boolean getBeamBreak() {
@@ -74,6 +79,8 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
+        topFlywheelMotor.periodicLimit();
+        bottomFlywheelMotor.periodicLimit();
         SmartDashboard.putNumber("Top Shooter Speed", topFlywheelEncoder.getVelocity());
         SmartDashboard.putNumber("Bottom Shooter Speed", bottomFlywheelEncoder.getVelocity());
     }

@@ -206,20 +206,30 @@ public final class Constants {
 
         public static final int bottomFlywheelMotorID = 51;
         public static final int topFlywheelMotorID = 52;
-        public static final double kBottomGearRatio = (1 / 5.0f);
-        public static final double kBottomVelocityConversionFactor = kBottomGearRatio / 60f;
+        public static final double kBottomGearRatio = (1 / 1.0f);
+        public static final double kBottomVelocityConversionFactor = kBottomGearRatio;
         public static final double kTopRatio = (1 / 5.0f);
         public static final int slotID = 0;
+
+        public static final int kCurrentLimit = 10;
+
+        public static class ShooterCurrentLimit {
+
+            public static final double kLimitToAmps = 5.0f;
+            public static final double kMaxSpikeTime = 5.0f;
+            public static final double kMaxSpikeAmps = 20;
+            public static final int kSmartLimit = 10;
+        }
 
         public static final int kShooterBeamBreakDIOPin = 0;
 
         public static class PIDValues {
 
-            public static final double minOut = 0;
+            public static final double minOut = -0.25;
             public static final double maxOut = 1;
-            public static final double kP = 1d;
-            public static final double kI = 0.01d;
-            public static final double kD = 0d;
+            public static final double kP = 0.5d;
+            public static final double kI = 0d;
+            public static final double kD = 10d;
             public static final double kMaxI = 0d;
             public static final double iMaxAccum = 0d;
         }
