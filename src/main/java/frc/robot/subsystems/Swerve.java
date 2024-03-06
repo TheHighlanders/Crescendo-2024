@@ -254,22 +254,18 @@ public class Swerve extends SubsystemBase {
 
     public void sendAbsoluteDiagnostic() {
         for (SwerveModule m : modules) {
-            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Absolute", m.getAbsolutePosition().getDegrees());
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " ERROR",
-                (m.angleEncoder.getPosition() - m.getAbsolutePosition().getDegrees()) % 360
-            );
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Absolute", m.absoluteEncoder.getPosition());
         }
     }
 
     public void sendSmartDashboardDiagnostics() {
-        sendAngleDiagnostic();
-        sendAngleTargetDiagnostic();
+        // sendAngleDiagnostic();
+        // sendAngleTargetDiagnostic();
 
-        sendDriveDiagnostic();
-        sendDriveTargetDiagnostic();
+        // sendDriveDiagnostic();
+        // sendDriveTargetDiagnostic();
 
-        // sendAbsoluteDiagnostic();
+        sendAbsoluteDiagnostic();
 
         SmartDashboard.putNumber("NavX Angle", getYaw().getDegrees());
         SmartDashboard.putNumber("Pose X", getPose().getX());
