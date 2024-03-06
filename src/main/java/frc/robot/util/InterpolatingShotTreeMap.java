@@ -34,7 +34,7 @@ public class InterpolatingShotTreeMap {
 
     private InterpolatableShotData interpolate(InterpolatableShotData startValue, InterpolatableShotData endValue, double t) {
         return new InterpolatableShotData(
-            ((endValue.getArmAngle() - startValue.getArmAngle()) * t) + startValue.getArmAngle(),
+            ((endValue.getArmExtension() - startValue.getArmExtension()) * t) + startValue.getArmExtension(),
             ((endValue.getRPM() - startValue.getRPM()) * t) + startValue.getRPM()
         );
     }

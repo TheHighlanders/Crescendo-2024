@@ -48,7 +48,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
             // move swere to face speaker and align pivot
             new ParallelCommandGroup(
                 // align pivot, is finished when asSetpoints returns true
-                new InstantCommand(() -> m_Pivot.alignPivot(currentShotData::getArmAngle)),
+                new InstantCommand(() -> m_Pivot.alignPivot(currentShotData::getArmExtension)),
                 // runs the swerve move to command to the angle of the speaker
                 new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker),
                 new WaitUntilCommand(m_Pivot::atSetpoints)

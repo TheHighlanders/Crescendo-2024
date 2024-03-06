@@ -211,14 +211,14 @@ public final class Constants {
         public static final double kTopRatio = (1 / 5.0f);
         public static final int slotID = 0;
 
-        public static final int kShooterBeamBreakDIOPin = 6;
+        public static final int kShooterBeamBreakDIOPin = 0;
 
         public static class PIDValues {
 
-            public static final double minOut = -1;
+            public static final double minOut = 0;
             public static final double maxOut = 1;
-            public static final double kP = 0d;
-            public static final double kI = 0d;
+            public static final double kP = 1d;
+            public static final double kI = 0.01d;
             public static final double kD = 0d;
             public static final double kMaxI = 0d;
             public static final double iMaxAccum = 0d;
@@ -234,24 +234,23 @@ public final class Constants {
             public static final int kAbsolDutyCycleDIOPin = 2;
             public static final double absoluteEncoderOffset = 69.86439174660984;
 
-            public static final double initAngle = 42.5; //deg
-            public static final double readyAngle = 50; //deg
+            public static final double initExtension = 13.231982231140137;//14; // Inches
+            public static final double readyInches = 14; // Inches
 
             public static final double shooterPivotRatio = 1 / 7.0f;
 
-            public static final float shooterAngleDeadzone = 0.1f;
+            public static final float shooterExtensionDeadzone = 0.125f;
 
             public static final double shooterBaseToArmPivotAxis = 7.4353; //inches
 
             public static class PIDValues {
 
-                public static final double minOut = -1;
+                public static final double minOut = -0.25;
                 public static final double maxOut = 1;
-                public static final double kP = 0.5d;
-                public static final double kI = 0.1d;
-                public static final double kD = 0d;
-                public static final double kMaxI = 0d;
-                public static final double iMaxAccum = 0d;
+                public static final double kP = 1.2d;
+                public static final double kI = 0d;//.005d;
+                public static final double kD = 0;//30;
+                public static final double iMaxAccum = 10d;
             }
 
             public static class ArmCurrentLimit {
@@ -264,11 +263,12 @@ public final class Constants {
 
             public static class actuatorConst {
 
+                public static final double extensionVelocityDeadzone = 0.5;
                 public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
                 public static final double actuatorBaseDistX = 19.25;
                 public static final double actuatorBaseDistY = 5.375;
                 public static final double actuatorHypot = Math.hypot(actuatorBaseDistX, actuatorBaseDistY);
-                public static final double actuatorAngleBaseDist = Math.toDegrees(Math.atan(actuatorBaseDistY / actuatorBaseDistX));
+                public static final double actuatorAngleBaseDist = Math.atan(actuatorBaseDistY / actuatorBaseDistX);
                 public static final double pivotToActuatorCenterAxis = 2; //inches
                 public static final double secretAngleDeg = 25.919;
             }
@@ -280,7 +280,7 @@ public final class Constants {
         public static final int INTAKE = 53;
         public static final int slotID = 0;
 
-        public static final int kIntakeBeamBreakDIOPin = 7;
+        public static final int kIntakeBeamBreakDIOPin = 1;
 
         public static class IntakeCurrentLimit {
 

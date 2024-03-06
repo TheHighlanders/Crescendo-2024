@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -12,7 +11,6 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
 import frc.robot.util.CANSparkMaxCurrent;
@@ -29,8 +27,8 @@ public class Pivot extends SubsystemBase {
     private SparkPIDController pidIntakeAngleController;
 
     private CANSparkMaxCurrent shooterAngleMotor;
-    private RelativeEncoder shooterAngleEncoder;
-    private SparkPIDController pidShooterAngleController;
+    private RelativeEncoder shooterExtensionEncoder;
+    private SparkPIDController pidShooterExtensionController;
 
     private DutyCycleEncoder absolShooter;
     private DutyCycleEncoder absolIntake;
@@ -77,15 +75,14 @@ public class Pivot extends SubsystemBase {
 
         shooterAngleMotor = new CANSparkMaxCurrent(Shooter.Pivot.SHOOTER, MotorType.kBrushless);
         shooterAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        shooterAngleEncoder = shooterAngleMotor.getEncoder();
-        shooterAngleEncoder.setPositionConversionFactor(Shooter.Pivot.actuatorConst.inchesToRotationsConversion);
-        pidShooterAngleController = shooterAngleMotor.getPIDController();
-        shooterAngleEncoder.setPositionConversionFactor(Shooter.Pivot.shooterPivotRatio);
-        pidShooterAngleController.setOutputRange(Shooter.Pivot.PIDValues.minOut, Shooter.Pivot.PIDValues.maxOut);
-        pidShooterAngleController.setP(Shooter.Pivot.PIDValues.kP);
-        pidShooterAngleController.setI(Shooter.Pivot.PIDValues.kI);
-        pidShooterAngleController.setD(Shooter.Pivot.PIDValues.kD);
-        pidShooterAngleController.setIMaxAccum(Shooter.Pivot.PIDValues.iMaxAccum, Shooter.Pivot.slotID);
+        shooterExtensionEncoder = shooterAngleMotor.getEncoder();
+        shooterExtensionEncoder.setPositionConversionFactor(Shooter.Pivot.actuatorConst.inchesToRotationsConversion);
+        pidShooterExtensionController = shooterAngleMotor.getPIDController();
+        pidShooterExtensionController.setOutputRange(Shooter.Pivot.PIDValues.minOut, Shooter.Pivot.PIDValues.maxOut);
+        pidShooterExtensionController.setP(Shooter.Pivot.PIDValues.kP);
+        pidShooterExtensionController.setI(Shooter.Pivot.PIDValues.kI);
+        pidShooterExtensionController.setD(Shooter.Pivot.PIDValues.kD);
+        pidShooterExtensionController.setIMaxAccum(Shooter.Pivot.PIDValues.iMaxAccum, Shooter.Pivot.slotID);
 
         shooterAngleMotor.setSpikeCurrentLimit(
             Shooter.Pivot.ArmCurrentLimit.kLimitToAmps,
@@ -94,7 +91,7 @@ public class Pivot extends SubsystemBase {
             Shooter.Pivot.ArmCurrentLimit.kSmartLimit
         );
 
-        shooterAngleEncoder.setPosition(convertAngleToDistanceInches(Constants.Shooter.Pivot.initAngle));
+        shooterExtensionEncoder.setPosition(Shooter.Pivot.initExtension);
     }
 
     public InterpolatableShotData interpolate(double dist) {
@@ -102,6 +99,7 @@ public class Pivot extends SubsystemBase {
     }
 
     // Encoder offsets
+    @Deprecated
     public double getShooterAbsolutePosition() {
         return ((absolShooter.get() * 360) - Shooter.Pivot.absoluteEncoderOffset) * Shooter.Pivot.inversionFactor;
     }
@@ -111,39 +109,41 @@ public class Pivot extends SubsystemBase {
     }
 
     public double getShooterRelativePosition() {
-        return convertDistanceInchesToAngleDeg(shooterAngleEncoder.getPosition()); //convert to deg
+        return shooterExtensionEncoder.getPosition(); //convert to deg
     }
 
     public double getIntakeRelativePosition() {
-        return convertDistanceInchesToAngleDeg(intakeAngleEncoder.getPosition()); //convert to deg
+        return intakeAngleEncoder.getPosition(); //convert to deg
     }
 
     /**Aligns both intake and shooter to a given angle */
-    public boolean alignPivot(DoubleSupplier angle) {
+    public boolean alignPivot(DoubleSupplier Extension) {
         try {
-            double angleSupplied = angle.getAsDouble();
-            alignShooterToAngle(angleSupplied);
-            alignIntakeToAngle(angleSupplied, false);
+            double extSupplied = Extension.getAsDouble();
+            alignShooterToExtension(extSupplied);
+            // TODO: change this to use approx math
+            alignIntakeToAngle(convertDistanceInchesToAngleDeg(extSupplied), false);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public void alignShooterToAngle(double angle) {
-        cachedSetpointShooter = convertAngleToDistanceInches(angle);
-        pidShooterAngleController.setReference(cachedSetpointShooter, CANSparkMax.ControlType.kPosition);
+    public void alignShooterToExtension(double Extension) {
+        cachedSetpointShooter = Extension;
+        pidShooterExtensionController.setReference(cachedSetpointShooter, CANSparkMax.ControlType.kPosition);
     }
 
-    public void alignIntakeToAngle(double angle, boolean deployed) {
-        cachedSetpointIntake = angle;
-        pidIntakeAngleController.setReference(angle, CANSparkMax.ControlType.kPosition);
+    public void alignIntakeToAngle(double Angle, boolean deployed) {
+        cachedSetpointIntake = Angle;
+        pidIntakeAngleController.setReference(Angle, CANSparkMax.ControlType.kPosition);
         intakeDeployed = deployed;
     }
 
     /** Moves intake back into robot, matching its angle to the shooter */
     public void intakeIn() {
-        alignIntakeToAngle(getShooterRelativePosition(), false);
+        // TODO: fix this to align to the shooter using extension
+        alignIntakeToAngle(convertDistanceInchesToAngleDeg(getShooterRelativePosition()), false);
     }
 
     public void intakeOut() {
@@ -153,7 +153,7 @@ public class Pivot extends SubsystemBase {
     // Put shooter to avg shootig angle and align the Pivot
     public void readyPositions() {
         alignIntakeToAngle(Intake.Pivot.readyAngle, false);
-        alignShooterToAngle(Shooter.Pivot.readyAngle);
+        alignShooterToExtension(Shooter.Pivot.readyInches);
     }
 
     public boolean atSetpoints() {
@@ -171,8 +171,8 @@ public class Pivot extends SubsystemBase {
     // must be still at specified position to be true
     public boolean shooterAtSetpoint() {
         return (
-            Math.abs(cachedSetpointShooter - getShooterRelativePosition()) <= Shooter.Pivot.shooterAngleDeadzone &&
-            Math.abs(shooterAngleEncoder.getVelocity()) == 0
+            Math.abs(cachedSetpointShooter - getShooterRelativePosition()) <= Shooter.Pivot.shooterExtensionDeadzone &&
+            Math.abs(shooterExtensionEncoder.getVelocity()) <= Shooter.Pivot.actuatorConst.extensionVelocityDeadzone
         );
     }
 
@@ -184,24 +184,12 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.set(speed.getAsDouble());
     }
 
-    public void stopShooterAngle() {
+    public void stopShooterAngleNoHold() {
         shooterAngleMotor.set(0d);
     }
 
-    // used for linear actuator conversion
-    public double convertAngleToDistanceInches(double angle) {
-        angle = Math.toRadians(angle);
-        return Math.sqrt(
-            Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2) +
-            Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2) -
-            Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2) -
-            (
-                2 *
-                Shooter.Pivot.shooterBaseToArmPivotAxis *
-                Shooter.Pivot.actuatorConst.actuatorHypot *
-                Math.cos(angle + Shooter.Pivot.actuatorConst.actuatorAngleBaseDist)
-            )
-        );
+    public boolean getIntakeDeploy() {
+        return intakeDeployed;
     }
 
     public double convertDistanceInchesToAngleDeg(double dist) {
@@ -217,12 +205,8 @@ public class Pivot extends SubsystemBase {
                     (-2 * Shooter.Pivot.shooterBaseToArmPivotAxis * Shooter.Pivot.actuatorConst.actuatorHypot)
                 ) -
                 Shooter.Pivot.actuatorConst.actuatorAngleBaseDist
-            )
+            ) + Shooter.Pivot.actuatorConst.secretAngleDeg
         );
-    }
-
-    public boolean getIntakeDeploy() {
-        return intakeDeployed;
     }
 
     @Override
@@ -230,8 +214,13 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
 
-        //SmartDashboard.putNumber("Intake Angle Value absolute", getIntakeAbsolutePosition());
-        //SmartDashboard.putNumber("Intake Angle Value relative", getIntakeRelativePosition());
+        SmartDashboard.putNumber("Intake Angle Value absolute", getIntakeAbsolutePosition());
+        SmartDashboard.putNumber("Intake Angle Value absolute no offset", (absolIntake.get() * 360));
+
+        SmartDashboard.putNumber("Shooter extension", shooterExtensionEncoder.getPosition());
+        SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
+
+        SmartDashboard.putNumber("Shooter Inferred Angle", convertDistanceInchesToAngleDeg(shooterExtensionEncoder.getPosition()));
 
         SmartDashboard.putNumber("Shooter Measured Angle Value", getShooterRelativePosition());
     }

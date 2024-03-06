@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
@@ -30,7 +31,7 @@ public class Shooter extends SubsystemBase {
         bottomFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
         bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
         bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomGearRatio);
-        bottomFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
+        //bottomFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
         bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         pidBottom = bottomFlywheelMotor.getPIDController();
@@ -56,10 +57,10 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot(DoubleSupplier speed) {
-        //pidBottom.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
-        //pidTop.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
-        topFlywheelMotor.set(speed.getAsDouble());
-        bottomFlywheelMotor.set(speed.getAsDouble());
+        pidBottom.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        pidTop.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        // topFlywheelMotor.set(speed.getAsDouble());
+        // bottomFlywheelMotor.set(speed.getAsDouble());
     }
 
     public void shootCancel() {
@@ -72,5 +73,8 @@ public class Shooter extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        SmartDashboard.putNumber("Top Shooter Speed", topFlywheelEncoder.getVelocity());
+        SmartDashboard.putNumber("Bottom Shooter Speed", bottomFlywheelEncoder.getVelocity());
+    }
 }

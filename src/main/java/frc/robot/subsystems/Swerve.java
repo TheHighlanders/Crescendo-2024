@@ -46,13 +46,13 @@ public class Swerve extends SubsystemBase {
         gyro = new AHRS(SPI.Port.kMXP);
         zeroGyro();
 
-        SmartDashboard.putNumber("getRobotRelativeSpeedsX", 1);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsY", 2);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsO", 3);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsX", 1);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsY", 2);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsO", 3);
 
-        SmartDashboard.putNumber("PP X", 4);
-        SmartDashboard.putNumber("PP Y", 5);
-        SmartDashboard.putNumber("PP O", 6);
+        // SmartDashboard.putNumber("PP X", 4);
+        // SmartDashboard.putNumber("PP Y", 5);
+        // SmartDashboard.putNumber("PP O", 6);
 
         odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
 
@@ -86,11 +86,11 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(gyro.getRotation2d(), getModulePositions());
-        SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
+        // SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
 
-        SmartDashboard.putNumber("xCalc", -1);
-        SmartDashboard.putNumber("yCalc", -1);
-        SmartDashboard.putBoolean("Running", false);
+        // SmartDashboard.putNumber("xCalc", -1);
+        // SmartDashboard.putNumber("yCalc", -1);
+        // SmartDashboard.putBoolean("Running", false);
 
         // field.setRobotPose(getPose());
         for (SwerveModule m : modules) {
@@ -122,9 +122,9 @@ public class Swerve extends SubsystemBase {
     }
 
     public void driveRobotRelative(ChassisSpeeds chassisSpeeds) {
-        SmartDashboard.putNumber("PP X", chassisSpeeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("PP Y", chassisSpeeds.vyMetersPerSecond);
-        SmartDashboard.putNumber("PP O", chassisSpeeds.omegaRadiansPerSecond);
+        // SmartDashboard.putNumber("PP X", chassisSpeeds.vxMetersPerSecond);
+        // SmartDashboard.putNumber("PP Y", chassisSpeeds.vyMetersPerSecond);
+        // SmartDashboard.putNumber("PP O", chassisSpeeds.omegaRadiansPerSecond);
 
         chassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
 
@@ -149,8 +149,8 @@ public class Swerve extends SubsystemBase {
         RobotContainer.s_Localizer.resetOdoPose2d(pose);
         odometer.resetPosition(getYaw(), getModulePositions(), pose);
 
-        SmartDashboard.putNumber("ResetPoseX", pose.getX());
-        SmartDashboard.putNumber("ResetPoseY", pose.getY());
+        // SmartDashboard.putNumber("ResetPoseX", pose.getX());
+        // SmartDashboard.putNumber("ResetPoseY", pose.getY());
     }
 
     /**
@@ -183,9 +183,9 @@ public class Swerve extends SubsystemBase {
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        SmartDashboard.putNumber("getRobotRelativeSpeedsX", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vxMetersPerSecond);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsY", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vyMetersPerSecond);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsO", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).omegaRadiansPerSecond);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsX", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vxMetersPerSecond);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsY", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vyMetersPerSecond);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsO", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).omegaRadiansPerSecond);
 
         return Constants.SwerveConst.kinematics.toChassisSpeeds(getStates());
     }
@@ -263,11 +263,11 @@ public class Swerve extends SubsystemBase {
     }
 
     public void sendSmartDashboardDiagnostics() {
-        sendAngleDiagnostic();
-        sendAngleTargetDiagnostic();
+        // sendAngleDiagnostic();
+        // sendAngleTargetDiagnostic();
 
-        sendDriveDiagnostic();
-        sendDriveTargetDiagnostic();
+        // sendDriveDiagnostic();
+        // sendDriveTargetDiagnostic();
 
         // sendAbsoluteDiagnostic();
 

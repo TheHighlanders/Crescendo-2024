@@ -77,7 +77,7 @@ public class RobotContainer {
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
     public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
     public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
-    public static Command alignIntakeTest = new InstantCommand(() -> s_Pivot.alignShooterToAngle(90));
+    public static Command alignIntakeTest = new InstantCommand(() -> s_Pivot.alignShooterToExtension(Constants.Shooter.Pivot.readyInches));
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer);
 
@@ -108,14 +108,15 @@ public class RobotContainer {
 
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
-        operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25))); // Manual Pivot Angle Control
+        operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25))); 
+        operator.rightStick().onFalse(new InstantCommand(()-> s_Pivot.stopShooterAngleNoHold()));// Manual Pivot Angle Control
         operator/* .whileTrue(new InstantCommand(() -> s_Shooter.shoot(() -> 1)));*/
             .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1
             .whileTrue(
                 new FunctionalCommand(
                     () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 1000); //Execute
+                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 2500); //Execute
                     },
                     v -> {
                         s_Shooter.shootCancel(); // End
