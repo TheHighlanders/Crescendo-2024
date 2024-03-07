@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
     private double currentVeloc = 2.5;
     private RobotContainer m_robotContainer;
 
+    int val = 0;
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any

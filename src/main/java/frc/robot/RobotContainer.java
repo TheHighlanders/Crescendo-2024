@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,7 +16,12 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ClimberConsts;
+import frc.robot.commands.LEDloadingBarCMD;
+import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
+import frc.robot.commands.climbCMD;
+import frc.robot.subsystems.Climber;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
@@ -38,6 +44,7 @@ import java.util.function.Supplier;
  */
 public class RobotContainer {
 
+
     /* Controllers */
     private final CommandXboxController driver = new CommandXboxController(0);
     private final CommandXboxController operator = new CommandXboxController(1);
@@ -51,6 +58,7 @@ public class RobotContainer {
     public static final Shooter s_Shooter = new Shooter();
     public static final Swerve s_Swerve = new Swerve();
     public static final Vision s_Vision = new Vision();
+    public static final Climber S_Climber = new Climber();
     public static final Pivot s_Pivot = new Pivot();
     public static final Intake s_Intake = new Intake();
 
@@ -61,6 +69,10 @@ public class RobotContainer {
 
     /* Auton */
     private SendableChooser<Command> autoChooser;
+
+ /* Commands */
+    private static final Command climbCMD = new climbCMD(operator.leftBumper(), operator.rightBumper(), S_Climber);
+
 
     public static Command deployIntakeCMD = new InstantCommand(
         () -> {
@@ -127,6 +139,10 @@ public class RobotContainer {
                     s_Shooter // Requirements
                 )
             );
+
+	/* Climber  */
+ 	operator.rightBumper().whileTrue(new FunctionalCommand(()->S_Climber.climbRight(ClimberConsts.kClimbSpeed), ()->{},v->S_Climber.climbRight(0),()->{return false;}));
+        operator.leftBumper().whileTrue(new FunctionalCommand(()->S_Climber.climbLeft(ClimberConsts.kClimbSpeed), ()->{},v->S_Climber.climbLeft(0),()->{return false;}));
     }
 
     private void configureAuton() {
@@ -136,6 +152,7 @@ public class RobotContainer {
     }
 
     private void setDefaultCommands() {
+    
         s_Swerve.setDefaultCommand(
             new SwerveTeleCMD(
                 s_Swerve,

@@ -255,10 +255,6 @@ public class Swerve extends SubsystemBase {
     public void sendAbsoluteDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Absolute", m.getAbsolutePosition().getDegrees());
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " ERROR",
-                (m.angleEncoder.getPosition() - m.getAbsolutePosition().getDegrees()) % 360
-            );
         }
     }
 

@@ -153,8 +153,8 @@ public final class Constants {
 
         public static class FrontLeft {
 
-            public static final int driveMotorID = 01;
-            public static final int angleMotorID = 02;
+            public static final int driveMotorID = 1;
+            public static final int angleMotorID = 2;
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
 
@@ -336,5 +336,16 @@ public final class Constants {
                 public static final int kSmartLimit = 40;
             }
         }
+    }
+
+    public static final class ClimberConsts {
+
+        public static final int CLIMBER_LEFT = 61;
+        public static final int CLIMBER_RIGHT = 62;
+
+        public static final int kServoRightID = 3;
+        public static final int kServoLeftID = 4;
+
+        public static final double kClimbSpeed = 0.25;
     }
 }
