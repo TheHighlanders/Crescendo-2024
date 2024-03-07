@@ -9,11 +9,7 @@ public class SwerveModuleConfig {
 
     public Rotation2d absoluteEncoderOffset;
 
-    public SwerveModuleConfig(
-        int driveMotorID,
-        int angleMotorID,
-        Rotation2d absoluteEncoderOffset
-    ) {
+    public SwerveModuleConfig(int driveMotorID, int angleMotorID, Rotation2d absoluteEncoderOffset) {
         this.driveMotorID = driveMotorID;
         this.angleMotorID = angleMotorID;
 

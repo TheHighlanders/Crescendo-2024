@@ -33,12 +33,7 @@ public class Localizer extends SubsystemBase {
         field = new Field2d();
 
         swervePoseEstimator =
-            new SwerveDrivePoseEstimator(
-                Constants.SwerveConst.kinematics,
-                this.swerve.getYaw(),
-                this.swerve.getModulePositions(),
-                new Pose2d()
-            );
+            new SwerveDrivePoseEstimator(Constants.SwerveConst.kinematics, this.swerve.getYaw(), this.swerve.getModulePositions(), new Pose2d());
 
         SmartDashboard.putData(field);
     }
@@ -92,11 +87,7 @@ public class Localizer extends SubsystemBase {
     }
 
     public void resetOdoPose2d(Pose2d pose) {
-        swervePoseEstimator.resetPosition(
-            this.swerve.getYaw(),
-            this.swerve.getModulePositions(),
-            pose
-        );
+        swervePoseEstimator.resetPosition(this.swerve.getYaw(), this.swerve.getModulePositions(), pose);
     }
 
     public Pose2d getPose() {
@@ -106,8 +97,9 @@ public class Localizer extends SubsystemBase {
     public Field2d getField() {
         return field;
     }
-
+    
     public double getDistanceToSpeaker() {
+        if(DriverStation.getAlliance().isEmpty()){return -1;}
         Translation2d robot = getPose().getTranslation();
         Translation2d goal =
             (
@@ -120,6 +112,7 @@ public class Localizer extends SubsystemBase {
     }
 
     public Rotation2d getAngleToSpeaker() {
+        if(DriverStation.getAlliance().isEmpty()){return new Rotation2d();}
         Translation2d robot = getPose().getTranslation();
         Translation2d goal =
             (
@@ -127,7 +120,7 @@ public class Localizer extends SubsystemBase {
                     ? Constants.VisionConstants.kRedSpeaker
                     : Constants.VisionConstants.kBlueSpeaker
             );
-        SmartDashboard.putNumber("Angle to Speaker", Math.toDegrees(Math.atan2(goal.getY()-robot.getY(), goal.getX() - robot.getX())));
-        return new Rotation2d(Math.atan2(goal.getY()-robot.getY(), goal.getX() - robot.getX()));
+        SmartDashboard.putNumber("Angle to Speaker", Math.toDegrees(Math.atan2(goal.getY() - robot.getY(), goal.getX() - robot.getX())));
+        return new Rotation2d(Math.atan2(goal.getY() - robot.getY(), goal.getX() - robot.getX()));
     }
 }

@@ -51,8 +51,7 @@ public class RobotContainer {
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
     public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
-    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) ->
-        s_Localizer.resetOdoPose2d(pose);
+    public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
     public RGB s_RGB = new RGB();
 
     /* Auton */
@@ -99,8 +98,6 @@ public class RobotContainer {
                 () -> driver.leftBumper().getAsBoolean()
             )
         );
-        
-
     }
 
     /**
@@ -113,5 +110,4 @@ public class RobotContainer {
         //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
     }
-
 }

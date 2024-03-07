@@ -54,12 +54,7 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("PP Y", 5);
         SmartDashboard.putNumber("PP O", 6);
 
-        odometer =
-            new SwerveDriveOdometry(
-                Constants.SwerveConst.kinematics,
-                gyro.getRotation2d(),
-                getModulePositions()
-            );
+        odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
 
         chassisSpeeds = new ChassisSpeeds();
         // SmartDashboard.putData(field);
@@ -111,30 +106,15 @@ public class Swerve extends SubsystemBase {
      * @param fieldRelative Driving mode
      * @param isOpenLoop    Drive controller mode
      */
-    public void drive(
-        Translation2d translate,
-        Rotation2d rotate,
-        boolean fieldRelative,
-        boolean isOpenLoop
-    ) {
+    public void drive(Translation2d translate, Rotation2d rotate, boolean fieldRelative, boolean isOpenLoop) {
         chassisSpeeds =
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    -translate.getX(),
-                    -translate.getY(),
-                    rotate.getRadians(),
-                    getYaw()
-                )
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(-translate.getX(), -translate.getY(), rotate.getRadians(), getYaw())
                 : new ChassisSpeeds(translate.getX(), translate.getY(), rotate.getRadians());
 
-        SwerveModuleState[] swerveModuleStates = Constants.SwerveConst.kinematics.toSwerveModuleStates(
-            chassisSpeeds
-        );
+        SwerveModuleState[] swerveModuleStates = Constants.SwerveConst.kinematics.toSwerveModuleStates(chassisSpeeds);
 
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            swerveModuleStates,
-            Constants.SwerveConst.kMaxSpeedTele
-        );
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConst.kMaxSpeedTele);
 
         for (SwerveModule m : modules) {
             m.setModuleState(swerveModuleStates[m.moduleNumber], isOpenLoop); //WHY WHY WHY
@@ -148,17 +128,12 @@ public class Swerve extends SubsystemBase {
 
         chassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
 
-        SwerveModuleState[] swerveModuleStates = Constants.SwerveConst.kinematics.toSwerveModuleStates(
-            chassisSpeeds
-        );
+        SwerveModuleState[] swerveModuleStates = Constants.SwerveConst.kinematics.toSwerveModuleStates(chassisSpeeds);
 
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            swerveModuleStates,
-            Constants.SwerveConst.kMaxSpeedTele
-        );
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConst.kMaxSpeedTele);
 
         for (SwerveModule m : modules) {
-            m.setModuleState(swerveModuleStates[m.moduleNumber], false);
+            m.setModuleState(swerveModuleStates[m.moduleNumber], Constants.SwerveConst.kOpenLoop);
         }
     }
 
@@ -208,18 +183,9 @@ public class Swerve extends SubsystemBase {
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        SmartDashboard.putNumber(
-            "getRobotRelativeSpeedsX",
-            Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vxMetersPerSecond
-        );
-        SmartDashboard.putNumber(
-            "getRobotRelativeSpeedsY",
-            Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vyMetersPerSecond
-        );
-        SmartDashboard.putNumber(
-            "getRobotRelativeSpeedsO",
-            Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).omegaRadiansPerSecond
-        );
+        SmartDashboard.putNumber("getRobotRelativeSpeedsX", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vxMetersPerSecond);
+        SmartDashboard.putNumber("getRobotRelativeSpeedsY", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vyMetersPerSecond);
+        SmartDashboard.putNumber("getRobotRelativeSpeedsO", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).omegaRadiansPerSecond);
 
         return Constants.SwerveConst.kinematics.toChassisSpeeds(getStates());
     }
@@ -248,10 +214,7 @@ public class Swerve extends SubsystemBase {
      */
     public void sendAngleDiagnostic() {
         for (SwerveModule m : modules) {
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " Angle Actual",
-                m.angleEncoder.getPosition()
-            );
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Angle Actual", m.angleEncoder.getPosition());
         }
     }
 
@@ -260,10 +223,7 @@ public class Swerve extends SubsystemBase {
      */
     public void sendAngleTargetDiagnostic() {
         for (SwerveModule m : modules) {
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " Angle Target",
-                m.angleReference
-            );
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Angle Target", m.angleReference);
         }
     }
 
@@ -273,17 +233,13 @@ public class Swerve extends SubsystemBase {
     public void sendDriveDiagnostic() {
         double[] wheelSpeeds = new double[4];
         for (SwerveModule m : modules) {
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Actual",
-                m.driveEncoder.getVelocity()
-            );
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Actual", m.driveEncoder.getVelocity());
             wheelSpeeds[m.driveMotor.getDeviceId() / 10 - 1] = m.driveEncoder.getVelocity();
         }
 
         SmartDashboard.putNumber(
             "Velocity Range",
-            Math.abs(Arrays.stream(wheelSpeeds).max().getAsDouble()) -
-            Math.abs(Arrays.stream(wheelSpeeds).min().getAsDouble())
+            Math.abs(Arrays.stream(wheelSpeeds).max().getAsDouble()) - Math.abs(Arrays.stream(wheelSpeeds).min().getAsDouble())
         );
     }
 
@@ -292,34 +248,24 @@ public class Swerve extends SubsystemBase {
      */
     public void sendDriveTargetDiagnostic() {
         for (SwerveModule m : modules) {
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Target",
-                m.driveReference
-            );
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Target", m.driveReference);
         }
     }
 
     public void sendAbsoluteDiagnostic() {
         for (SwerveModule m : modules) {
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " Absolute",
-                m.getAbsolutePosition().getDegrees()
-            );
-            SmartDashboard.putNumber(
-                "Module " + m.driveMotor.getDeviceId() / 10 + " ERROR",
-                (m.angleEncoder.getPosition() - m.getAbsolutePosition().getDegrees()) % 360
-            );
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Absolute", m.absoluteEncoder.getPosition());
         }
     }
 
     public void sendSmartDashboardDiagnostics() {
-        sendAngleDiagnostic();
-        sendAngleTargetDiagnostic();
+        // sendAngleDiagnostic();
+        // sendAngleTargetDiagnostic();
 
-        sendDriveDiagnostic();
-        sendDriveTargetDiagnostic();
+        // sendDriveDiagnostic();
+        // sendDriveTargetDiagnostic();
 
-        // sendAbsoluteDiagnostic();
+        sendAbsoluteDiagnostic();
 
         SmartDashboard.putNumber("NavX Angle", getYaw().getDegrees());
         SmartDashboard.putNumber("Pose X", getPose().getX());
@@ -329,15 +275,10 @@ public class Swerve extends SubsystemBase {
 
     public void jogSingleModule(int moduleNumber, double input, boolean drive) {
         if (drive) {
-            modules[moduleNumber].setDriveState(
-                    new SwerveModuleState(input, new Rotation2d(0)),
-                    false
-                );
+            modules[moduleNumber].setDriveState(new SwerveModuleState(input, new Rotation2d(0)), false);
             DriverStation.reportWarning(modules[moduleNumber].driveMotor.getDeviceId() + "", false);
         } else {
-            modules[moduleNumber].setAngleState(
-                    new SwerveModuleState(0, new Rotation2d(Math.toRadians(input)))
-                );
+            modules[moduleNumber].setAngleState(new SwerveModuleState(0, new Rotation2d(Math.toRadians(input))));
             DriverStation.reportWarning(modules[moduleNumber].angleMotor.getDeviceId() + "", false);
         }
     }
