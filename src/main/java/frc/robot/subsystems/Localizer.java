@@ -19,7 +19,8 @@ import org.photonvision.EstimatedRobotPose;
 public class Localizer extends SubsystemBase {
 
     SwerveDrivePoseEstimator swervePoseEstimator;
-    Pose2d previous = new Pose2d();
+    Pose2d previous0 = new Pose2d();
+    Pose2d previous1 = new Pose2d();
     Field2d field;
     Swerve swerve;
     Vision vision;
@@ -46,20 +47,40 @@ public class Localizer extends SubsystemBase {
     public void periodic() {
         swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
 
-        Optional<EstimatedRobotPose> estPose;
+        Optional<EstimatedRobotPose> estPose0;
+        Optional<EstimatedRobotPose> estPose1;
 
-        if (previous != null) {
-            estPose = vision.getEstimatedGlobalPosePhoton(previous);
+
+        if (previous0 != null) {
+            estPose0 = vision.getEstimatedGlobalPosePhoton0(previous0);
+
         } else {
-            estPose = vision.getEstimatedGlobalPosePhoton();
+            estPose0 = vision.getEstimatedGlobalPosePhoton0();
         }
 
-        if (estPose.isPresent()) {
-            var estStdDevs = vision.getEstimationStdDevs(estPose.get().estimatedPose.toPose2d());
-            previous = estPose.get().estimatedPose.toPose2d();
+        if (previous1 != null) {
+            estPose1 = vision.getEstimatedGlobalPosePhoton1(previous0);
+
+        } else {
+            estPose1 = vision.getEstimatedGlobalPosePhoton1();
+        }
+
+        if (estPose0.isPresent()) {
+            var estStdDevs = vision.getEstimationStdDevs(estPose0.get().estimatedPose.toPose2d(), 0);
+            previous0 = estPose0.get().estimatedPose.toPose2d();
             swervePoseEstimator.addVisionMeasurement(
-                estPose.get().estimatedPose.toPose2d(),
-                estPose.get().timestampSeconds,
+                estPose0.get().estimatedPose.toPose2d(),
+                estPose0.get().timestampSeconds,
+                estStdDevs
+            );
+        }
+
+        if (estPose1.isPresent()) {
+            var estStdDevs = vision.getEstimationStdDevs(estPose1.get().estimatedPose.toPose2d(), 1);
+            previous1 = estPose1.get().estimatedPose.toPose2d();
+            swervePoseEstimator.addVisionMeasurement(
+                estPose1.get().estimatedPose.toPose2d(),
+                estPose1.get().timestampSeconds,
                 estStdDevs
             );
         }

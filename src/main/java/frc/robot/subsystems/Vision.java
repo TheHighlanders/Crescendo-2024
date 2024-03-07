@@ -26,11 +26,14 @@ public class Vision extends SubsystemBase {
 
     AprilTagFieldLayout aprilTagFieldLayout;
     PhotonPoseEstimator photonPoseEst0;
+    PhotonPoseEstimator photonPoseEst1;
     PhotonCamera cam0;
+    PhotonCamera cam1;
 
     /** Creates a new Vision. */
     public Vision() {
         cam0 = new PhotonCamera("6201Cam0");
+        cam1 = new PhotonCamera("6201Cam1");
 
         try {
             aprilTagFieldLayout =
@@ -47,6 +50,14 @@ public class Vision extends SubsystemBase {
                 cam0,
                 VisionConstants.kRobotCamera0
             );
+        
+        photonPoseEst1 =
+            new PhotonPoseEstimator(
+                aprilTagFieldLayout,
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                cam0,
+                VisionConstants.kRobotCamera1
+            );
     }
 
     @Override
@@ -54,24 +65,38 @@ public class Vision extends SubsystemBase {
         // This method will be called once per scheduler run
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton(
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton0(
         Pose2d prevEstimatedRobotPose
     ) {
         photonPoseEst0.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEst0.update();
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton() {
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton1(
+        Pose2d prevEstimatedRobotPose
+    ) {
+        photonPoseEst1.setReferencePose(prevEstimatedRobotPose);
+        return photonPoseEst1.update();
+    }
+
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton0() {
         return photonPoseEst0.update();
     }
 
-    public PhotonPipelineResult getLatestResult() {
-        return cam0.getLatestResult();
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton1() {
+        return photonPoseEst1.update();
     }
 
-    public Matrix<N3, N1> getEstimationStdDevs(Pose2d estimatedPose) {
+    public PhotonPipelineResult getLatestResult0() {
+        return cam0.getLatestResult();
+    }
+    public PhotonPipelineResult getLatestResult1() {
+        return cam1.getLatestResult();
+    }
+
+    public Matrix<N3, N1> getEstimationStdDevs(Pose2d estimatedPose, int camID) {
         var estStdDevs = VisionConstants.kSingleTagStdDevs;
-        var targets = getLatestResult().getTargets();
+        var targets = ((camID == 0) ? getLatestResult0().getTargets() : getLatestResult1().getTargets());
         int numTags = 0;
         double avgDist = 0;
         for (var tgt : targets) {
