@@ -167,7 +167,7 @@ public class SwerveModule {
      * @return Swerve Module Position (Position & Angle)
      */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
+        return new SwerveModulePosition(-getDrivePosition(), getAnglePosition());
     }
 
     /**

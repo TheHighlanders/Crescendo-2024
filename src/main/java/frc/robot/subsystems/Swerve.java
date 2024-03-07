@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,12 +16,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.Modules;
+import frc.robot.RobotContainer;
 import java.util.Arrays;
 
 public class Swerve extends SubsystemBase {
@@ -30,12 +29,7 @@ public class Swerve extends SubsystemBase {
     /* Array of Modules */
     public SwerveModule[] modules;
     private AHRS gyro;
-
-    public Field2d field;
-
     public ChassisSpeeds chassisSpeeds;
-
-    public SwerveDrivePoseEstimator swervePoseEstimator;
 
     public SwerveDriveOdometry odometer;
 
@@ -60,21 +54,11 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("PP Y", 5);
         SmartDashboard.putNumber("PP O", 6);
 
-        field = new Field2d();
-
         odometer =
             new SwerveDriveOdometry(
                 Constants.SwerveConst.kinematics,
                 gyro.getRotation2d(),
                 getModulePositions()
-            );
-
-        swervePoseEstimator =
-            new SwerveDrivePoseEstimator(
-                Constants.SwerveConst.kinematics,
-                getYaw(),
-                getModulePositions(),
-                new Pose2d()
             );
 
         chassisSpeeds = new ChassisSpeeds();
@@ -107,7 +91,11 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(gyro.getRotation2d(), getModulePositions());
-        swervePoseEstimator.update(getYaw(), getModulePositions());
+        SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
+
+        SmartDashboard.putNumber("xCalc", -1);
+        SmartDashboard.putNumber("yCalc", -1);
+        SmartDashboard.putBoolean("Running", false);
 
         // field.setRobotPose(getPose());
         for (SwerveModule m : modules) {
@@ -132,8 +120,8 @@ public class Swerve extends SubsystemBase {
         chassisSpeeds =
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translate.getX(),
-                    translate.getY(),
+                    -translate.getX(),
+                    -translate.getY(),
                     rotate.getRadians(),
                     getYaw()
                 )
@@ -149,7 +137,7 @@ public class Swerve extends SubsystemBase {
         );
 
         for (SwerveModule m : modules) {
-            m.setModuleState(swerveModuleStates[m.moduleNumber], isOpenLoop);
+            m.setModuleState(swerveModuleStates[m.moduleNumber], isOpenLoop); //WHY WHY WHY
         }
     }
 
@@ -183,7 +171,7 @@ public class Swerve extends SubsystemBase {
 
     // For PP
     public void resetPose(Pose2d pose) {
-        swervePoseEstimator.resetPosition(getYaw(), getModulePositions(), pose);
+        RobotContainer.s_Localizer.resetOdoPose2d(pose);
         odometer.resetPosition(getYaw(), getModulePositions(), pose);
 
         SmartDashboard.putNumber("ResetPoseX", pose.getX());
@@ -214,12 +202,9 @@ public class Swerve extends SubsystemBase {
 
     public Pose2d getPose() {
         // return new Pose2d(odometer.getPoseMeters().getTranslation(), new Rotation2d());
-        return odometer.getPoseMeters();
+        // return odometer.getPoseMeters();
         // return swervePoseEstimator.getEstimatedPosition();
-    }
-
-    public Field2d getField() {
-        return field;
+        return RobotContainer.getLocalizedPose.get();
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -258,6 +243,9 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /**
+     *  Sends actual angle encoder data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendAngleTargetDiagnostic()
+     */
     public void sendAngleDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber(
@@ -267,6 +255,9 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /**
+     *  Sends angle PID target data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendAngleDiagnostic()
+     */
     public void sendAngleTargetDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber(
@@ -276,6 +267,9 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /**
+     *  Sends actual drive encoder data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendDriveTargetDiagnostic()
+     */
     public void sendDriveDiagnostic() {
         double[] wheelSpeeds = new double[4];
         for (SwerveModule m : modules) {
@@ -293,6 +287,9 @@ public class Swerve extends SubsystemBase {
         );
     }
 
+    /**
+     *  Sends drive PID target data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendDriveDiagnostic()
+     */
     public void sendDriveTargetDiagnostic() {
         for (SwerveModule m : modules) {
             SmartDashboard.putNumber(

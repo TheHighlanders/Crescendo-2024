@@ -26,5 +26,8 @@
     },
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
-  "java.completion.importOrder": ["#"]
+  "java.completion.importOrder": [
+    "#"
+  ],
+  "workbench.colorTheme": "Default Dark Modern"
 }
