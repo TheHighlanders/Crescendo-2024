@@ -245,7 +245,7 @@ public final class Constants {
             public static final double absoluteEncoderOffset = 69.86439174660984;
 
             public static final double initExtension = 13.231982231140137;//14; // Inches
-            public static final double readyInches = 14; // Inches
+            public static final double readyInches = 12.6; // Inches
 
             public static final double shooterPivotRatio = 1 / 7.0f;
 
@@ -281,6 +281,8 @@ public final class Constants {
                 public static final double actuatorAngleBaseDist = Math.atan(actuatorBaseDistY / actuatorBaseDistX);
                 public static final double pivotToActuatorCenterAxis = 2; //inches
                 public static final double secretAngleDeg = 25.919;
+                public static final double integralBreakpointExtension = 12.6;
+                public static final double breakpointIntegralValue = 0.1;
             }
         }
     }

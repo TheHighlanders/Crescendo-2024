@@ -4,12 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +37,8 @@ public class Pivot extends SubsystemBase {
 
     private double cachedSetpointIntake = 0;
     private double cachedSetpointShooter = 0;
+    private double cachedExtensionPos = Shooter.Pivot.initExtension;
+    private double currentExtionsPos = Shooter.Pivot.initExtension;
 
     private boolean intakeDeployed;
 
@@ -76,7 +78,7 @@ public class Pivot extends SubsystemBase {
         absolShooter = new DutyCycleEncoder(Shooter.Pivot.kAbsolDutyCycleDIOPin);
 
         shooterAngleMotor = new CANSparkMaxCurrent(Shooter.Pivot.SHOOTER, MotorType.kBrushless);
-        shooterAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        shooterAngleMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         shooterExtensionEncoder = shooterAngleMotor.getEncoder();
         shooterExtensionEncoder.setPositionConversionFactor(Shooter.Pivot.actuatorConst.inchesToRotationsConversion);
         pidShooterExtensionController = shooterAngleMotor.getPIDController();
@@ -102,8 +104,8 @@ public class Pivot extends SubsystemBase {
 
     // Encoder offsets
     @Deprecated
-    public double getShooterAbsolutePosition() {
-        return ((absolShooter.get() * 360) - Shooter.Pivot.absoluteEncoderOffset) * Shooter.Pivot.inversionFactor;
+    public double getPositionDiffrential() {
+        return ((absolShooter.get() * 360)) * Shooter.Pivot.inversionFactor;// - Shooter.Pivot.absoluteEncoderOffset) ;
     }
 
     public double getIntakeAbsolutePosition() {
@@ -190,7 +192,7 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.set(0d);
     }
 
-    public void shooterAngleHold(){
+    public void shooterAngleHold() {
         pidShooterExtensionController.setReference(shooterExtensionEncoder.getPosition(), ControlType.kPosition);
     }
 
@@ -198,14 +200,18 @@ public class Pivot extends SubsystemBase {
         return intakeDeployed;
     }
 
-    public void setShooterBreakMode(){
+    public void setShooterBreakMode() {
         shooterAngleMotor.setIdleMode(IdleMode.kBrake);
     }
 
-    public void setShooterCoastMode(){
+    public void setShooterCoastMode() {
         shooterAngleMotor.setIdleMode(IdleMode.kCoast);
     }
-    
+
+    public void setShooterBrakeMode() {
+        shooterAngleMotor.setIdleMode(IdleMode.kBrake);
+    }
+
     public double convertDistanceInchesToAngleDeg(double dist) {
         return (
             Math.toDegrees(
@@ -219,7 +225,8 @@ public class Pivot extends SubsystemBase {
                     (-2 * Shooter.Pivot.shooterBaseToArmPivotAxis * Shooter.Pivot.actuatorConst.actuatorHypot)
                 ) -
                 Shooter.Pivot.actuatorConst.actuatorAngleBaseDist
-            ) + Shooter.Pivot.actuatorConst.secretAngleDeg
+            ) +
+            Shooter.Pivot.actuatorConst.secretAngleDeg
         );
     }
 
@@ -228,13 +235,34 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
 
+        currentExtionsPos = shooterExtensionEncoder.getPosition();
+
+        if (
+            currentExtionsPos < Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
+            cachedExtensionPos > Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
+            cachedExtensionPos < cachedSetpointShooter
+        ) {
+            pidShooterExtensionController.setI(Shooter.Pivot.actuatorConst.breakpointIntegralValue);
+        } else if (
+            currentExtionsPos > Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
+            cachedExtensionPos < Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
+            cachedExtensionPos > cachedSetpointShooter
+        ) {
+            pidShooterExtensionController.setI(0);
+        }
+
+        cachedExtensionPos = shooterExtensionEncoder.getPosition();
+
+        SmartDashboard.putNumber("Intake pid I value", pidShooterExtensionController.getI());
+
+
         SmartDashboard.putNumber("Intake Angle Value absolute", getIntakeAbsolutePosition());
         SmartDashboard.putNumber("Intake Angle Value absolute no offset", (absolIntake.get() * 360));
 
         SmartDashboard.putNumber("Shooter extension", shooterExtensionEncoder.getPosition());
         SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
 
-        SmartDashboard.putNumber("Shooter Inferred Angle", convertDistanceInchesToAngleDeg(shooterExtensionEncoder.getPosition()));
+        SmartDashboard.putNumber("Diffrence in angle", getPositionDiffrential());
 
         SmartDashboard.putNumber("Shooter Measured Angle Value", getShooterRelativePosition());
     }
