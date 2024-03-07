@@ -156,7 +156,7 @@ public final class Constants {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 2;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(349.7586393356323));
 
             public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -166,7 +166,7 @@ public final class Constants {
             public static final int driveMotorID = 11;
             public static final int angleMotorID = 12;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(59.69142973423005));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(308.786244392395));
 
             public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -176,17 +176,17 @@ public final class Constants {
             public static final int driveMotorID = 21;
             public static final int angleMotorID = 22;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(131.00274682044983));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(241.66677474975586));
 
             public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
 
         public static class BackRight {
 
-            public static final int driveMotorID = 31;
-            public static final int angleMotorID = 32;
+            public static final int driveMotorID = 32;
+            public static final int angleMotorID = 31;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(170.9482741355896));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(253.65536928176877));
 
             public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -346,6 +346,9 @@ public final class Constants {
         public static final int kServoRightID = 3;
         public static final int kServoLeftID = 4;
 
-        public static final double kClimbSpeed = 0.25;
+        public static final double kClimbSpeed = 0.30;
+
+        public static final double kClimberP = 0.0;
+        public static final double kClimberPrimePoint = 0.0;
     }
 }

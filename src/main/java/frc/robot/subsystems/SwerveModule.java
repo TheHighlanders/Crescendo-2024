@@ -157,6 +157,16 @@ public class SwerveModule {
         return Rotation2d.fromDegrees(positionDeg);
     }
 
+        public Rotation2d getAbsolutePositionNoOffset() {
+        /* Gets Position from SparkMAX absol encoder * 360 to degrees */
+        double positionDeg = absoluteEncoder.getPosition() * 360.0d;
+
+        /* Inverts if necesary */
+        positionDeg *= (Module.KAbsoluteEncoderInverted ? -1 : 1);
+
+        return Rotation2d.fromDegrees(positionDeg);
+    }
+
     /**
      *
      * @return Swerve Module Position (Position & Angle)

@@ -8,6 +8,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,7 +49,7 @@ public class Pivot extends SubsystemBase {
         absolIntake = new DutyCycleEncoder(Intake.Pivot.kAbsolDutyCycleDIOPin);
 
         intakeAngleMotor = new CANSparkMaxCurrent(Intake.Pivot.INTAKE, MotorType.kBrushless);
-        intakeAngleMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        intakeAngleMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         intakeAngleEncoder = intakeAngleMotor.getEncoder();
         intakeAngleEncoder.setPositionConversionFactor(Intake.Pivot.intakePivotRatio);
         pidIntakeAngleController = intakeAngleMotor.getPIDController();
@@ -188,10 +190,22 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.set(0d);
     }
 
+    public void shooterAngleHold(){
+        pidShooterExtensionController.setReference(shooterExtensionEncoder.getPosition(), ControlType.kPosition);
+    }
+
     public boolean getIntakeDeploy() {
         return intakeDeployed;
     }
 
+    public void setShooterBreakMode(){
+        shooterAngleMotor.setIdleMode(IdleMode.kBrake);
+    }
+
+    public void setShooterCoastMode(){
+        shooterAngleMotor.setIdleMode(IdleMode.kCoast);
+    }
+    
     public double convertDistanceInchesToAngleDeg(double dist) {
         return (
             Math.toDegrees(

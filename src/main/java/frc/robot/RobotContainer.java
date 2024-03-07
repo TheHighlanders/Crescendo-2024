@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,12 +16,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
-import frc.robot.commands.LEDloadingBarCMD;
-import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
-import frc.robot.commands.climbCMD;
-import frc.robot.subsystems.Climber;
 import frc.robot.commands.alignShootCMDG;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
@@ -46,8 +42,8 @@ public class RobotContainer {
 
 
     /* Controllers */
-    private final CommandXboxController driver = new CommandXboxController(0);
-    private final CommandXboxController operator = new CommandXboxController(1);
+    private static final CommandXboxController driver = new CommandXboxController(0);
+    private static final CommandXboxController operator = new CommandXboxController(1);
 
     /* Drive Controls */
     private static final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -71,7 +67,7 @@ public class RobotContainer {
     private SendableChooser<Command> autoChooser;
 
  /* Commands */
-    private static final Command climbCMD = new climbCMD(operator.leftBumper(), operator.rightBumper(), S_Climber);
+    // private static final Command climbCMD = new climbCMD(operator.leftBumper(), operator.rightBumper(), S_Climber);
 
 
     public static Command deployIntakeCMD = new InstantCommand(
@@ -116,12 +112,12 @@ public class RobotContainer {
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
         driver.leftBumper().whileTrue(new frc.robot.commands.deployIntakeCMD(s_Pivot));
         operator.x().onTrue(gamePieceOverrideCMD);
-        operator.back().onTrue(alignIntakeTest);
+        //operator.back().onTrue(alignIntakeTest);
 
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
-        operator.rightStick().whileTrue(new InstantCommand(() -> s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25))); 
-        operator.rightStick().onFalse(new InstantCommand(()-> s_Pivot.stopShooterAngleNoHold()));// Manual Pivot Angle Control
+        operator.rightStick().whileTrue(new FunctionalCommand(()->{},()->{s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25);},v->{},()->{return false;})); 
+        operator.rightStick().onFalse(new InstantCommand(()-> s_Pivot.shooterAngleHold()));// Manual Pivot Angle Control
         operator/* .whileTrue(new InstantCommand(() -> s_Shooter.shoot(() -> 1)));*/
             .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1
             .whileTrue(
@@ -141,8 +137,9 @@ public class RobotContainer {
             );
 
 	/* Climber  */
- 	operator.rightBumper().whileTrue(new FunctionalCommand(()->S_Climber.climbRight(ClimberConsts.kClimbSpeed), ()->{},v->S_Climber.climbRight(0),()->{return false;}));
+ 	    operator.rightBumper().whileTrue(new FunctionalCommand(()->S_Climber.climbRight(ClimberConsts.kClimbSpeed), ()->{},v->S_Climber.climbRight(0),()->{return false;}));
         operator.leftBumper().whileTrue(new FunctionalCommand(()->S_Climber.climbLeft(ClimberConsts.kClimbSpeed), ()->{},v->S_Climber.climbLeft(0),()->{return false;}));
+        operator.b().onTrue(new InstantCommand(()->S_Climber.climberPrime()));
     }
 
     private void configureAuton() {
