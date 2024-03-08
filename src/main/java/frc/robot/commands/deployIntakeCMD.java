@@ -25,9 +25,9 @@ public class deployIntakeCMD extends Command {
     @Override
     public void initialize() {
         if (pivot.getIntakeDeploy()) {
-            pivot.intakeIn();
+            pivot.alignIntakeToShooter();
         } else {
-            pivot.intakeOut();
+            pivot.alignIntakeToGround();
         }
     }
 
@@ -42,6 +42,6 @@ public class deployIntakeCMD extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }

@@ -51,7 +51,7 @@ public class alignShootCMDG extends SequentialCommandGroup {
                 new InstantCommand(() -> m_Pivot.alignPivot(currentShotData::getArmExtension)),
                 // runs the swerve move to command to the angle of the speaker
                 new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker),
-                new WaitUntilCommand(m_Pivot::atSetpoints)
+                new WaitUntilCommand(m_Pivot::atSetpointsAtShooter)
             ),
             // runs the intake and the shooter for 3 seconds and then stops them when the time us up
             new ParallelDeadlineGroup(

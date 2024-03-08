@@ -242,9 +242,9 @@ public final class Constants {
             public static final boolean isInversed = true;
             public static final int inversionFactor = (isInversed ? -1 : 1);
             public static final int kAbsolDutyCycleDIOPin = 2;
-            public static final double absoluteEncoderOffset = 69.86439174660984;
+            public static final double absoluteEncoderOffset = -70;
 
-            public static final double initExtension = 13.231982231140137;//14; // Inches
+            public static final double initExtension = 13.231982231140137; // Inches
             public static final double readyInches = 12.6; // Inches
 
             public static final double shooterPivotRatio = 1 / 7.0f;
@@ -258,8 +258,8 @@ public final class Constants {
                 public static final double minOut = -0.25;
                 public static final double maxOut = 1;
                 public static final double kP = 1.2d;
-                public static final double kI = 0d;//.005d;
-                public static final double kD = 0;//30;
+                public static final double kI = 0d; //.005d;
+                public static final double kD = 0; //30;
                 public static final double iMaxAccum = 10d;
             }
 
@@ -310,24 +310,31 @@ public final class Constants {
             public static final boolean isInversed = false;
             public static final int inversionFactor = (isInversed ? -1 : 1);
             public static final int kAbsolDutyCycleDIOPin = 3;
-            public static final double absoluteEncoderOffset = 206.4615531615389 - 90d;
+            public static final double absoluteEncoderOffset = 337d;
 
-            public static final double intakeOutAngle = -35; //deg
-            public static final double readyAngle = 50; //deg
-
-            public static final double intakePivotRatio = 1 / 36.0f;
-
-            public static final float intakeAngleDeadzone = 0.1f;
+            public static final double intakePivotRatio = 1;
+            public static final double intakeInit = -13.3;
+            public static final float intakeAngleDeadzone = 0.5f;
+            public static final float intakeVelocityDeadzone = 0.1f;
 
             public static class PIDValues {
 
-                public static final double minOut = -1;
-                public static final double maxOut = 1;
-                public static final double kP = 0.1d;
+                public static final double minOut = -0.1;
+                public static final double maxOut = 0.1;
+                public static final double kP = 0.01d;
                 public static final double kI = 0d;
                 public static final double kD = 0d;
                 public static final double kMaxI = 0d;
                 public static final double iMaxAccum = 0d;
+
+                public static class deviationPID {
+
+                    public static final double kP = 0.001d;
+                    public static final double kI = 0d;
+                    public static final double kD = 0d;
+                    public static final double posTolerance = 0.2d;
+                    public static final double velTolerance = 0.2d;
+                }
             }
 
             public static class ArmCurrentLimit {

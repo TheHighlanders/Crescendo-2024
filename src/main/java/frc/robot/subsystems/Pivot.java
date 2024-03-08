@@ -10,8 +10,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
@@ -24,6 +27,7 @@ public class Pivot extends SubsystemBase {
 
     private InterpolatingShotTreeMapContainer iTreeMapContainer;
 
+    private PIDController differentialPidController;
     private CANSparkMaxCurrent intakeAngleMotor;
     private RelativeEncoder intakeAngleEncoder;
     private SparkPIDController pidIntakeAngleController;
@@ -35,12 +39,14 @@ public class Pivot extends SubsystemBase {
     private DutyCycleEncoder absolShooter;
     private DutyCycleEncoder absolIntake;
 
-    private double cachedSetpointIntake = 0;
     private double cachedSetpointShooter = 0;
+    private double cachedSetpointIntake = 0;
     private double cachedExtensionPos = Shooter.Pivot.initExtension;
     private double currentExtionsPos = Shooter.Pivot.initExtension;
 
     private boolean intakeDeployed;
+
+    public static Command intakeShooterCommand;
 
     public Pivot() {
         iTreeMapContainer = new InterpolatingShotTreeMapContainer();
@@ -61,6 +67,15 @@ public class Pivot extends SubsystemBase {
         pidIntakeAngleController.setD(Intake.Pivot.PIDValues.kD);
         pidIntakeAngleController.setIMaxAccum(Intake.Pivot.PIDValues.iMaxAccum, Intake.Pivot.slotID);
 
+        differentialPidController =
+            new PIDController(
+                Intake.Pivot.PIDValues.deviationPID.kP,
+                Intake.Pivot.PIDValues.deviationPID.kI,
+                Intake.Pivot.PIDValues.deviationPID.kD,
+                0.02
+            );
+        differentialPidController.setTolerance(Intake.Pivot.PIDValues.deviationPID.posTolerance, Intake.Pivot.PIDValues.deviationPID.velTolerance);
+
         intakeAngleMotor.setSpikeCurrentLimit(
             Intake.Pivot.ArmCurrentLimit.kLimitToAmps,
             Intake.Pivot.ArmCurrentLimit.kMaxSpikeTime,
@@ -68,7 +83,21 @@ public class Pivot extends SubsystemBase {
             Intake.Pivot.ArmCurrentLimit.kSmartLimit
         );
 
-        intakeAngleEncoder.setPosition(getIntakeAbsolutePosition());
+        intakeAngleEncoder.setPosition(Intake.Pivot.intakeInit);
+
+        intakeShooterCommand =
+            new FunctionalCommand(
+                () -> {},
+                () -> {
+                    intakeAngleMotor.set(-(differentialPidController.calculate(getPositionDiffrential(), 0)));
+                },
+                v -> {
+                    intakeAngleHold();
+                },
+                () -> {
+                    return intakeAtSetpointShooter();
+                }
+            );
 
         intakeDeployed = false;
 
@@ -103,9 +132,8 @@ public class Pivot extends SubsystemBase {
     }
 
     // Encoder offsets
-    @Deprecated
     public double getPositionDiffrential() {
-        return ((absolShooter.get() * 360)) * Shooter.Pivot.inversionFactor;// - Shooter.Pivot.absoluteEncoderOffset) ;
+        return ((absolShooter.get() * 360) * Shooter.Pivot.inversionFactor) - Shooter.Pivot.absoluteEncoderOffset;
     }
 
     public double getIntakeAbsolutePosition() {
@@ -113,11 +141,11 @@ public class Pivot extends SubsystemBase {
     }
 
     public double getShooterRelativePosition() {
-        return shooterExtensionEncoder.getPosition(); //convert to deg
+        return shooterExtensionEncoder.getPosition();
     }
 
     public double getIntakeRelativePosition() {
-        return intakeAngleEncoder.getPosition(); //convert to deg
+        return intakeAngleEncoder.getPosition();
     }
 
     /**Aligns both intake and shooter to a given angle */
@@ -125,8 +153,7 @@ public class Pivot extends SubsystemBase {
         try {
             double extSupplied = Extension.getAsDouble();
             alignShooterToExtension(extSupplied);
-            // TODO: change this to use approx math
-            alignIntakeToAngle(convertDistanceInchesToAngleDeg(extSupplied), false);
+            alignIntakeToShooter();
             return true;
         } catch (Exception e) {
             return false;
@@ -138,38 +165,34 @@ public class Pivot extends SubsystemBase {
         pidShooterExtensionController.setReference(cachedSetpointShooter, CANSparkMax.ControlType.kPosition);
     }
 
-    public void alignIntakeToAngle(double Angle, boolean deployed) {
-        cachedSetpointIntake = Angle;
-        pidIntakeAngleController.setReference(Angle, CANSparkMax.ControlType.kPosition);
-        intakeDeployed = deployed;
+    public void alignIntakeToShooter() {
+        intakeShooterCommand.schedule();
+        
+        intakeDeployed = false;
     }
 
-    /** Moves intake back into robot, matching its angle to the shooter */
-    public void intakeIn() {
-        // TODO: fix this to align to the shooter using extension
-        alignIntakeToAngle(convertDistanceInchesToAngleDeg(getShooterRelativePosition()), false);
-    }
-
-    public void intakeOut() {
-        alignIntakeToAngle(Intake.Pivot.intakeOutAngle, true);
+    public void alignIntakeToGround() {
+        pidIntakeAngleController.setReference(0, CANSparkMax.ControlType.kPosition);
+        intakeDeployed = true;
     }
 
     // Put shooter to avg shootig angle and align the Pivot
     public void readyPositions() {
-        alignIntakeToAngle(Intake.Pivot.readyAngle, false);
+        alignIntakeToShooter();
         alignShooterToExtension(Shooter.Pivot.readyInches);
     }
 
-    public boolean atSetpoints() {
-        return intakeAtSetpoint() && shooterAtSetpoint();
+    public boolean atSetpointsAtShooter() {
+        return intakeAtSetpointShooter() && shooterAtSetpoint();
     }
 
     // must be still at specified position to be true
-    public boolean intakeAtSetpoint() {
-        return (
-            Math.abs(cachedSetpointIntake - getIntakeAbsolutePosition()) <= Intake.Pivot.intakeAngleDeadzone &&
-            Math.abs(intakeAngleEncoder.getVelocity()) == 0
-        );
+    public boolean intakeAtSetpointGround() {
+        return (Math.abs(getIntakeRelativePosition()) <= Intake.Pivot.intakeAngleDeadzone);
+    }
+
+    public boolean intakeAtSetpointShooter() {
+        return differentialPidController.atSetpoint();
     }
 
     // must be still at specified position to be true
@@ -188,6 +211,10 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.set(speed.getAsDouble());
     }
 
+    public void driveIntakeManual(double speed) {
+        intakeAngleMotor.set(speed);
+    }
+
     public void stopShooterAngleNoHold() {
         shooterAngleMotor.set(0d);
     }
@@ -196,12 +223,12 @@ public class Pivot extends SubsystemBase {
         pidShooterExtensionController.setReference(shooterExtensionEncoder.getPosition(), ControlType.kPosition);
     }
 
-    public boolean getIntakeDeploy() {
-        return intakeDeployed;
+    public void intakeAngleHold() {
+        pidIntakeAngleController.setReference(intakeAngleEncoder.getPosition(), ControlType.kPosition);
     }
 
-    public void setShooterBreakMode() {
-        shooterAngleMotor.setIdleMode(IdleMode.kBrake);
+    public boolean getIntakeDeploy() {
+        return intakeDeployed;
     }
 
     public void setShooterCoastMode() {
@@ -210,24 +237,6 @@ public class Pivot extends SubsystemBase {
 
     public void setShooterBrakeMode() {
         shooterAngleMotor.setIdleMode(IdleMode.kBrake);
-    }
-
-    public double convertDistanceInchesToAngleDeg(double dist) {
-        return (
-            Math.toDegrees(
-                Math.acos(
-                    (
-                        Math.pow(dist, 2) -
-                        Math.pow(Shooter.Pivot.actuatorConst.actuatorHypot, 2) -
-                        Math.pow(Shooter.Pivot.shooterBaseToArmPivotAxis, 2) +
-                        Math.pow(Shooter.Pivot.actuatorConst.pivotToActuatorCenterAxis, 2)
-                    ) /
-                    (-2 * Shooter.Pivot.shooterBaseToArmPivotAxis * Shooter.Pivot.actuatorConst.actuatorHypot)
-                ) -
-                Shooter.Pivot.actuatorConst.actuatorAngleBaseDist
-            ) +
-            Shooter.Pivot.actuatorConst.secretAngleDeg
-        );
     }
 
     @Override
@@ -255,15 +264,14 @@ public class Pivot extends SubsystemBase {
 
         SmartDashboard.putNumber("Intake pid I value", pidShooterExtensionController.getI());
 
-
-        SmartDashboard.putNumber("Intake Angle Value absolute", getIntakeAbsolutePosition());
-        SmartDashboard.putNumber("Intake Angle Value absolute no offset", (absolIntake.get() * 360));
-
-        SmartDashboard.putNumber("Shooter extension", shooterExtensionEncoder.getPosition());
-        SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
+        SmartDashboard.putNumber("Intake setpoint comparason", Math.abs(getIntakeRelativePosition()));
+        //SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
 
         SmartDashboard.putNumber("Diffrence in angle", getPositionDiffrential());
+        SmartDashboard.putNumber("relative angle", getIntakeRelativePosition());
 
-        SmartDashboard.putNumber("Shooter Measured Angle Value", getShooterRelativePosition());
+        SmartDashboard.putNumber("Intake set value", differentialPidController.calculate(getPositionDiffrential(), 0) / 50);
+        SmartDashboard.putBoolean("Intake deployed", getIntakeDeploy());
+        SmartDashboard.putBoolean("Intake at setpoint ground", intakeAtSetpointGround());
     }
 }

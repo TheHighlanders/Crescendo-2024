@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
+import frc.robot.commands.deployIntakeCMD;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
@@ -68,25 +69,25 @@ public class RobotContainer {
     /* Commands */
     // private static final Command climbCMD = new climbCMD(operator.leftBumper(), operator.rightBumper(), S_Climber);
 
-    public static Command deployIntakeCMD = new InstantCommand(
-        () -> {
-            if (s_Pivot.getIntakeDeploy()) {
-                s_Pivot.intakeIn();
-            } else {
-                s_Pivot.intakeOut();
-            }
-        },
-        s_Pivot
-    );
-
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
     public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
     public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
-    public static Command intakeFloorCommand = new InstantCommand(s_Pivot::intakeOut);
-    public static Command intakeShooterCommand = new InstantCommand(s_Pivot::intakeOut);
+    public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
+    public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
 
     public static Command alignIntakeTest = new InstantCommand(() -> s_Pivot.alignShooterToExtension(Constants.Shooter.Pivot.readyInches));
+
+    public static Command deployIntakeCMD = new InstantCommand(
+        () -> {
+            if (s_Pivot.getIntakeDeploy()) {
+                intakeShooterCommand.schedule();
+            } else {
+                intakeFloorCommand.schedule();
+            }
+        },
+        s_Pivot
+    );
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer);
 
@@ -111,9 +112,9 @@ public class RobotContainer {
         /* Intake Button Bindings */
         driver.start().whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
-        driver.leftBumper().whileTrue(new frc.robot.commands.deployIntakeCMD(s_Pivot));
+        driver.leftBumper().onTrue(new deployIntakeCMD(s_Pivot));
         operator.x().onTrue(gamePieceOverrideCMD);
-        operator.back().onTrue(alignIntakeTest);
+        operator.back().onTrue(intakeShooterCommand);
 
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
