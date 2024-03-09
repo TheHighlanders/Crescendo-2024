@@ -139,7 +139,7 @@ public class RobotContainer {
                 new FunctionalCommand(
                     () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 2500); //Execute
+                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 3200); //Execute
                     },
                     v -> {
                         s_Shooter.shootCancel(); // End

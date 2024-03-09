@@ -208,10 +208,10 @@ public final class Constants {
         public static final int topFlywheelMotorID = 52;
         public static final double kBottomGearRatio = (1 / 1.0f);
         public static final double kBottomVelocityConversionFactor = kBottomGearRatio;
-        public static final double kTopRatio = (1 / 5.0f);
+        public static final double kTopRatio = (1 / 1.0f);
         public static final int slotID = 0;
 
-        public static final int kCurrentLimit = 10;
+        public static final int kCurrentLimit = 20;
 
         public static class ShooterCurrentLimit {
 
@@ -225,13 +225,12 @@ public final class Constants {
 
         public static class PIDValues {
 
-            public static final double minOut = -0.25;
+            public static final double minOut = 0;
             public static final double maxOut = 1;
-            public static final double kP = 0.5d;
+            public static final double kP = 0.001d;
             public static final double kI = 0d;
-            public static final double kD = 10d;
-            public static final double kMaxI = 0d;
-            public static final double iMaxAccum = 0d;
+            public static final double kD = 0d;
+            public static final double iMaxAccum = .6d;
         }
 
         public static class Pivot {

@@ -31,8 +31,8 @@ public class Shooter extends SubsystemBase {
         bottomFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.bottomFlywheelMotorID, MotorType.kBrushless);
         bottomFlywheelEncoder = bottomFlywheelMotor.getEncoder();
         bottomFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kBottomGearRatio);
-        bottomFlywheelMotor.setSpikeCurrentLimit(Constants.Shooter.ShooterCurrentLimit.kLimitToAmps, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeTime, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeAmps, Constants.Shooter.ShooterCurrentLimit.kSmartLimit);
-        // bottomFlywheelMotor.setSmartCurrentLimit(frc.robot.Constants.Shooter.kCurrentLimit);
+        // bottomFlywheelMotor.setSpikeCurrentLimit(Constants.Shooter.ShooterCurrentLimit.kLimitToAmps, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeTime, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeAmps, Constants.Shooter.ShooterCurrentLimit.kSmartLimit);
+        bottomFlywheelMotor.setSmartCurrentLimit(frc.robot.Constants.Shooter.kCurrentLimit);
         bottomFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
         bottomFlywheelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
@@ -41,13 +41,14 @@ public class Shooter extends SubsystemBase {
         pidBottom.setP(Constants.Shooter.PIDValues.kP);
         pidBottom.setI(Constants.Shooter.PIDValues.kI);
         pidBottom.setD(Constants.Shooter.PIDValues.kD);
+        pidBottom.setFF(0.6/3200d);
         pidBottom.setIMaxAccum(Constants.Shooter.PIDValues.iMaxAccum, Constants.Shooter.slotID);
         /*----------------------------------------------------------------------------*/
         /* Top */
         /*----------------------------------------------------------------------------*/
         topFlywheelMotor = new CANSparkMaxCurrent(Constants.Shooter.topFlywheelMotorID, MotorType.kBrushless);
-        topFlywheelMotor.setSpikeCurrentLimit(Constants.Shooter.ShooterCurrentLimit.kLimitToAmps, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeTime, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeAmps, Constants.Shooter.ShooterCurrentLimit.kSmartLimit);
-        // topFlywheelMotor.setSmartCurrentLimit(frc.robot.Constants.Shooter.kCurrentLimit);
+        //topFlywheelMotor.setSpikeCurrentLimit(Constants.Shooter.ShooterCurrentLimit.kLimitToAmps, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeTime, Constants.Shooter.ShooterCurrentLimit.kMaxSpikeAmps, Constants.Shooter.ShooterCurrentLimit.kSmartLimit);
+        topFlywheelMotor.setSmartCurrentLimit(frc.robot.Constants.Shooter.kCurrentLimit);
         topFlywheelEncoder = topFlywheelMotor.getEncoder();
         topFlywheelEncoder.setPositionConversionFactor(Constants.Shooter.kTopRatio);
         topFlywheelEncoder.setVelocityConversionFactor(Constants.Shooter.kBottomVelocityConversionFactor);
@@ -58,12 +59,14 @@ public class Shooter extends SubsystemBase {
         pidTop.setP(Constants.Shooter.PIDValues.kP);
         pidTop.setI(Constants.Shooter.PIDValues.kI);
         pidTop.setD(Constants.Shooter.PIDValues.kD);
+        pidTop.setFF(0.6/3200d);
         pidTop.setIMaxAccum(Constants.Shooter.PIDValues.iMaxAccum, Constants.Shooter.slotID);
     }
 
     public void shoot(DoubleSupplier speed) {
         pidBottom.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
         pidTop.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        
         // topFlywheelMotor.set(speed.getAsDouble());
         // bottomFlywheelMotor.set(speed.getAsDouble());
     }
