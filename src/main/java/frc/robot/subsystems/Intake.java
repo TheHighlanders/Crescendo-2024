@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.util.CANSparkMaxCurrent;
 
 public class Intake extends SubsystemBase {
@@ -42,11 +43,15 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        hasGamePiece = beamBreak.get();
+        if(hasGamePiece == beamBreak.get() && hasGamePiece == false){
+            RobotContainer.intakeRetract.schedule();
+        }
+        hasGamePiece = !beamBreak.get();
 
         // RobotContainer.s_RGB.setLED((hasGamePiece ? State.ORANGESOLID : State.ORANGEBLINK));
 
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
+
     }
 
     public boolean gamePieceDetectionOverride() {

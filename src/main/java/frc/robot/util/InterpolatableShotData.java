@@ -5,11 +5,11 @@ import edu.wpi.first.math.interpolation.Interpolatable;
 public class InterpolatableShotData implements Interpolatable<InterpolatableShotData> {
 
     private double armExtension;
-    private double rotationsPerSecond;
+    private double rpm;
 
-    public InterpolatableShotData(double armAngle, double rotationsPerSecond) {
+    public InterpolatableShotData(double armAngle, double rpm) {
         this.armExtension = armAngle;
-        this.rotationsPerSecond = rotationsPerSecond;
+        this.rpm = rpm;
     }
 
     public double getArmExtension() {
@@ -17,7 +17,7 @@ public class InterpolatableShotData implements Interpolatable<InterpolatableShot
     }
 
     public double getRPM() {
-        return rotationsPerSecond;
+        return rpm;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class InterpolatableShotData implements Interpolatable<InterpolatableShot
         // Unused actual code in ISTM
         return new InterpolatableShotData(
             ((endValue.getArmExtension() - armExtension) * t) + armExtension,
-            ((endValue.getRPM() - rotationsPerSecond) * t) + rotationsPerSecond
+            ((endValue.getRPM() - rpm) * t) + rpm
         );
     }
 }

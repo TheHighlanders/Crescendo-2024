@@ -1,24 +1,30 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.util.Units;
+
 public class InterpolatingShotTreeMapContainer {
 
     public static final InterpolatingShotTreeMap shotMap = new InterpolatingShotTreeMap();
     double[][] values = {
         // TODO: find these values
-        { 10.0, 20.0, 30.0, 40.0, 50.0 }, // Distances
-        { 45.0, 30.0, 60.0, 45.0, 75.0 }, // Extension
-        { 1000.0, 1200.0, 900.0, 1100.0, 800.0 }, // RPM's
+        { 36, 14.25, 2000 },
+        { 60, 13.75, 2100 },
+        { 108, 12.9, 2500 },
+        { 145, 12.65, 2900 },
+        { 176, 12.5, 3200 },
     };
 
+    // Arrays.sort(value, Comparator.comparingInt(row -> row[0]));
+
+    //
+
     public InterpolatingShotTreeMapContainer() {
-        for (int i = 0; i < values[0].length; i++) {
-            double distance = values[0][i];
-            double extension = values[1][i];
-            double rpm = values[2][i];
+        for (int i = 0; i < values.length; i++) {
+            double distance = Units.inchesToMeters(values[i][0]);
+            double extension = values[i][1];
+            double rpm = values[i][2];
 
-            double rps = rpm / 60.0;
-
-            InterpolatableShotData shotData = new InterpolatableShotData(extension, rps);
+            InterpolatableShotData shotData = new InterpolatableShotData(extension, rpm);
 
             shotMap.put(distance, shotData);
         }

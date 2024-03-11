@@ -91,7 +91,7 @@ public class Swerve extends SubsystemBase {
         // SmartDashboard.putNumber("xCalc", -1);
         // SmartDashboard.putNumber("yCalc", -1);
         // SmartDashboard.putBoolean("Running", false);
-
+        sendSmartDashboardDiagnostics();
         // field.setRobotPose(getPose());
         for (SwerveModule m : modules) {
             m.runPeriodicLimiting();

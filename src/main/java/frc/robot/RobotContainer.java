@@ -13,12 +13,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
+import frc.robot.commands.runIntakeCMD;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
@@ -40,6 +44,7 @@ import java.util.function.Supplier;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+    public static double speedMult = 0.5;
 
     /* Controllers */
     private static final CommandXboxController driver = new CommandXboxController(0);
@@ -75,7 +80,7 @@ public class RobotContainer {
     public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
     public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
-
+    public static Command intakeRetract = new ParallelDeadlineGroup(new WaitCommand(0.75), new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),new deployIntakeCMD(s_Pivot, s_Intake, true));
     public static Command alignIntakeTest = new InstantCommand(() -> s_Pivot.alignShooterToExtension(Constants.Shooter.Pivot.readyInches));
 
     public static Command deployIntakeCMD = new InstantCommand(
@@ -107,12 +112,13 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
-        driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+        // driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
 
         /* Intake Button Bindings */
-        driver.start().whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
+        driver.rightTrigger(0.75).whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
-        driver.leftBumper().onTrue(new deployIntakeCMD(s_Pivot));
+        driver.a().onTrue(new deployIntakeCMD(s_Pivot, s_Intake, false));
+        driver.x().onTrue(intakeRetract);
         operator.x().onTrue(gamePieceOverrideCMD);
         operator.back().onTrue(intakeShooterCommand);
 
@@ -139,7 +145,7 @@ public class RobotContainer {
                 new FunctionalCommand(
                     () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * 3200); //Execute
+                        s_Shooter.shoot(() -> operator.getLeftY() * -2845.945945945946); //Execute
                     },
                     v -> {
                         s_Shooter.shootCancel(); // End
@@ -156,7 +162,7 @@ public class RobotContainer {
             .rightBumper()
             .whileTrue(
                 new FunctionalCommand(
-                    () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed),
+                    () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 0.5),
                     () -> {},
                     v -> S_Climber.climbRight(0),
                     () -> {
@@ -168,7 +174,7 @@ public class RobotContainer {
             .leftBumper()
             .whileTrue(
                 new FunctionalCommand(
-                    () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed),
+                    () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 0.5),
                     () -> {},
                     v -> S_Climber.climbLeft(0),
                     () -> {
@@ -176,7 +182,27 @@ public class RobotContainer {
                     }
                 )
             );
-        operator.b().onTrue(new InstantCommand(() -> S_Climber.climberPrime()));
+        operator.back().whileTrue(
+                new FunctionalCommand(
+                    () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 1),
+                    () -> {},
+                    v -> S_Climber.climbLeft(0),
+                    () -> {
+                        return false;
+                    }
+                )
+            );
+        operator.start().whileTrue(
+                new FunctionalCommand(
+                    () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 1),
+                    () -> {},
+                    v -> S_Climber.climbRight(0),
+                    () -> {
+                        return false;
+                    }
+                )
+            );
+        // operator.b().onTrue(new InstantCommand(() -> S_Climber.climberPrime()));
     }
 
     private void configureAuton() {
@@ -191,7 +217,7 @@ public class RobotContainer {
                 s_Swerve,
                 () -> -driver.getRawAxis(translationAxis),
                 () -> -driver.getRawAxis(strafeAxis),
-                () -> -driver.getRawAxis(rotationAxis),
+                () -> driver.getRawAxis(rotationAxis),
                 () -> driver.povDown().getAsBoolean(),
                 () -> driver.leftBumper().getAsBoolean()
             )

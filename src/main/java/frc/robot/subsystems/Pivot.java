@@ -89,7 +89,8 @@ public class Pivot extends SubsystemBase {
             new FunctionalCommand(
                 () -> {},
                 () -> {
-                    intakeAngleMotor.set(-(differentialPidController.calculate(getPositionDiffrential(), 0)));
+                    intakeAngleMotor.set(-Math.max(Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),Intake.Pivot.PIDValues.minOut));
+                    //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
                 },
                 v -> {
                     intakeAngleHold();
@@ -167,13 +168,13 @@ public class Pivot extends SubsystemBase {
 
     public void alignIntakeToShooter() {
         intakeShooterCommand.schedule();
-        
-        intakeDeployed = false;
+        // intakeDeployed = false;
     }
 
     public void alignIntakeToGround() {
+        intakeShooterCommand.cancel();
         pidIntakeAngleController.setReference(0, CANSparkMax.ControlType.kPosition);
-        intakeDeployed = true;
+        // intakeDeployed = true;
     }
 
     // Put shooter to avg shootig angle and align the Pivot
@@ -265,6 +266,7 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putNumber("Intake pid I value", pidShooterExtensionController.getI());
 
         SmartDashboard.putNumber("Intake setpoint comparason", Math.abs(getIntakeRelativePosition()));
+        SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
         //SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
 
         SmartDashboard.putNumber("Diffrence in angle", getPositionDiffrential());

@@ -103,8 +103,8 @@ public class SwerveModule {
      */
     public void setAngleState(SwerveModuleState state) {
         // Anti Jitter Code, not sure if it works, need to test and review
-        Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001) ? lastAngle : state.angle;
-        // Rotation2d angle = state.angle;
+        // Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001) ? lastAngle : state.angle;
+        Rotation2d angle = state.angle;
         if (angle != null) {
             angleController.setReference(angle.getDegrees(), ControlType.kPosition);
             angleReference = angle.getDegrees();

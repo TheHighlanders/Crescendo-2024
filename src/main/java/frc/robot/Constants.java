@@ -92,9 +92,28 @@ public final class Constants {
         public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
         public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
 
-        public static final Translation3d robotCameraTranslation0 = new Translation3d(-0.0445, -0.3175, 0.1778); //-x, -y, z
+        public static final Translation3d robotCameraTranslation0 = new Translation3d(
+            0.288,
+            0.23,
+            0.259
+        ); //-x, -y, z
         public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, 0, -Math.PI / 2.0f);
-        public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
+        public static final Transform3d kRobotCamera0 = new Transform3d(
+            robotCameraTranslation0,
+            robotCameraRotation0
+        );
+
+        
+        public static final Translation3d robotCameraTranslation1 = new Translation3d(
+            0.288,
+            -0.23,
+            0.259
+        ); //-x, -y, z
+        public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, 0, -Math.PI / 2.0f);
+        public static final Transform3d kRobotCamera1 = new Transform3d(
+            robotCameraTranslation0,
+            robotCameraRotation0
+        );
     }
 
     public static class Module {
@@ -318,9 +337,9 @@ public final class Constants {
 
             public static class PIDValues {
 
-                public static final double minOut = -0.1;
-                public static final double maxOut = 0.1;
-                public static final double kP = 0.01d;
+                public static final double minOut = -0.4;
+                public static final double maxOut = 0.4;
+                public static final double kP = 0.03d;
                 public static final double kI = 0d;
                 public static final double kD = 0d;
                 public static final double kMaxI = 0d;
@@ -328,7 +347,7 @@ public final class Constants {
 
                 public static class deviationPID {
 
-                    public static final double kP = 0.001d;
+                    public static final double kP = 0.003d;
                     public static final double kI = 0d;
                     public static final double kD = 0d;
                     public static final double posTolerance = 0.2d;
@@ -354,7 +373,7 @@ public final class Constants {
         public static final int kServoRightID = 3;
         public static final int kServoLeftID = 4;
 
-        public static final double kClimbSpeed = 0.30;
+        public static final double kClimbSpeed = 0.40;
 
         public static final double kClimberP = 0.0;
         public static final double kClimberPrimePoint = 0.0;

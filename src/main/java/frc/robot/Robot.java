@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -23,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
 
     private Command m_autonomousCommand;
-    private double currentVeloc = 45;
+    private double currentVeloc = 2;
     private RobotContainer m_robotContainer;
 
     int val = 0;
@@ -58,7 +57,7 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
-        RobotContainer.s_Swerve.sendSmartDashboardDiagnostics();
+
         RobotContainer.s_Swerve.getRobotRelativeSpeeds();
     }
 
@@ -110,14 +109,15 @@ public class Robot extends TimedRobot {
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
-        RobotContainer.s_Swerve.jogSingleModule(0, currentVeloc, false);
+        //RobotContainer.s_Swerve.jogSingleModule(0, currentVeloc, false);
+        RobotContainer.s_Swerve.jogAllModuleDrive(currentVeloc);
         currentVeloc *= -1;
     }
 
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
-        DriverStation.reportWarning(RobotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() + "", false);
+        // DriverStation.reportWarning(RobotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() + "", false);
     }
 
     /** This function is called once when the robot is first started up. */
