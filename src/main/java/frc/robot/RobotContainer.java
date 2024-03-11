@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -123,7 +124,8 @@ public class RobotContainer {
         operator.back().onTrue(intakeShooterCommand);
 
         /* Shooter Button Bindings */
-        operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
+        // operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
+        operator.y().onTrue(new PrintCommand("" + s_Localizer.getDistanceToSpeaker()));
         operator
             .rightStick()
             .whileTrue(
