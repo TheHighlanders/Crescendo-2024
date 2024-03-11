@@ -13,8 +13,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.CANSparkMaxCurrent;
+import frc.robot.subsystems.RGB;
+
+
 
 public class Intake extends SubsystemBase {
+    public static RGB s_RGB = new RGB();
 
     private CANSparkMaxCurrent intakeMotor;
 
@@ -43,8 +47,15 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
+
         if(hasGamePiece == beamBreak.get() && hasGamePiece == false){
             RobotContainer.intakeRetract.schedule();
+        }
+
+        if (hasGamePiece == true){
+        s_RGB.changeString("6"); // 6 is solid orange meaning the robot has a note.
+        }else{
+        s_RGB.changeString("5"); // 5 is orange blink meaning there is no note.
         }
         hasGamePiece = !beamBreak.get();
 
