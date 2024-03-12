@@ -83,22 +83,10 @@ public class SwerveMoveToCMD extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        //SmartDashboard.putBoolean("Running", true);
-
-        //SmartDashboard.putNumber("A PID ERROR", aPID.getPositionError());
-        //SmartDashboard.putNumber("X PID ERROR", xPID.getPositionError());
-        //SmartDashboard.putNumber("Y PID ERROR", yPID.getPositionError());
-
         double aCalc = -aPID.calculate(s_Swerve.getPose().getRotation().getDegrees());
-        //SmartDashboard.putNumber("A CALC", aCalc);
-
         if (translate) {
             double xCalc = xPID.calculate(s_Swerve.getPose().getX());
             double yCalc = yPID.calculate(s_Swerve.getPose().getY());
-
-            //SmartDashboard.putNumber("xCalc", xCalc);
-            //SmartDashboard.putNumber("yCalc", yCalc);
-
             s_Swerve.drive(new Translation2d(xCalc, yCalc), Rotation2d.fromDegrees(aCalc), true, false);
         } else {
             s_Swerve.drive(new Translation2d(), Rotation2d.fromDegrees(aCalc), true, false);
@@ -110,21 +98,15 @@ public class SwerveMoveToCMD extends Command {
     public void end(boolean interrupted) {
         // s_Swerve.drive(new Translation2d(), new Rotation2d(), true, true);
         DriverStation.reportWarning("POINT MOVE ENDED", false);
-        //SmartDashboard.putBoolean("Running", false);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        // SmartDashboard.putNumber("xPID.atSetpoint()", xPID.atSetpoint() ? 1 : 0);
-        // SmartDashboard.putNumber("yPID.atSetpoint()", yPID.atSetpoint() ? 1 : 0);
-        // SmartDashboard.putNumber("aPID.atSetpoint()", aPID.atSetpoint() ? 1 : 0);
-
         if (translate) {
             return xPID.atSetpoint() && yPID.atSetpoint() && aPID.atSetpoint();
         } else {
             return aPID.atSetpoint();
         }
-        // return (!translate || (xPID.atSetpoint() && yPID.atSetpoint())) && aPID.atSetpoint();
     }
 }

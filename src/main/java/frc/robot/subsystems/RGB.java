@@ -46,7 +46,6 @@ public class RGB extends SubsystemBase {
 
     public void changeString(String str) {
         elPuerto.writeString(str + "\n");
-        DriverStation.reportWarning(str, false);
     }
 
     public void setLED(State state) {

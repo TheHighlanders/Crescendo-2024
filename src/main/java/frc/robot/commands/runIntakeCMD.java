@@ -4,18 +4,22 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
 
 public class runIntakeCMD extends Command {
 
     /** Creates a new runIntakeCMD. */
-    Intake intake;
+    Intake m_intake;
+    Shooter m_shooter;
     boolean speed;
 
-    public runIntakeCMD(Intake intake, boolean speed) {
+    public runIntakeCMD(Intake intake, Shooter shooter, boolean speed) {
         // Use addRequirements() here to declare subsystem dependencies.
-        this.intake = intake;
+        m_intake = intake;
+        m_shooter = shooter;
         this.speed = speed;
 
         addRequirements(intake);
@@ -25,20 +29,22 @@ public class runIntakeCMD extends Command {
     @Override
     public void initialize() {
         if (speed) {
-            intake.intakeForward();
-        } else {
-            intake.intakeReverse();
+            m_intake.intakeForward();
+        } else if (m_shooter.aboveMinVelocity()) {
+            m_intake.intakeReverse();
         }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+        SmartDashboard.putBoolean("above min velocity", m_shooter.aboveMinVelocity());
+    }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        intake.intakeStop();
+        m_intake.intakeStop();
     }
 
     // Returns true when the command should end.

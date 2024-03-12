@@ -33,6 +33,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -46,6 +47,7 @@ import java.util.function.Supplier;
  */
 public class RobotContainer {
     public static double speedMult = 0.5;
+    public static DoubleSupplier distToSpeaker;
 
     /* Controllers */
     private static final CommandXboxController driver = new CommandXboxController(0);
@@ -65,7 +67,7 @@ public class RobotContainer {
     public static final Intake s_Intake = new Intake();
 
     public static final Localizer s_Localizer = new Localizer(s_Swerve, s_Vision);
-    public static final Supplier<Pose2d> getLocalizedPose = () -> s_Localizer.getPose();
+    public static final Supplier<Pose2d> getLocalizedPose = s_Localizer.getPose();
     public static final Consumer<Pose2d> resetLocalizedPose = (Pose2d pose) -> s_Localizer.resetOdoPose2d(pose);
     public static RGB s_RGB = new RGB();
 
@@ -81,7 +83,7 @@ public class RobotContainer {
     public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
     public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
-    public static Command intakeRetract = new ParallelDeadlineGroup(new WaitCommand(0.75), new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),new deployIntakeCMD(s_Pivot, s_Intake, true));
+    public static Command intakeRetract = new ParallelDeadlineGroup(new WaitCommand(0.75), new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, s_Shooter, true)),new deployIntakeCMD(s_Pivot, s_Intake, true));
     public static Command alignIntakeTest = new InstantCommand(() -> s_Pivot.alignShooterToExtension(Constants.Shooter.Pivot.readyInches));
 
     public static Command deployIntakeCMD = new InstantCommand(
@@ -95,7 +97,7 @@ public class RobotContainer {
         s_Pivot
     );
 
-    public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer);
+    public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer, () -> s_Localizer.getDistanceToSpeaker2());
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -121,11 +123,9 @@ public class RobotContainer {
         driver.a().onTrue(new deployIntakeCMD(s_Pivot, s_Intake, false));
         driver.x().onTrue(intakeRetract);
         operator.x().onTrue(gamePieceOverrideCMD);
-        operator.back().onTrue(intakeShooterCommand);
-
         /* Shooter Button Bindings */
-        // operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
-        operator.y().onTrue(new PrintCommand("" + s_Localizer.getDistanceToSpeaker()));
+        operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
+        // operator.y().onTrue(new PrintCommand("" + s_Localizer.getDistanceToSpeaker2()));
         operator
             .rightStick()
             .whileTrue(

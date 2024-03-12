@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -21,48 +22,74 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.InterpolatableShotData;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
-public class alignShootCMDG extends SequentialCommandGroup {
+public class alignShootCMDG extends ParallelCommandGroup {
 
     private final Shooter m_shooter;
     public final Intake m_intake;
     public final Pivot m_Pivot;
     public final Swerve m_Swerve;
     public final Localizer m_Localizer;
+    public DoubleSupplier distance;
+    private Supplier<InterpolatableShotData> data;
 
     Runnable emptyRunnable = () -> {};
 
     Consumer<Boolean> emptyConsumable = t -> {};
 
-    public alignShootCMDG(Shooter shoot, Intake intake, Pivot pivot, Swerve swerve, Localizer localizer) {
+    public static Command startShooter;
+    public static Command assignData;
+    public static Command alignPivot;
+    public static Command alignRobot;
+    public static Command waitForGamePiece;
+    public static Command outTake;
+    public static Command waitForRpmSetpoint;
+    public static Command deadline;
+    public static Command runIntakeOut;
+
+    public alignShootCMDG(Shooter shoot, Intake intake, Pivot pivot, Swerve swerve, Localizer localizer, DoubleSupplier distance) {
         m_shooter = shoot;
         m_intake = intake;
         m_Pivot = pivot;
         m_Swerve = swerve;
         m_Localizer = localizer;
+        this.distance = distance;
 
-        InterpolatableShotData currentShotData = m_Pivot.interpolate(m_Localizer.getDistanceToSpeaker());
-        // this should resolve before we start rotating hopefully
+        data = () -> m_Pivot.interpolate(distance.getAsDouble());
 
+        startShooter =
+            new StartEndCommand(
+                () -> {
+                    m_shooter.shoot(() -> data.get().getRPM());
+                },
+                m_shooter::shootCancel
+            );
+        
+        runIntakeOut = new runIntakeCMD(m_intake, m_shooter, false);
+        // assignData = new InstantCommand(() -> data = m_Pivot.interpolate(distance.getAsDouble()));
+        // align pivot, is finished when asSetpoints returns true
+        alignPivot = new InstantCommand(() -> m_Pivot.alignPivot(() -> data.get().getArmExtension()));
+        // runs the swerve move to command to the angle of the speaker
+        alignRobot = new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker);
+        waitForGamePiece = new WaitUntilCommand(() -> !(!shoot.getBeamBreak() || intake.hasGamePiece())).andThen(new WaitCommand(0.5));
+        waitForRpmSetpoint = new WaitUntilCommand(m_shooter::atVelocity).andThen(new PrintCommand("At velocity"));
+        deadline =
+            new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()));
+            
         addCommands(
-            // move swere to face speaker and align pivot
-            new ParallelCommandGroup(
-                // align pivot, is finished when asSetpoints returns true
-                new InstantCommand(() -> m_Pivot.alignPivot(currentShotData::getArmExtension)),
-                // runs the swerve move to command to the angle of the speaker
-                new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker),
-                new WaitUntilCommand(m_Pivot::atSetpointsAtShooter)
+            startShooter,
+            new SequentialCommandGroup(
+                // assignData,
+                // new PrintCommand(data.get().getArmExtension() + ""),
+                // move swere to face speaker and align pivot
+                new ParallelCommandGroup(alignPivot, alignRobot, waitForRpmSetpoint),
+                new PrintCommand("In Second Phase"),
+                // runs the intake and the shooter for 3 seconds and then stops them when the time us up\
+                new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut)
             ),
-            // runs the intake and the shooter for 3 seconds and then stops them when the time us up
-            new ParallelDeadlineGroup(
-                new ParallelRaceGroup(
-                    new WaitUntilCommand(() -> !(shoot.getBeamBreak() || intake.hasGamePiece())).andThen(new WaitCommand(0.5)),
-                    new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop)
-                        .andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()))
-                ),
-                new StartEndCommand(() -> m_shooter.shoot(currentShotData::getRPM), m_shooter::shootCancel),
-                new StartEndCommand(m_intake::intakeReverse, m_intake::intakeStop)
-            )
+            new PrintCommand("ENDED")
         );
     }
 }

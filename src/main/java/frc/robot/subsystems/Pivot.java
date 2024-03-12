@@ -40,7 +40,7 @@ public class Pivot extends SubsystemBase {
     private DutyCycleEncoder absolIntake;
 
     private double cachedSetpointShooter = 0;
-    private double cachedSetpointIntake = 0;
+    // private double cachedSetpointIntake = 0;
     private double cachedExtensionPos = Shooter.Pivot.initExtension;
     private double currentExtionsPos = Shooter.Pivot.initExtension;
 
@@ -269,17 +269,17 @@ public class Pivot extends SubsystemBase {
 
         cachedExtensionPos = shooterExtensionEncoder.getPosition();
 
-        SmartDashboard.putNumber("Intake pid I value", pidShooterExtensionController.getI());
+        // SmartDashboard.putNumber("Intake pid I value", pidShooterExtensionController.getI());
 
-        SmartDashboard.putNumber("Intake setpoint comparason", Math.abs(getIntakeRelativePosition()));
-        SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
-        //SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
+        // SmartDashboard.putNumber("Intake setpoint comparason", Math.abs(getIntakeRelativePosition()));
+        // SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
+        SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
 
-        SmartDashboard.putNumber("Diffrence in angle", getPositionDiffrential());
-        SmartDashboard.putNumber("relative angle", getIntakeRelativePosition());
+        // SmartDashboard.putNumber("Diffrence in angle", getPositionDiffrential());
+        // SmartDashboard.putNumber("relative angle", getIntakeRelativePosition());
 
-        SmartDashboard.putNumber("Intake set value", differentialPidController.calculate(getPositionDiffrential(), 0) / 50);
-        SmartDashboard.putBoolean("Intake deployed", getIntakeDeploy());
-        SmartDashboard.putBoolean("Intake at setpoint ground", intakeAtSetpointGround());
+        // SmartDashboard.putNumber("Intake set value", differentialPidController.calculate(getPositionDiffrential(), 0) / 50);
+        // SmartDashboard.putBoolean("Intake deployed", getIntakeDeploy());
+        // SmartDashboard.putBoolean("Intake at setpoint ground", intakeAtSetpointGround());
     }
 }

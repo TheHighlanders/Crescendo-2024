@@ -34,7 +34,7 @@ public class SwerveModule {
     public SparkAbsoluteEncoder absoluteEncoder;
 
     private Rotation2d KModuleAbsoluteOffset;
-    private Rotation2d lastAngle;
+    // private Rotation2d lastAngle;
 
     public SwerveModule(int moduleNumber, SwerveModuleConfig config) {
         this.moduleNumber = moduleNumber;

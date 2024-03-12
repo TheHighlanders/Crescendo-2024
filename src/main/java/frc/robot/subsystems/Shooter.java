@@ -6,6 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.CANSparkMaxCurrent;
@@ -23,8 +24,12 @@ public class Shooter extends SubsystemBase {
 
     private DigitalInput beamBreak;
 
+    private double setpoint;
+
     public Shooter() {
+        
         beamBreak = new DigitalInput(Constants.Shooter.kShooterBeamBreakDIOPin);
+        setpoint = 0;
         /*----------------------------------------------------------------------------*/
         /* Bottom */
         /*----------------------------------------------------------------------------*/
@@ -64,11 +69,20 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot(DoubleSupplier speed) {
-        pidBottom.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
-        pidTop.setReference(speed.getAsDouble(), CANSparkMax.ControlType.kVelocity);
+        setpoint = speed.getAsDouble();
+        pidBottom.setReference(setpoint, CANSparkMax.ControlType.kVelocity);
+        pidTop.setReference(setpoint, CANSparkMax.ControlType.kVelocity);
         
         // topFlywheelMotor.set(speed.getAsDouble());
         // bottomFlywheelMotor.set(speed.getAsDouble());
+    }
+
+    public boolean atVelocity() {
+        return Math.abs(bottomFlywheelEncoder.getVelocity() - setpoint) < Constants.Shooter.velocityTolerance && Math.abs(topFlywheelEncoder.getVelocity() - setpoint) < Constants.Shooter.velocityTolerance;
+    }
+
+    public boolean aboveMinVelocity() {
+        return bottomFlywheelEncoder.getVelocity() > Constants.Shooter.velocityMinimum;
     }
 
     public void shootCancel() {
@@ -82,9 +96,9 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putBoolean("at shooter velocity setpoint", atVelocity());
+
         topFlywheelMotor.periodicLimit();
         bottomFlywheelMotor.periodicLimit();
-        SmartDashboard.putNumber("Top Shooter Speed", topFlywheelEncoder.getVelocity());
-        SmartDashboard.putNumber("Bottom Shooter Speed", bottomFlywheelEncoder.getVelocity());
     }
 }
