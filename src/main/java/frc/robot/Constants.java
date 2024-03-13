@@ -41,11 +41,11 @@ public final class Constants {
 
         public static final double kTranslateP = 5.0;
         public static final double kTranslateI = 0.1;
-        public static final double kTranslateD = 0.13;
+        public static final double kTranslateD = 0.12;
 
-        public static final double kRotateP = 5.0;
+        public static final double kRotateP = 2.5;
         public static final double kRotateI = 0.0;
-        public static final double kRotateD = 0.13;
+        public static final double kRotateD = 0.25;
 
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
@@ -85,20 +85,20 @@ public final class Constants {
 
     public static class VisionConstants {
 
-        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 2);
-        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 2); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 1);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 1); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
         //TODO: Actual stddevs
 
         public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
         public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
 
         public static final Translation3d robotCameraTranslation0 = new Translation3d(0.23, 0.288, 0.259); //-x, -y, z
-        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(25));
+        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(10));
         public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
 
         public static final Translation3d robotCameraTranslation1 = new Translation3d(0.233, -0.288, 0.259); //-x, -y, z
-        public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, Units.degreesToRadians(25), -Units.degreesToRadians(25));
-        public static final Transform3d kRobotCamera1 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
+        public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, Units.degreesToRadians(25), -Units.degreesToRadians(10));
+        public static final Transform3d kRobotCamera1 = new Transform3d(robotCameraTranslation1, robotCameraRotation1);
     }
 
     public static class Module {
@@ -180,7 +180,7 @@ public final class Constants {
             public static final int driveMotorID = 21;
             public static final int angleMotorID = 22;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(241.66677474975586));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(60.66677474975586));
 
             public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -190,7 +190,7 @@ public final class Constants {
             public static final int driveMotorID = 32;
             public static final int angleMotorID = 31;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(253.65536928176877));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(256.65536928176877));
 
             public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -198,8 +198,10 @@ public final class Constants {
 
     public static final class SwerveMoveConsts {
 
-        public static final float posTolerance = 0.011f;
-        public static final float aTolerance = 0.5f;
+        public static final float posPosTolerance = 0.05f;
+        public static final float posVelTolerance = 0.1f;
+        public static final float aPosTolerance = 2.5f;
+        public static final float aVelTolerance = 2f;
 
         public static final float aVelocityTolerance = 1;
     }
@@ -255,7 +257,7 @@ public final class Constants {
 
             public static final double shooterPivotRatio = 1 / 7.0f;
 
-            public static final float shooterExtensionDeadzone = 0.125f;
+            public static final float shooterExtensionDeadzone = 0.0625f;
 
             public static final double shooterBaseToArmPivotAxis = 7.4353; //inches
 

@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -163,6 +164,7 @@ public class Pivot extends SubsystemBase {
             alignIntakeToShooter();
             return true;
         } catch (Exception e) {
+            DriverStation.reportWarning("Arm Threw an Exception", true);
             return false;
         }
     }

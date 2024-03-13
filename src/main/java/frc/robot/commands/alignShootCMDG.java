@@ -62,7 +62,8 @@ public class alignShootCMDG extends ParallelCommandGroup {
         startShooter =
             new StartEndCommand(
                 () -> {
-                    m_shooter.shoot(() -> data.get().getRPM());
+                    m_shooter.shoot(() -> data.get().getRPM() + 75
+                     );
                 },
                 m_shooter::shootCancel
             );
@@ -79,7 +80,9 @@ public class alignShootCMDG extends ParallelCommandGroup {
             new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()));
             
         addCommands(
+            // alignRobot
             startShooter,
+            // alignRobot,
             new SequentialCommandGroup(
                 // assignData,
                 // new PrintCommand(data.get().getArmExtension() + ""),
@@ -87,9 +90,10 @@ public class alignShootCMDG extends ParallelCommandGroup {
                 new ParallelCommandGroup(alignPivot, alignRobot, waitForRpmSetpoint),
                 new PrintCommand("In Second Phase"),
                 // runs the intake and the shooter for 3 seconds and then stops them when the time us up\
-                new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut)
+                new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut),
+                new PrintCommand("Ended")
             ),
-            new PrintCommand("ENDED")
+            new PrintCommand("Automatic Shooter")
         );
     }
 }

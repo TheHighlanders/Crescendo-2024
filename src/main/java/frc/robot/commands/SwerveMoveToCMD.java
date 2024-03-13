@@ -50,10 +50,10 @@ public class SwerveMoveToCMD extends Command {
         xPID.setIntegratorRange(-100, 100);
         yPID.setIntegratorRange(-100, 100);
 
-        xPID.setTolerance(Constants.SwerveMoveConsts.posTolerance);
-        yPID.setTolerance(Constants.SwerveMoveConsts.posTolerance);
+        xPID.setTolerance(Constants.SwerveMoveConsts.posPosTolerance, Constants.SwerveMoveConsts.posVelTolerance);
+        yPID.setTolerance(Constants.SwerveMoveConsts.posPosTolerance, Constants.SwerveMoveConsts.posVelTolerance);
 
-        aPID.setTolerance(Constants.SwerveMoveConsts.aTolerance);
+        aPID.setTolerance(Constants.SwerveMoveConsts.aPosTolerance/*, Constants.SwerveMoveConsts.aVelTolerance*/);
         aPID.enableContinuousInput(0, 360);
 
         // Use addRequirements() here to declare subsystem dependencies.
@@ -89,14 +89,14 @@ public class SwerveMoveToCMD extends Command {
             double yCalc = yPID.calculate(s_Swerve.getPose().getY());
             s_Swerve.drive(new Translation2d(xCalc, yCalc), Rotation2d.fromDegrees(aCalc), true, false);
         } else {
-            s_Swerve.drive(new Translation2d(), Rotation2d.fromDegrees(aCalc), true, false);
+            s_Swerve.drive(new Translation2d(), Rotation2d.fromDegrees(aCalc), true, true);
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        // s_Swerve.drive(new Translation2d(), new Rotation2d(), true, true);
+        s_Swerve.drive(new Translation2d(), new Rotation2d(), true, true);
         DriverStation.reportWarning("POINT MOVE ENDED", false);
     }
 

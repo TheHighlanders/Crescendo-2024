@@ -54,7 +54,7 @@ public class Vision extends SubsystemBase {
             new PhotonPoseEstimator(
                 aprilTagFieldLayout,
                 PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                cam0,
+                cam1,
                 VisionConstants.kRobotCamera1
             );
     }

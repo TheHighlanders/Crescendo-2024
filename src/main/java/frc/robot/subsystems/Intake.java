@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.RGB.State;
 import frc.robot.util.CANSparkMaxCurrent;
 
 
@@ -52,9 +53,9 @@ public class Intake extends SubsystemBase {
         }
 
         if (hasGamePiece == true){
-        RobotContainer.s_RGB.changeString("6"); // 6 is solid orange meaning the robot has a note.
+            RobotContainer.s_RGB.setLED(State.ORANGESOLID); // 6 is solid orange meaning the robot has a note.
         }else{
-        RobotContainer.s_RGB.changeString("5"); // 5 is orange blink meaning there is no note.
+            RobotContainer.s_RGB.setLED(State.ORANGEBLINK); // 5 is orange blink meaning there is no note.
         }
         hasGamePiece = !beamBreak.get();
 
