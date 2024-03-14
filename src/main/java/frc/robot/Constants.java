@@ -289,8 +289,6 @@ public final class Constants {
                 public static final double actuatorAngleBaseDist = Math.atan(actuatorBaseDistY / actuatorBaseDistX);
                 public static final double pivotToActuatorCenterAxis = 2; //inches
                 public static final double secretAngleDeg = 25.919;
-                public static final double integralBreakpointExtension = 12.6;
-                public static final double breakpointIntegralValue = 0.1;
             }
         }
     }

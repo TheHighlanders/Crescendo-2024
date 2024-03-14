@@ -148,7 +148,6 @@ public class Swerve extends SubsystemBase {
     public void resetPose(Pose2d pose) {
         RobotContainer.s_Localizer.resetOdoPose2d(pose);
         odometer.resetPosition(getYaw(), getModulePositions(), pose);
-
         // SmartDashboard.putNumber("ResetPoseX", pose.getX());
         // SmartDashboard.putNumber("ResetPoseY", pose.getY());
     }

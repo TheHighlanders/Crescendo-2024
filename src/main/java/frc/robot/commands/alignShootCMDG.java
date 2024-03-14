@@ -62,14 +62,12 @@ public class alignShootCMDG extends ParallelCommandGroup {
         startShooter =
             new StartEndCommand(
                 () -> {
-                    m_shooter.shoot(() -> data.get().getRPM() + 75
-                     );
+                    m_shooter.shoot(() -> data.get().getRPM() + 75);
                 },
                 m_shooter::shootCancel
             );
-        
+
         runIntakeOut = new runIntakeCMD(m_intake, m_shooter, false);
-        // assignData = new InstantCommand(() -> data = m_Pivot.interpolate(distance.getAsDouble()));
         // align pivot, is finished when asSetpoints returns true
         alignPivot = new InstantCommand(() -> m_Pivot.alignPivot(() -> data.get().getArmExtension()));
         // runs the swerve move to command to the angle of the speaker
@@ -78,13 +76,12 @@ public class alignShootCMDG extends ParallelCommandGroup {
         waitForRpmSetpoint = new WaitUntilCommand(m_shooter::atVelocity).andThen(new PrintCommand("At velocity"));
         deadline =
             new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()));
-            
+
         addCommands(
             // alignRobot
             startShooter,
             // alignRobot,
             new SequentialCommandGroup(
-                // assignData,
                 // new PrintCommand(data.get().getArmExtension() + ""),
                 // move swere to face speaker and align pivot
                 new ParallelCommandGroup(alignPivot, alignRobot, waitForRpmSetpoint),

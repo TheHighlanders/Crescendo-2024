@@ -10,28 +10,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Localizer;
-import frc.robot.subsystems.Pivot;
-import frc.robot.subsystems.RGB;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.*;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -46,6 +32,7 @@ import java.util.function.Supplier;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
     public static double speedMult = 0.5;
     public static DoubleSupplier distToSpeaker;
 
@@ -80,11 +67,14 @@ public class RobotContainer {
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
     public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
-    public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
+    //public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
     public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
-    public static Command intakeRetract = new ParallelDeadlineGroup(new WaitCommand(0.75), new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, s_Shooter, true)),new deployIntakeCMD(s_Pivot, s_Intake, true));
-    public static Command alignIntakeTest = new InstantCommand(() -> s_Pivot.alignShooterToExtension(Constants.Shooter.Pivot.readyInches));
+    public static Command intakeRetract = new ParallelDeadlineGroup(
+        new WaitCommand(0.75),
+        new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, s_Shooter, true)),
+        new deployIntakeCMD(s_Pivot, s_Intake, true)
+    );
 
     public static Command deployIntakeCMD = new InstantCommand(
         () -> {
@@ -97,7 +87,14 @@ public class RobotContainer {
         s_Pivot
     );
 
-    public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer, () -> s_Localizer.getDistanceToSpeaker2());
+    public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(
+        s_Shooter,
+        s_Intake,
+        s_Pivot,
+        s_Swerve,
+        s_Localizer,
+        () -> s_Localizer.getDistanceToSpeaker2()
+    );
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -184,7 +181,9 @@ public class RobotContainer {
                     }
                 )
             );
-        operator.back().whileTrue(
+        operator
+            .back()
+            .whileTrue(
                 new FunctionalCommand(
                     () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 1),
                     () -> {},
@@ -194,7 +193,9 @@ public class RobotContainer {
                     }
                 )
             );
-        operator.start().whileTrue(
+        operator
+            .start()
+            .whileTrue(
                 new FunctionalCommand(
                     () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 1),
                     () -> {},

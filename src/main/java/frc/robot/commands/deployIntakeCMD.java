@@ -19,7 +19,7 @@ public class deployIntakeCMD extends Command {
     Intake intake;
 
     /**
-     * 
+     *
      * @param pivot
      * @param desiredState true = align to shooter, false = align to ground
      */

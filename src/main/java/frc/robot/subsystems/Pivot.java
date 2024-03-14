@@ -41,21 +41,12 @@ public class Pivot extends SubsystemBase {
     private DutyCycleEncoder absolIntake;
 
     private double cachedSetpointShooter = 0;
-    // private double cachedSetpointIntake = 0;
-    private double cachedExtensionPos = Shooter.Pivot.initExtension;
-    private double currentExtionsPos = Shooter.Pivot.initExtension;
 
     private boolean intakeDeployed;
 
     public static Command intakeShooterCommand;
 
-
-
     public Pivot() {
-
-        
-
-
         iTreeMapContainer = new InterpolatingShotTreeMapContainer();
         /*----------------------------------------------------------------------------*/
         /* Intake */
@@ -96,7 +87,12 @@ public class Pivot extends SubsystemBase {
             new FunctionalCommand(
                 () -> {},
                 () -> {
-                    intakeAngleMotor.set(-Math.max(Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),Intake.Pivot.PIDValues.minOut));
+                    intakeAngleMotor.set(
+                        -Math.max(
+                            Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),
+                            Intake.Pivot.PIDValues.minOut
+                        )
+                    );
                     //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
                 },
                 v -> {
@@ -172,21 +168,22 @@ public class Pivot extends SubsystemBase {
     public void alignShooterToExtension(double Extension) {
         cachedSetpointShooter = Extension;
         pidShooterExtensionController.setReference(cachedSetpointShooter, CANSparkMax.ControlType.kPosition);
+
+        SmartDashboard.putNumber("Shooter setpoint", cachedSetpointShooter);
     }
 
     public void alignIntakeToShooter() {
         intakeShooterCommand.schedule();
-        // intakeDeployed = false;
     }
 
     public void alignIntakeToGround() {
         intakeShooterCommand.cancel();
         pidIntakeAngleController.setReference(0, CANSparkMax.ControlType.kPosition);
-        // intakeDeployed = true;
     }
 
     // Put shooter to avg shootig angle and align the Pivot
     public void readyPositions() {
+        // This isnt used anywhere
         alignIntakeToShooter();
         alignShooterToExtension(Shooter.Pivot.readyInches);
     }
@@ -253,35 +250,7 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
 
-        currentExtionsPos = shooterExtensionEncoder.getPosition();
-
-        if (
-            currentExtionsPos < Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
-            cachedExtensionPos > Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
-            cachedExtensionPos < cachedSetpointShooter
-        ) {
-            pidShooterExtensionController.setI(Shooter.Pivot.actuatorConst.breakpointIntegralValue);
-        } else if (
-            currentExtionsPos > Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
-            cachedExtensionPos < Shooter.Pivot.actuatorConst.integralBreakpointExtension &&
-            cachedExtensionPos > cachedSetpointShooter
-        ) {
-            pidShooterExtensionController.setI(0);
-        }
-
-        cachedExtensionPos = shooterExtensionEncoder.getPosition();
-
-        // SmartDashboard.putNumber("Intake pid I value", pidShooterExtensionController.getI());
-
-        // SmartDashboard.putNumber("Intake setpoint comparason", Math.abs(getIntakeRelativePosition()));
         // SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
         SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
-
-        // SmartDashboard.putNumber("Diffrence in angle", getPositionDiffrential());
-        // SmartDashboard.putNumber("relative angle", getIntakeRelativePosition());
-
-        // SmartDashboard.putNumber("Intake set value", differentialPidController.calculate(getPositionDiffrential(), 0) / 50);
-        // SmartDashboard.putBoolean("Intake deployed", getIntakeDeploy());
-        // SmartDashboard.putBoolean("Intake at setpoint ground", intakeAtSetpointGround());
     }
 }

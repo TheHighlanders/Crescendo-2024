@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClimberConsts;
@@ -32,7 +32,7 @@ public class Climber extends SubsystemBase {
 
         climberMotorRight = new CANSparkMaxCurrent(Constants.ClimberConsts.CLIMBER_RIGHT, MotorType.kBrushless);
         climberMotorRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        
+
         leftEncoder = climberMotorLeft.getEncoder();
         leftEncoder.setPosition(0);
         rightEncoder = climberMotorRight.getEncoder();
@@ -46,7 +46,6 @@ public class Climber extends SubsystemBase {
 
         rightPID.setP(ClimberConsts.kClimberP);
         rightPID.setOutputRange(0, 0.25);
-
     }
 
     @Override
@@ -70,7 +69,7 @@ public class Climber extends SubsystemBase {
         climberMotorLeft.set(0);
     }
 
-    public void climberPrime(){
+    public void climberPrime() {
         leftPID.setReference(ClimberConsts.kClimberPrimePoint, ControlType.kPosition);
         rightPID.setReference(ClimberConsts.kClimberPrimePoint, ControlType.kPosition);
     }

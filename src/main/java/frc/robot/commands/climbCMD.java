@@ -37,12 +37,10 @@ public class climbCMD extends Command {
             climber.climbBoth(ClimberConsts.kClimbSpeed);
         } else if (rightButtonDown) {
             climber.climbRight(ClimberConsts.kClimbSpeed);
-        }
-        else if (leftButtonDown) {
+        } else if (leftButtonDown) {
             climber.climbLeft(ClimberConsts.kClimbSpeed);
-        }
-        else {
-          climber.climberStop();
+        } else {
+            climber.climberStop();
         }
     }
 

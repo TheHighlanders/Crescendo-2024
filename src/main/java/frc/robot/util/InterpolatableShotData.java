@@ -23,9 +23,6 @@ public class InterpolatableShotData implements Interpolatable<InterpolatableShot
     @Override
     public InterpolatableShotData interpolate(InterpolatableShotData endValue, double t) {
         // Unused actual code in ISTM
-        return new InterpolatableShotData(
-            ((endValue.getArmExtension() - armExtension) * t) + armExtension,
-            ((endValue.getRPM() - rpm) * t) + rpm
-        );
+        return new InterpolatableShotData(((endValue.getArmExtension() - armExtension) * t) + armExtension, ((endValue.getRPM() - rpm) * t) + rpm);
     }
 }

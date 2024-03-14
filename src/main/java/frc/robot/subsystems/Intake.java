@@ -15,9 +15,8 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.RGB.State;
 import frc.robot.util.CANSparkMaxCurrent;
 
-
-
 public class Intake extends SubsystemBase {
+
     // public static RGB s_RGB = new RGB();
 
     private CANSparkMaxCurrent intakeMotor;
@@ -47,14 +46,13 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-
-        if(hasGamePiece == beamBreak.get() && hasGamePiece == false){
+        if (hasGamePiece == beamBreak.get() && hasGamePiece == false) {
             RobotContainer.intakeRetract.schedule();
         }
 
-        if (hasGamePiece == true){
+        if (hasGamePiece == true) {
             RobotContainer.s_RGB.setLED(State.ORANGESOLID); // 6 is solid orange meaning the robot has a note.
-        }else{
+        } else {
             RobotContainer.s_RGB.setLED(State.ORANGEBLINK); // 5 is orange blink meaning there is no note.
         }
         hasGamePiece = !beamBreak.get();
@@ -62,7 +60,6 @@ public class Intake extends SubsystemBase {
         // RobotContainer.s_RGB.setLED((hasGamePiece ? State.ORANGESOLID : State.ORANGEBLINK));
 
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
-
     }
 
     public boolean gamePieceDetectionOverride() {

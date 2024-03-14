@@ -42,38 +42,20 @@ public class Vision extends SubsystemBase {
             DriverStation.reportWarning("AprilTag Field Layout Load Exception", true);
         }
 
-        photonPoseEst0 =
-            new PhotonPoseEstimator(
-                aprilTagFieldLayout,
-                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                cam0,
-                VisionConstants.kRobotCamera0
-            );
-        
-        photonPoseEst1 =
-            new PhotonPoseEstimator(
-                aprilTagFieldLayout,
-                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                cam1,
-                VisionConstants.kRobotCamera1
-            );
+        photonPoseEst0 = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cam0, VisionConstants.kRobotCamera0);
+
+        photonPoseEst1 = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cam1, VisionConstants.kRobotCamera1);
     }
 
     @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-    }
+    public void periodic() {}
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton0(
-        Pose2d prevEstimatedRobotPose
-    ) {
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton0(Pose2d prevEstimatedRobotPose) {
         photonPoseEst0.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEst0.update();
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton1(
-        Pose2d prevEstimatedRobotPose
-    ) {
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPosePhoton1(Pose2d prevEstimatedRobotPose) {
         photonPoseEst1.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEst1.update();
     }
@@ -89,6 +71,7 @@ public class Vision extends SubsystemBase {
     public PhotonPipelineResult getLatestResult0() {
         return cam0.getLatestResult();
     }
+
     public PhotonPipelineResult getLatestResult1() {
         return cam1.getLatestResult();
     }

@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.EnumMap;
@@ -23,7 +22,7 @@ public class RGB extends SubsystemBase {
         ORANGEBLINK,
         ORANGESOLID,
         POPSICLE,
-        BROWN
+        BROWN,
     }
 
     public EnumMap<State, String> stateMap = new EnumMap<>(State.class);
@@ -57,9 +56,9 @@ public class RGB extends SubsystemBase {
      * @param angleDif Angle Difference between arm and pivot !DEG! 100DEG is max
      */
     public void setArmLEDLoadingBar(double angleDif, int range) {
-      angleDif = angleDif/range;
-        
-      angleDif = Math.max(Math.min(Math.abs(angleDif), 1), 0);
+        angleDif = angleDif / range;
+
+        angleDif = Math.max(Math.min(Math.abs(angleDif), 1), 0);
 
         angleDif *= 100;
         // int state = ((int) angleDif) + 100;

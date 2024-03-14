@@ -8,15 +8,11 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import java.sql.Driver;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
@@ -47,7 +43,7 @@ public class Localizer extends SubsystemBase {
     @Override
     public void periodic() {
         swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
-        
+
         // SwerveModulePosition[] blank = {new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d())};
         // swervePoseEstimator.update(this.swerve.getYaw(), blank);
 
@@ -118,10 +114,17 @@ public class Localizer extends SubsystemBase {
         return Math.hypot(getPose().get().getX() - goal.getX(), getPose().get().getY() - goal.getY());
     }
 
-    public double getDistanceToSpeaker2(){
-        if (DriverStation.getAlliance().isEmpty()) {return -1;}
+    public double getDistanceToSpeaker2() {
+        if (DriverStation.getAlliance().isEmpty()) {
+            return -1;
+        }
 
-        Translation2d goal = (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? Constants.VisionConstants.kBlueSpeaker : Constants.VisionConstants.kRedSpeaker);
+        Translation2d goal =
+            (
+                DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
+                    ? Constants.VisionConstants.kBlueSpeaker
+                    : Constants.VisionConstants.kRedSpeaker
+            );
         // SmartDashboard.putString("Cached in fucntion", cached.get().toString());
         return Math.hypot(cached.get().getX() - goal.getX(), cached.get().getY() - goal.getY());
     }

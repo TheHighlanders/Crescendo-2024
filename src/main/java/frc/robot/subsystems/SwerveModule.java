@@ -34,6 +34,7 @@ public class SwerveModule {
     public SparkAbsoluteEncoder absoluteEncoder;
 
     private Rotation2d KModuleAbsoluteOffset;
+
     // private Rotation2d lastAngle;
 
     public SwerveModule(int moduleNumber, SwerveModuleConfig config) {
@@ -157,7 +158,7 @@ public class SwerveModule {
         return Rotation2d.fromDegrees(positionDeg);
     }
 
-        public Rotation2d getAbsolutePositionNoOffset() {
+    public Rotation2d getAbsolutePositionNoOffset() {
         /* Gets Position from SparkMAX absol encoder * 360 to degrees */
         double positionDeg = absoluteEncoder.getPosition() * 360.0d;
 
