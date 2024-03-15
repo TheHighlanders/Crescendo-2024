@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -21,6 +22,7 @@ import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.InterpolatableShotData;
+import java.sql.Driver;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -57,11 +59,16 @@ public class alignShootCMDG extends ParallelCommandGroup {
         m_Localizer = localizer;
         this.distance = distance;
 
-        data = () -> m_Pivot.interpolate(distance.getAsDouble());
+        try{
+            data = () -> m_Pivot.interpolate(distance.getAsDouble());
+        } catch (Exception e){
+            DriverStation.reportWarning("Align Data threw", true);
+        }
 
         startShooter =
             new StartEndCommand(
                 () -> {
+                    DriverStation.reportWarning(data.get() + "", false);
                     m_shooter.shoot(() -> data.get().getRPM() + 75);
                 },
                 m_shooter::shootCancel
@@ -79,7 +86,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
 
         addCommands(
             // alignRobot
-            startShooter,
+            new InstantCommand(() -> {m_shooter.shoot(() -> data.get().getRPM() + 75);}),
             // alignRobot,
             new SequentialCommandGroup(
                 // new PrintCommand(data.get().getArmExtension() + ""),
@@ -88,6 +95,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
                 new PrintCommand("In Second Phase"),
                 // runs the intake and the shooter for 3 seconds and then stops them when the time us up\
                 new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut),
+                new InstantCommand(() -> {m_shooter.shootCancel();}),
                 new PrintCommand("Ended")
             ),
             new PrintCommand("Automatic Shooter")

@@ -10,6 +10,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -39,9 +40,9 @@ public final class Constants {
 
         public static final boolean kOpenLoop = true;
 
-        public static final double kTranslateP = 5.0;
-        public static final double kTranslateI = 0.1;
-        public static final double kTranslateD = 0.12;
+        public static final double kTranslateP = 2.5;
+        public static final double kTranslateI = 0;
+        public static final double kTranslateD = 0;
 
         public static final double kRotateP = 2.5;
         public static final double kRotateI = 0.0;
@@ -78,7 +79,7 @@ public final class Constants {
             new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
             new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
             2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
-            0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
+            0.38615, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         );
     }
@@ -89,8 +90,8 @@ public final class Constants {
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 1); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
         //TODO: Actual stddevs
 
-        public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
-        public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
+        public static final Translation2d kBlueSpeaker = new Translation2d(-0.04 + Units.inchesToMeters(6), 5.55);
+        public static final Translation2d kRedSpeaker = new Translation2d(16.58 - Units.inchesToMeters(6), 5.55);
 
         public static final Translation3d robotCameraTranslation0 = new Translation3d(0.23, 0.288, 0.259); //-x, -y, z
         public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(10));
@@ -365,5 +366,11 @@ public final class Constants {
 
         public static final double kClimberP = 0.0;
         public static final double kClimberPrimePoint = 0.0;
+    }
+
+    public static final class Notes{
+        public static final Translation2d AmpClose = new Translation2d(2.6, 7.0104);
+        public static final Translation2d MidClose = new Translation2d(2.6, 5.5626);
+        public static final Translation2d SourceClose = new Translation2d(2.6, 4.1148);
     }
 }

@@ -40,8 +40,8 @@ public class InterpolatingShotTreeMapContainer {
     }
 
     public InterpolatableShotData interpolate(double dist) {
-        if(dist > max){dist = max;}
-        if(dist < min){dist = min;}
+        // if(dist > max){dist = max;}
+        // if(dist < min){dist = min;}
         return shotMap.get(dist);
     }
 }

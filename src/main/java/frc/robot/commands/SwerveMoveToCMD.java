@@ -4,10 +4,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -30,6 +33,8 @@ public class SwerveMoveToCMD extends Command {
     double endAngle;
 
     boolean translate;
+
+    static double fieldLine = Units.feetToMeters(54) + Units.inchesToMeters(3.25);
 
     /** Creates a new SwerveMoveToCMD. */
     public SwerveMoveToCMD(Swerve s_Swerve, Supplier<Pose2d> target, boolean translate) {
@@ -72,6 +77,18 @@ public class SwerveMoveToCMD extends Command {
         this(s_Swerve, () -> pose, true);
     }
 
+    /** Mirrors Pose for Auton */
+    public SwerveMoveToCMD(Swerve s_Swerve, Pose2d pose, int i) {
+
+        this(s_Swerve, () -> pose, true);
+    }
+
+    public static SwerveMoveToCMD getAutoPath(Swerve swerve, Pose2d pose){
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
+            pose = new Pose2d(fieldLine + (fieldLine - pose.getX()), pose.getY(), pose.getRotation());
+        }
+        return new SwerveMoveToCMD(swerve, pose);
+    }
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
@@ -87,7 +104,12 @@ public class SwerveMoveToCMD extends Command {
         if (translate) {
             double xCalc = xPID.calculate(s_Swerve.getPose().getX());
             double yCalc = yPID.calculate(s_Swerve.getPose().getY());
-            s_Swerve.drive(new Translation2d(xCalc, yCalc), Rotation2d.fromDegrees(aCalc), true, false);
+            MathUtil.clamp(xCalc, -1, 1);
+            MathUtil.clamp(yCalc, -1, 1);
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xCalc, yCalc, aCalc);
+            ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, s_Swerve.getYaw());
+
+            s_Swerve.drive(new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond), Rotation2d.fromDegrees(aCalc), false, true);
         } else {
             s_Swerve.drive(new Translation2d(), Rotation2d.fromDegrees(aCalc), true, true);
         }

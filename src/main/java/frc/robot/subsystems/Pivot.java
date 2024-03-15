@@ -22,6 +22,7 @@ import frc.robot.Constants.Shooter;
 import frc.robot.util.CANSparkMaxCurrent;
 import frc.robot.util.InterpolatableShotData;
 import frc.robot.util.InterpolatingShotTreeMapContainer;
+import java.sql.Driver;
 import java.util.function.DoubleSupplier;
 
 public class Pivot extends SubsystemBase {
@@ -174,10 +175,12 @@ public class Pivot extends SubsystemBase {
 
     public void alignIntakeToShooter() {
         intakeShooterCommand.schedule();
+        DriverStation.reportWarning("Set Intake Setpoint Shooter", true);
     }
 
     public void alignIntakeToGround() {
         intakeShooterCommand.cancel();
+        DriverStation.reportWarning("Set Intake Setpoint Ground", false);
         pidIntakeAngleController.setReference(0, CANSparkMax.ControlType.kPosition);
     }
 

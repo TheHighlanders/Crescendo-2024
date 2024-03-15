@@ -5,7 +5,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -13,6 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
+import frc.robot.Constants.Notes;
+import frc.robot.auton.MidSideAutonCMDG;
+import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
@@ -72,7 +77,7 @@ public class RobotContainer {
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
     public static Command intakeRetract = new ParallelDeadlineGroup(
         new WaitCommand(0.75),
-        new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, s_Shooter, true)),
+        new SequentialCommandGroup(new WaitCommand(0.6), new runIntakeCMD(s_Intake, s_Shooter, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true)
     );
 
@@ -101,6 +106,7 @@ public class RobotContainer {
      */
     public RobotContainer() {
         s_RGB.changeString("7");
+        // registerNamedCommands();
         // Configure the trigger bindings
         configureBindings();
         configureAuton();
@@ -144,7 +150,7 @@ public class RobotContainer {
                 new FunctionalCommand(
                     () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getLeftY() * -2845.945945945946); //Execute
+                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * -2845.945945945946); //Execute
                     },
                     v -> {
                         s_Shooter.shootCancel(); // End
@@ -158,7 +164,7 @@ public class RobotContainer {
 
         /* Climber  */
         operator
-            .rightBumper()
+            .start()
             .whileTrue(
                 new FunctionalCommand(
                     () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 0.5),
@@ -170,7 +176,7 @@ public class RobotContainer {
                 )
             );
         operator
-            .leftBumper()
+            .back()
             .whileTrue(
                 new FunctionalCommand(
                     () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 0.5),
@@ -182,7 +188,7 @@ public class RobotContainer {
                 )
             );
         operator
-            .back()
+            .leftBumper()
             .whileTrue(
                 new FunctionalCommand(
                     () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 1),
@@ -194,7 +200,7 @@ public class RobotContainer {
                 )
             );
         operator
-            .start()
+            .rightBumper()
             .whileTrue(
                 new FunctionalCommand(
                     () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 1),
@@ -205,11 +211,15 @@ public class RobotContainer {
                     }
                 )
             );
+
+        // operator.a().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(Notes.MidClose, s_Swerve.getPose().getRotation().plus(new Rotation2d(Math.PI)))));
         // operator.b().onTrue(new InstantCommand(() -> S_Climber.climberPrime()));
     }
 
     private void configureAuton() {
-        autoChooser = AutoBuilder.buildAutoChooser();
+        // autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser = new SendableChooser<>();
+        autoChooser.addOption("Mid 2Piece", new MidSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
@@ -251,5 +261,13 @@ public class RobotContainer {
         // Uses an Auto to assign a starting position
         //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
+    }
+
+    public void registerNamedCommands(){
+        NamedCommands.registerCommand("Deploy Intake", deployIntakeCMD);
+        NamedCommands.registerCommand("Automatic Shoot", autonShootRoutineCMDG);
+        NamedCommands.registerCommand("Retract Intake", intakeRetract);
+        NamedCommands.registerCommand("Run Intake In", runIntakeInCMD);
+
     }
 }
