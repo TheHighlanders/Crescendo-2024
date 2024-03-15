@@ -4,10 +4,7 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,9 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
-import frc.robot.Constants.Notes;
 import frc.robot.auton.MidSideAutonCMDG;
-import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
@@ -38,7 +33,7 @@ import java.util.function.Supplier;
  */
 public class RobotContainer {
 
-    public static double speedMult = 0.5;
+    public static final double speedMult = 0.5;
     public static DoubleSupplier distToSpeaker;
 
     /* Controllers */
@@ -81,24 +76,13 @@ public class RobotContainer {
         new deployIntakeCMD(s_Pivot, s_Intake, true)
     );
 
-    public static Command deployIntakeCMD = new InstantCommand(
-        () -> {
-            if (s_Pivot.getIntakeDeploy()) {
-                intakeShooterCommand.schedule();
-            } else {
-                intakeFloorCommand.schedule();
-            }
-        },
-        s_Pivot
-    );
-
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(
         s_Shooter,
         s_Intake,
         s_Pivot,
         s_Swerve,
         s_Localizer,
-        () -> s_Localizer.getDistanceToSpeaker2()
+        s_Localizer::getDistanceToSpeaker
     );
 
     /**
@@ -106,19 +90,14 @@ public class RobotContainer {
      */
     public RobotContainer() {
         s_RGB.changeString("7");
-        // registerNamedCommands();
-        // Configure the trigger bindings
         configureBindings();
         configureAuton();
-        // Set Default commands for subsystems
         setDefaultCommands();
     }
 
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-
-        // driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
 
         /* Intake Button Bindings */
         driver.rightTrigger(0.75).whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
@@ -128,7 +107,6 @@ public class RobotContainer {
         operator.x().onTrue(gamePieceOverrideCMD);
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
-        // operator.y().onTrue(new PrintCommand("" + s_Localizer.getDistanceToSpeaker2()));
         operator
             .rightStick()
             .whileTrue(
@@ -150,7 +128,7 @@ public class RobotContainer {
                 new FunctionalCommand(
                     () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * -2845.945945945946); //Execute
+                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * -3000); //Execute
                     },
                     v -> {
                         s_Shooter.shootCancel(); // End
@@ -163,61 +141,14 @@ public class RobotContainer {
             );
 
         /* Climber  */
-        operator
-            .start()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 0.5),
-                    () -> {},
-                    v -> S_Climber.climbRight(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
-        operator
-            .back()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 0.5),
-                    () -> {},
-                    v -> S_Climber.climbLeft(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
-        operator
-            .leftBumper()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 1),
-                    () -> {},
-                    v -> S_Climber.climbLeft(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
-        operator
-            .rightBumper()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 1),
-                    () -> {},
-                    v -> S_Climber.climbRight(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
 
-        // operator.a().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(Notes.MidClose, s_Swerve.getPose().getRotation().plus(new Rotation2d(Math.PI)))));
-        // operator.b().onTrue(new InstantCommand(() -> S_Climber.climberPrime()));
+        operator.back().whileTrue(new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * speedMult), () -> S_Climber.climbLeft(0)));
+        operator.start().whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * speedMult), () -> S_Climber.climbRight(0)));
+        operator.leftBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed), () -> S_Climber.climbLeft(0)));
+        operator.rightBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed), () -> S_Climber.climbRight(0)));
     }
 
     private void configureAuton() {
-        // autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("Mid 2Piece", new MidSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
 
@@ -235,21 +166,6 @@ public class RobotContainer {
                 () -> driver.leftBumper().getAsBoolean()
             )
         );
-        // s_Pivot.setDefaultCommand(
-        //     new FunctionalCommand(
-        //         () -> {}, // Initialize
-        //         () -> {
-        //             s_Pivot.driveShooterAngleManual(() -> operator.getRawAxis(translationAxis) / 10); // Execute
-        //         },
-        //         v -> {
-        //             s_Pivot.stopShooterAngle(); // End
-        //         },
-        //         () -> {
-        //             return false; // Is Finished
-        //         },
-        //         s_Shooter // Requirements
-        //     )
-        // );
     }
 
     /**
@@ -261,13 +177,5 @@ public class RobotContainer {
         // Uses an Auto to assign a starting position
         //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
-    }
-
-    public void registerNamedCommands(){
-        NamedCommands.registerCommand("Deploy Intake", deployIntakeCMD);
-        NamedCommands.registerCommand("Automatic Shoot", autonShootRoutineCMDG);
-        NamedCommands.registerCommand("Retract Intake", intakeRetract);
-        NamedCommands.registerCommand("Run Intake In", runIntakeInCMD);
-
     }
 }

@@ -78,7 +78,6 @@ public class Robot extends TimedRobot {
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-        // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
         }
@@ -117,9 +116,7 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during test mode. */
     @Override
-    public void testPeriodic() {
-        // DriverStation.reportWarning(RobotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() + "", false);
-    }
+    public void testPeriodic() {}
 
     /** This function is called once when the robot is first started up. */
     @Override

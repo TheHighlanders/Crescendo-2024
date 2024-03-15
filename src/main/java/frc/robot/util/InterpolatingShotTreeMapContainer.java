@@ -13,12 +13,6 @@ public class InterpolatingShotTreeMapContainer {
         { 145, 12.65, 2900 },
         { 176, 12.5, 3200 },
     };
-    double max;
-    double min;
-
-    // Arrays.sort(value, Comparator.comparingInt(row -> row[0]));
-
-    //
 
     public InterpolatingShotTreeMapContainer() {
         for (int i = 0; i < values.length; i++) {
@@ -30,18 +24,9 @@ public class InterpolatingShotTreeMapContainer {
 
             shotMap.put(distance, shotData);
         }
-
-        max = values[0][0];
-        min = values[0][0];
-        for(int i = 1; i < values.length; i++){
-            if(values[i][0] < min) {min = values[i][0];}
-            if(values[i][0] > max) {max = values[i][0];}
-        }
     }
 
     public InterpolatableShotData interpolate(double dist) {
-        // if(dist > max){dist = max;}
-        // if(dist < min){dist = min;}
         return shotMap.get(dist);
     }
 }

@@ -10,12 +10,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -63,25 +58,14 @@ public final class Constants {
             new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0)
         );
 
-        public static double speedLimit = 3.0;
-        public static double slowSpeedLimit = 1.0;
+        public static final double speedLimit = 3.0;
+        public static final double slowSpeedLimit = 1.0;
 
-        public static double accelerationLimit = 1.5;
-        public static double slowAccelerationLimit = 2;
+        public static final double accelerationLimit = 1.5;
+        public static final double slowAccelerationLimit = 2;
 
-        public static double angularVelocityLimit = 180.0;
-        public static double slowAngularVelocityLimit = 45.0;
-    }
-
-    public static class Autonomous {
-
-        public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
-            2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
-            0.38615, // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig() // Default path replanning config. See the API for the options here
-        );
+        public static final double angularVelocityLimit = 180.0;
+        public static final double slowAngularVelocityLimit = 45.0;
     }
 
     public static class VisionConstants {
@@ -203,13 +187,11 @@ public final class Constants {
         public static final float posVelTolerance = 0.1f;
         public static final float aPosTolerance = 2.5f;
         public static final float aVelTolerance = 2f;
-
-        public static final float aVelocityTolerance = 1;
     }
 
     public static class Shooter {
 
-        public static double kWaitTimeBeforeStop = 3; //seconds
+        public static final double kWaitTimeBeforeStop = 3; //seconds
 
         public static final int bottomFlywheelMotorID = 51;
         public static final int topFlywheelMotorID = 52;
@@ -260,8 +242,6 @@ public final class Constants {
 
             public static final float shooterExtensionDeadzone = 0.0625f;
 
-            public static final double shooterBaseToArmPivotAxis = 7.4353; //inches
-
             public static class PIDValues {
 
                 public static final double minOut = -0.25;
@@ -281,15 +261,8 @@ public final class Constants {
             }
 
             public static class actuatorConst {
-
                 public static final double extensionVelocityDeadzone = 0.5;
                 public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
-                public static final double actuatorBaseDistX = 19.25;
-                public static final double actuatorBaseDistY = 5.375;
-                public static final double actuatorHypot = Math.hypot(actuatorBaseDistX, actuatorBaseDistY);
-                public static final double actuatorAngleBaseDist = Math.atan(actuatorBaseDistY / actuatorBaseDistX);
-                public static final double pivotToActuatorCenterAxis = 2; //inches
-                public static final double secretAngleDeg = 25.919;
             }
         }
     }
@@ -322,7 +295,6 @@ public final class Constants {
             public static final double intakePivotRatio = 1;
             public static final double intakeInit = -13.3;
             public static final float intakeAngleDeadzone = 0.5f;
-            public static final float intakeVelocityDeadzone = 0.1f;
 
             public static class PIDValues {
 
@@ -359,16 +331,14 @@ public final class Constants {
         public static final int CLIMBER_LEFT = 61;
         public static final int CLIMBER_RIGHT = 62;
 
-        public static final int kServoRightID = 3;
-        public static final int kServoLeftID = 4;
-
         public static final double kClimbSpeed = 0.40;
 
         public static final double kClimberP = 0.0;
         public static final double kClimberPrimePoint = 0.0;
     }
 
-    public static final class Notes{
+    public static final class Notes {
+
         public static final Translation2d AmpClose = new Translation2d(2.6, 7.0104);
         public static final Translation2d MidClose = new Translation2d(2.6, 5.5626);
         public static final Translation2d SourceClose = new Translation2d(2.6, 4.1148);

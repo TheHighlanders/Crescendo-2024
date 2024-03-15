@@ -6,25 +6,27 @@ package frc.robot.auton;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Notes;
 import frc.robot.commands.SwerveMoveToCMD;
 import frc.robot.commands.alignShootCMDG;
-import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
 import frc.robot.subsystems.*;
 
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class MidSideAutonCMDG extends SequentialCommandGroup {
+public class RightSideAutonCMDG extends SequentialCommandGroup {
 
-    public MidSideAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
+    public RightSideAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
         addCommands(
             new alignShootCMDG(shooter, intake, pivot, swerve, localizer, localizer::getDistanceToSpeaker),
             new PrintCommand("Post Shoot"),
             new WaitCommand(0.1),
-            new deployIntakeCMD(pivot, intake, false),
+            // new deployIntakeCMD(pivot, intake, false),
             // new PrintCommand("Post Deploy"),
-            new WaitUntilCommand(pivot::intakeAtSetpointGround),
+            // new WaitUntilCommand(()->pivot.intakeAtSetpointGround()),
 
             new ParallelDeadlineGroup(
                 SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.MidClose, new Rotation2d(Math.PI))),

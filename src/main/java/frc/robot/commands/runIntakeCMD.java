@@ -16,11 +16,11 @@ public class runIntakeCMD extends Command {
     Shooter m_shooter;
     boolean speed;
 
-    public runIntakeCMD(Intake intake, Shooter shooter, boolean speed) {
+    public runIntakeCMD(Intake intake, Shooter shooter, boolean forward) {
         // Use addRequirements() here to declare subsystem dependencies.
         m_intake = intake;
         m_shooter = shooter;
-        this.speed = speed;
+        this.speed = forward;
 
         addRequirements(intake);
     }
