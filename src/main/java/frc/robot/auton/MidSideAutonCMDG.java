@@ -7,6 +7,8 @@ package frc.robot.auton;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -34,20 +36,33 @@ public class MidSideAutonCMDG extends SequentialCommandGroup {
   public MidSideAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    
+
     addCommands(
-      RobotContainer.autonShootRoutineCMDG,
+      // RobotContainer.autonShootRoutineCMDG,
+      new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker2()),
       new PrintCommand("Post Shoot"),
-      new WaitCommand(0.1),
-      // new deployIntakeCMD(pivot, intake, false),
-      // new PrintCommand("Post Deploy"),
-      // new WaitUntilCommand(()->pivot.intakeAtSetpointGround()),
-      // new ParallelDeadlineGroup(
-      SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.MidClose, new Rotation2d(Math.PI))),
-      //   new StartEndCommand(()->intake.intakeForward(), ()->DriverStation.reportWarning("INTAKE ENDED", false), intake)
-      //   // new InstantCommand(()->intake.intakeForward())
-      // ),
-      new PrintCommand("Post Move"),
+      new WaitCommand(3),
+      new deployIntakeCMD(pivot, intake, false),
+      new PrintCommand("Post Deploy"),
+      new WaitUntilCommand(()->pivot.intakeAtSetpointGround()),
+      new InstantCommand(()->intake.intakeForward()),
+
+      new ParallelCommandGroup(
+        SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.MidClose, new Rotation2d(Math.PI))),
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> intake.hasGamePiece()),
+          new PrintCommand("Had Game Piece"),
+          new InstantCommand(()-> intake.intakeStop()),
+          pivot.retractIntake(),
+          new WaitUntilCommand(()->pivot.intakeAtSetpointShooter()),
+          new PrintCommand("Retracted")
+        )
+      ),
+
+      new PrintCommand("Post Move PCMDG"),
       new WaitCommand(1),
-      new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker2()));
+      new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker2())
+      );
   }
 }

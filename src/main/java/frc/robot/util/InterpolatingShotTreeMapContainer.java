@@ -7,6 +7,7 @@ public class InterpolatingShotTreeMapContainer {
     public static final InterpolatingShotTreeMap shotMap = new InterpolatingShotTreeMap();
     double[][] values = {
         // TODO: find these values
+        {0, 14.5, 2000}, //Same as last to prevent NPE
         { 36, 14.25, 2000 },
         { 60, 13.75, 2100 },
         { 108, 12.9, 2500 },

@@ -44,9 +44,9 @@ public final class Constants {
         public static final double kTranslateI = 0;
         public static final double kTranslateD = 0;
 
-        public static final double kRotateP = 2.5;
+        public static final double kRotateP = 1.5;
         public static final double kRotateI = 0.0;
-        public static final double kRotateD = 0.25;
+        public static final double kRotateD = 0.5;
 
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second

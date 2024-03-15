@@ -14,6 +14,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.RGB.State;
 import frc.robot.util.CANSparkMaxCurrent;
+import java.sql.Driver;
 
 public class Intake extends SubsystemBase {
 
@@ -47,7 +48,7 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         // Checks if we have gained a piece, and schedules retraction
-        if (hasGamePiece == beamBreak.get() && hasGamePiece == false) {
+        if (hasGamePiece == beamBreak.get() && hasGamePiece == false && !DriverStation.isAutonomous()) {
             DriverStation.reportWarning("Intake Retraction AutoCommanded", true);
             RobotContainer.intakeRetract.schedule();
         }

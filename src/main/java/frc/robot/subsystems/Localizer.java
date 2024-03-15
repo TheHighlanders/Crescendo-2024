@@ -126,7 +126,9 @@ public class Localizer extends SubsystemBase {
                     : Constants.VisionConstants.kRedSpeaker
             );
         // SmartDashboard.putString("Cached in fucntion", cached.get().toString());
-        return Math.hypot(cached.get().getX() - goal.getX(), cached.get().getY() - goal.getY());
+         
+        double dist = Math.hypot(cached.get().getX() - goal.getX(), cached.get().getY() - goal.getY());
+        return dist;
     }
 
     public Rotation2d getAngleToSpeaker() {

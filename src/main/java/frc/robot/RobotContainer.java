@@ -77,7 +77,7 @@ public class RobotContainer {
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
     public static Command intakeRetract = new ParallelDeadlineGroup(
         new WaitCommand(0.75),
-        new SequentialCommandGroup(new WaitCommand(0.6), new runIntakeCMD(s_Intake, s_Shooter, true)),
+        //new SequentialCommandGroup(new WaitCommand(0.6), new runIntakeCMD(s_Intake, s_Shooter, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true)
     );
 
@@ -150,7 +150,7 @@ public class RobotContainer {
                 new FunctionalCommand(
                     () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * -2845.945945945946); //Execute
+                        s_Shooter.shoot(() -> operator.getLeftY() * -2845.945945945946); //Execute
                     },
                     v -> {
                         s_Shooter.shootCancel(); // End

@@ -59,9 +59,11 @@ public class alignShootCMDG extends ParallelCommandGroup {
         m_Localizer = localizer;
         this.distance = distance;
 
-        try{
+        try {
             data = () -> m_Pivot.interpolate(distance.getAsDouble());
-        } catch (Exception e){
+        } catch (Exception e) {
+            data = () -> m_Pivot.interpolate(1.5);
+
             DriverStation.reportWarning("Align Data threw", true);
         }
 
@@ -80,13 +82,15 @@ public class alignShootCMDG extends ParallelCommandGroup {
         // runs the swerve move to command to the angle of the speaker
         alignRobot = new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker);
         waitForGamePiece = new WaitUntilCommand(() -> !(!shoot.getBeamBreak() || intake.hasGamePiece())).andThen(new WaitCommand(0.5));
-        waitForRpmSetpoint = new WaitUntilCommand(m_shooter::atVelocity).andThen(new PrintCommand("At velocity"));
+        waitForRpmSetpoint = new WaitUntilCommand(m_shooter::atVelocity).raceWith(new WaitCommand(2)).andThen(new PrintCommand("At velocity"));
         deadline =
-            new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.gamePieceDetectionOverride()));
+            new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.getGamePieceDetectionOverride()));
 
         addCommands(
             // alignRobot
-            new InstantCommand(() -> {m_shooter.shoot(() -> data.get().getRPM() + 75);}),
+            new InstantCommand(() -> {
+                m_shooter.shoot(() -> data.get().getRPM() + 75);
+            }),
             // alignRobot,
             new SequentialCommandGroup(
                 // new PrintCommand(data.get().getArmExtension() + ""),
@@ -95,7 +99,9 @@ public class alignShootCMDG extends ParallelCommandGroup {
                 new PrintCommand("In Second Phase"),
                 // runs the intake and the shooter for 3 seconds and then stops them when the time us up\
                 new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut),
-                new InstantCommand(() -> {m_shooter.shootCancel();}),
+                new InstantCommand(() -> {
+                    m_shooter.shootCancel();
+                }),
                 new PrintCommand("Ended")
             ),
             new PrintCommand("Automatic Shooter")

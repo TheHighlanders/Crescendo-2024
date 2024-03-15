@@ -153,6 +153,27 @@ public class Pivot extends SubsystemBase {
         return intakeAngleEncoder.getPosition();
     }
 
+    public Command retractIntake(){
+        return new FunctionalCommand(
+                () -> {},
+                () -> {
+                    intakeAngleMotor.set(
+                        -Math.max(
+                            Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),
+                            Intake.Pivot.PIDValues.minOut
+                        )
+                    );
+                    //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
+                },
+                v -> {
+                    intakeAngleHold();
+                },
+                () -> {
+                    return intakeAtSetpointShooter();
+                }
+            );
+    }
+
     /**Aligns both intake and shooter to a given angle */
     public boolean alignPivot(DoubleSupplier Extension) {
         try {
@@ -174,7 +195,8 @@ public class Pivot extends SubsystemBase {
     }
 
     public void alignIntakeToShooter() {
-        intakeShooterCommand.schedule();
+        if(DriverStation.isTeleop()){intakeShooterCommand.schedule();}
+        
         DriverStation.reportWarning("Set Intake Setpoint Shooter", true);
     }
 
