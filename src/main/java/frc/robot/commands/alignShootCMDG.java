@@ -22,7 +22,6 @@ import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.InterpolatableShotData;
-import java.sql.Driver;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -76,15 +75,14 @@ public class alignShootCMDG extends ParallelCommandGroup {
                 m_shooter::shootCancel
             );
 
-        runIntakeOut = new runIntakeCMD(m_intake, m_shooter, false);
+        runIntakeOut = new runIntakeCMD(m_intake, false);
         // align pivot, is finished when asSetpoints returns true
         alignPivot = new InstantCommand(() -> m_Pivot.alignPivot(() -> data.get().getArmExtension()));
         // runs the swerve move to command to the angle of the speaker
         alignRobot = new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker);
         waitForGamePiece = new WaitUntilCommand(() -> !(!shoot.getBeamBreak() || intake.hasGamePiece())).andThen(new WaitCommand(0.5));
-        waitForRpmSetpoint = new WaitUntilCommand(m_shooter::atVelocity).raceWith(new WaitCommand(2)).andThen(new PrintCommand("At velocity"));
-        deadline =
-            new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.getGamePieceDetectionOverride()));
+        waitForRpmSetpoint = new WaitUntilCommand(m_shooter::atVelocity).andThen(new PrintCommand("At velocity"));
+        deadline = new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop);
 
         addCommands(
             // alignRobot
@@ -93,7 +91,6 @@ public class alignShootCMDG extends ParallelCommandGroup {
             }),
             // alignRobot,
             new SequentialCommandGroup(
-                // new PrintCommand(data.get().getArmExtension() + ""),
                 // move swere to face speaker and align pivot
                 new ParallelCommandGroup(alignPivot, alignRobot, waitForRpmSetpoint),
                 new PrintCommand("In Second Phase"),

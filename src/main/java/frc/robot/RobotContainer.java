@@ -4,25 +4,35 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
-import frc.robot.Constants.Notes;
+import frc.robot.auton.AmpSideAutonCMDG;
 import frc.robot.auton.MidSideAutonCMDG;
-import frc.robot.commands.SwerveMoveToCMD;
+import frc.robot.auton.SourceSideAutonCMDG;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Localizer;
+import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.RGB;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Vision;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -71,13 +81,13 @@ public class RobotContainer {
 
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
-    public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
+    // public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
     //public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
     public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
     public static Command intakeRetract = new ParallelDeadlineGroup(
         new WaitCommand(0.75),
-        //new SequentialCommandGroup(new WaitCommand(0.6), new runIntakeCMD(s_Intake, s_Shooter, true)),
+        new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true)
     );
 
@@ -98,7 +108,7 @@ public class RobotContainer {
         s_Pivot,
         s_Swerve,
         s_Localizer,
-        () -> s_Localizer.getDistanceToSpeaker2()
+        () -> s_Localizer.getDistanceToSpeaker()
     );
 
     /**
@@ -125,10 +135,9 @@ public class RobotContainer {
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
         driver.a().onTrue(new deployIntakeCMD(s_Pivot, s_Intake, false));
         driver.x().onTrue(intakeRetract);
-        operator.x().onTrue(gamePieceOverrideCMD);
+        // operator.x().onTrue(gamePieceOverrideCMD);
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
-        // operator.y().onTrue(new PrintCommand("" + s_Localizer.getDistanceToSpeaker2()));
         operator
             .rightStick()
             .whileTrue(
@@ -144,13 +153,13 @@ public class RobotContainer {
                 )
             );
         operator.rightStick().onFalse(new InstantCommand(() -> s_Pivot.shooterAngleHold())); // Manual Pivot Angle Control
-        operator/* .whileTrue(new InstantCommand(() -> s_Shooter.shoot(() -> 1)));*/
+        operator
             .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1
             .whileTrue(
                 new FunctionalCommand(
                     () -> {}, // Initialize
                     () -> {
-                        s_Shooter.shoot(() -> operator.getLeftY() * -2845.945945945946); //Execute
+                        s_Shooter.shoot(() -> operator.getLeftY() * -3000); //Execute
                     },
                     v -> {
                         s_Shooter.shootCancel(); // End
@@ -162,56 +171,14 @@ public class RobotContainer {
                 )
             );
 
-        /* Climber  */
-        operator
-            .start()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 0.5),
-                    () -> {},
-                    v -> S_Climber.climbRight(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
         operator
             .back()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 0.5),
-                    () -> {},
-                    v -> S_Climber.climbLeft(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
+            .whileTrue(new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * speedMult), () -> S_Climber.climbLeft(0)));
         operator
-            .leftBumper()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * 1),
-                    () -> {},
-                    v -> S_Climber.climbLeft(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
-        operator
-            .rightBumper()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * 1),
-                    () -> {},
-                    v -> S_Climber.climbRight(0),
-                    () -> {
-                        return false;
-                    }
-                )
-            );
-
+            .start()
+            .whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * speedMult), () -> S_Climber.climbRight(0)));
+        operator.leftBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed), () -> S_Climber.climbLeft(0)));
+        operator.rightBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed), () -> S_Climber.climbRight(0)));
         // operator.a().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(Notes.MidClose, s_Swerve.getPose().getRotation().plus(new Rotation2d(Math.PI)))));
         // operator.b().onTrue(new InstantCommand(() -> S_Climber.climberPrime()));
     }
@@ -220,7 +187,8 @@ public class RobotContainer {
         // autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("Mid 2Piece", new MidSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
-
+        autoChooser.addOption("Amp 2Piece", new AmpSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
+        autoChooser.addOption("Source 2Piece", new SourceSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
@@ -235,21 +203,6 @@ public class RobotContainer {
                 () -> driver.leftBumper().getAsBoolean()
             )
         );
-        // s_Pivot.setDefaultCommand(
-        //     new FunctionalCommand(
-        //         () -> {}, // Initialize
-        //         () -> {
-        //             s_Pivot.driveShooterAngleManual(() -> operator.getRawAxis(translationAxis) / 10); // Execute
-        //         },
-        //         v -> {
-        //             s_Pivot.stopShooterAngle(); // End
-        //         },
-        //         () -> {
-        //             return false; // Is Finished
-        //         },
-        //         s_Shooter // Requirements
-        //     )
-        // );
     }
 
     /**
@@ -261,13 +214,5 @@ public class RobotContainer {
         // Uses an Auto to assign a starting position
         //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
-    }
-
-    public void registerNamedCommands(){
-        NamedCommands.registerCommand("Deploy Intake", deployIntakeCMD);
-        NamedCommands.registerCommand("Automatic Shoot", autonShootRoutineCMDG);
-        NamedCommands.registerCommand("Retract Intake", intakeRetract);
-        NamedCommands.registerCommand("Run Intake In", runIntakeInCMD);
-
     }
 }

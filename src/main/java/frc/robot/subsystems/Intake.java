@@ -14,7 +14,6 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.RGB.State;
 import frc.robot.util.CANSparkMaxCurrent;
-import java.sql.Driver;
 
 public class Intake extends SubsystemBase {
 
@@ -25,11 +24,9 @@ public class Intake extends SubsystemBase {
     private DigitalInput beamBreak;
 
     private boolean hasGamePiece;
-    private boolean override;
 
     public Intake() {
         this.hasGamePiece = true;
-        this.override = false;
 
         beamBreak = new DigitalInput(Constants.Intake.kIntakeBeamBreakDIOPin);
 
@@ -65,30 +62,22 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
     }
 
-    public boolean gamePieceDetectionOverride() {
-        override = !override;
-        DriverStation.reportWarning("Gamepiece override " + override, false);
-        return hasGamePiece();
-    }
-
     public boolean hasGamePiece() {
-        return hasGamePiece || override;
+        return hasGamePiece;
     }
 
     public void intakeStop() {
+        DriverStation.reportWarning("Intake stop", false);
         intakeMotor.set(0);
     }
 
     public void intakeForward() {
+        DriverStation.reportWarning("Intake forward", false);
         intakeMotor.set(1);
     }
 
     public void intakeReverse() {
-        override = false;
+        DriverStation.reportWarning("Intake reverse", false);
         intakeMotor.set(-1);
-    }
-
-    public boolean getGamePieceDetectionOverride() {
-        return override;
     }
 }

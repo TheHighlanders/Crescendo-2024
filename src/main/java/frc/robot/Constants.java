@@ -10,7 +10,6 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -63,14 +62,14 @@ public final class Constants {
             new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0)
         );
 
-        public static double speedLimit = 3.0;
-        public static double slowSpeedLimit = 1.0;
+        public static final double speedLimit = 3.0;
+        public static final double slowSpeedLimit = 1.0;
 
-        public static double accelerationLimit = 1.5;
-        public static double slowAccelerationLimit = 2;
+        public static final double accelerationLimit = 1.5;
+        public static final double slowAccelerationLimit = 1;
 
-        public static double angularVelocityLimit = 180.0;
-        public static double slowAngularVelocityLimit = 45.0;
+        public static final double angularVelocityLimit = 180.0;
+        public static final double slowAngularVelocityLimit = 45.0;
     }
 
     public static class Autonomous {
@@ -281,15 +280,8 @@ public final class Constants {
             }
 
             public static class actuatorConst {
-
                 public static final double extensionVelocityDeadzone = 0.5;
                 public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
-                public static final double actuatorBaseDistX = 19.25;
-                public static final double actuatorBaseDistY = 5.375;
-                public static final double actuatorHypot = Math.hypot(actuatorBaseDistX, actuatorBaseDistY);
-                public static final double actuatorAngleBaseDist = Math.atan(actuatorBaseDistY / actuatorBaseDistX);
-                public static final double pivotToActuatorCenterAxis = 2; //inches
-                public static final double secretAngleDeg = 25.919;
             }
         }
     }
@@ -368,7 +360,8 @@ public final class Constants {
         public static final double kClimberPrimePoint = 0.0;
     }
 
-    public static final class Notes{
+    public static final class Notes {
+
         public static final Translation2d AmpClose = new Translation2d(2.6, 7.0104);
         public static final Translation2d MidClose = new Translation2d(2.6, 5.5626);
         public static final Translation2d SourceClose = new Translation2d(2.6, 4.1148);

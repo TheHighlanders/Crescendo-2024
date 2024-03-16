@@ -30,9 +30,9 @@ import frc.robot.subsystems.Swerve;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class MidSideAutonCMDG extends SequentialCommandGroup {
+public class AmpSideAutonCMDG extends SequentialCommandGroup {
   /** Creates a new AmpSideAutonCMDG. */
-  public MidSideAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
+  public AmpSideAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     
@@ -48,7 +48,7 @@ public class MidSideAutonCMDG extends SequentialCommandGroup {
       new InstantCommand(()->intake.intakeForward()),
 
       new ParallelCommandGroup(
-        SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.MidClose, new Rotation2d(Math.PI))),
+        SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.AmpClose, new Rotation2d(Math.PI))),
         new SequentialCommandGroup(
           new WaitUntilCommand(() -> intake.hasGamePiece()),
           new PrintCommand("Had Game Piece"),

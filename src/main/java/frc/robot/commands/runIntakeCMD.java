@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -16,11 +15,9 @@ public class runIntakeCMD extends Command {
     Shooter m_shooter;
     boolean speed;
 
-    public runIntakeCMD(Intake intake, Shooter shooter, boolean speed) {
-        // Use addRequirements() here to declare subsystem dependencies.
+    public runIntakeCMD(Intake intake, boolean forward) {
         m_intake = intake;
-        m_shooter = shooter;
-        this.speed = speed;
+        this.speed = forward;
 
         addRequirements(intake);
     }
@@ -30,15 +27,15 @@ public class runIntakeCMD extends Command {
     public void initialize() {
         if (speed) {
             m_intake.intakeForward();
-        } else if (m_shooter.aboveMinVelocity()) {
+        } else {
             m_intake.intakeReverse();
         }
+
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        SmartDashboard.putBoolean("above min velocity", m_shooter.aboveMinVelocity());
     }
 
     // Called once the command ends or is interrupted.

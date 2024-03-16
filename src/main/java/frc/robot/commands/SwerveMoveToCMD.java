@@ -85,7 +85,7 @@ public class SwerveMoveToCMD extends Command {
 
     public static SwerveMoveToCMD getAutoPath(Swerve swerve, Pose2d pose){
         if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
-            pose = new Pose2d(fieldLine + (fieldLine - pose.getX()), pose.getY(), pose.getRotation());
+            pose = new Pose2d(fieldLine + (fieldLine - pose.getX()), pose.getY(), new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin()));
         }
         return new SwerveMoveToCMD(swerve, pose);
     }

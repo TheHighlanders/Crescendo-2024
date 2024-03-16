@@ -80,7 +80,7 @@ public class Localizer extends SubsystemBase {
         field.setRobotPose(getPose().get());
         // SmartDashboard.putString("getPose", getPose().get() + "");
         // SmartDashboard.putString("Cached", cached.get().toString());
-        SmartDashboard.putNumber("Distance to Goal", getDistanceToSpeaker2());
+        SmartDashboard.putNumber("Distance to Goal", getDistanceToSpeaker());
         SmartDashboard.putNumber("Angle to Goal", getAngleToSpeaker().getDegrees());
         // SmartDashboard.putString("Swerve Pose Estimator Output", "" + swervePoseEstimator.getEstimatedPosition());
         // field.setRobotPose(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
@@ -101,20 +101,8 @@ public class Localizer extends SubsystemBase {
         return field;
     }
 
+
     public double getDistanceToSpeaker() {
-        if (DriverStation.getAlliance().isEmpty()) return -1;
-
-        Translation2d goal =
-            (
-                DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                    ? Constants.VisionConstants.kRedSpeaker
-                    : Constants.VisionConstants.kBlueSpeaker
-            );
-
-        return Math.hypot(getPose().get().getX() - goal.getX(), getPose().get().getY() - goal.getY());
-    }
-
-    public double getDistanceToSpeaker2() {
         if (DriverStation.getAlliance().isEmpty()) {
             return -1;
         }
@@ -142,9 +130,6 @@ public class Localizer extends SubsystemBase {
                     ? Constants.VisionConstants.kRedSpeaker
                     : Constants.VisionConstants.kBlueSpeaker
             );
-        // double comp = DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? Units.degreesToRadians(2) : -Units.degreesToRadians(2);
-        // comp *= 2/getDistanceToSpeaker2();
-        // SmartDashboard.putNumber("Angle to Speaker", Math.toDegrees(Math.atan2(goal.getY() - robot.getY(), goal.getX() - robot.getX())));
         return new Rotation2d(Math.atan2(robot.getY() - goal.getY(), robot.getX() - goal.getX()) + Math.PI);
     }
 }
