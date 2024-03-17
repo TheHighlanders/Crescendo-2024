@@ -89,7 +89,7 @@ public class Pivot extends SubsystemBase {
                 () -> {
                     intakeAngleMotor.set(
                         -Math.max(
-                            Math.min(differentialPidController.calculate(getPositionDiffrential(), 53), Intake.Pivot.PIDValues.maxOut),
+                            Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),
                             Intake.Pivot.PIDValues.minOut
                         )
                     );
