@@ -200,7 +200,7 @@ public final class Constants {
 
         public static final float posPosTolerance = 0.05f;
         public static final float posVelTolerance = 0.1f;
-        public static final float aPosTolerance = 2.5f;
+        public static final float aPosTolerance = 5f;
         public static final float aVelTolerance = 2f;
 
         public static final float aVelocityTolerance = 1;
@@ -208,7 +208,7 @@ public final class Constants {
 
     public static class Shooter {
 
-        public static double kWaitTimeBeforeStop = 3; //seconds
+        public static double kWaitTimeBeforeStop = 2; //seconds
 
         public static final int bottomFlywheelMotorID = 51;
         public static final int topFlywheelMotorID = 52;
@@ -365,5 +365,11 @@ public final class Constants {
         public static final Translation2d AmpClose = new Translation2d(2.6, 7.0104);
         public static final Translation2d MidClose = new Translation2d(2.6, 5.5626);
         public static final Translation2d SourceClose = new Translation2d(2.6, 4.1148);
+    }
+
+    public static final class Points {
+        public static final Translation2d shootAndLeaveS1 = new Translation2d(2, 2);
+        public static final Translation2d shootAndLeaveS2 = new Translation2d(4,2);
+        public static final Translation2d shootAndLeaveM1 = new Translation2d(4, 5.5);
     }
 }

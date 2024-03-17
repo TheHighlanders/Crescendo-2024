@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
 import frc.robot.auton.AmpSideAutonCMDG;
 import frc.robot.auton.MidSideAutonCMDG;
+import frc.robot.auton.ShootAndLeaveMidAutonCMDG;
+import frc.robot.auton.ShootAndLeaveSourceSideAutonCMDG;
+import frc.robot.auton.ShootAutonCMDG;
 import frc.robot.auton.SourceSideAutonCMDG;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
@@ -144,7 +147,7 @@ public class RobotContainer {
                 new FunctionalCommand(
                     () -> {},
                     () -> {
-                        s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25);
+                        s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.5);
                     },
                     v -> {},
                     () -> {
@@ -177,6 +180,7 @@ public class RobotContainer {
         operator
             .start()
             .whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * speedMult), () -> S_Climber.climbRight(0)));
+        operator.povDown().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
         operator.leftBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed), () -> S_Climber.climbLeft(0)));
         operator.rightBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed), () -> S_Climber.climbRight(0)));
         // operator.a().onTrue(new SwerveMoveToCMD(s_Swerve, new Pose2d(Notes.MidClose, s_Swerve.getPose().getRotation().plus(new Rotation2d(Math.PI)))));
@@ -189,7 +193,12 @@ public class RobotContainer {
         autoChooser.addOption("Mid 2Piece", new MidSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
         autoChooser.addOption("Amp 2Piece", new AmpSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
         autoChooser.addOption("Source 2Piece", new SourceSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
-        
+        autoChooser.addOption("Just Shoot", new ShootAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
+        autoChooser.addOption("None", new SequentialCommandGroup());
+        autoChooser.addOption("Source Side 1PLeave", new ShootAndLeaveSourceSideAutonCMDG(s_Shooter, s_Intake, s_Swerve, s_Pivot, s_Localizer));
+        autoChooser.addOption("Mid 1P Leave", new ShootAndLeaveMidAutonCMDG(s_Shooter, s_Intake, s_Swerve, s_Pivot, s_Localizer));
+
+        autoChooser.setDefaultOption("Just Shoot", new ShootAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 

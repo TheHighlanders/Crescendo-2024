@@ -119,7 +119,7 @@ public class SwerveMoveToCMD extends Command {
     @Override
     public void end(boolean interrupted) {
         s_Swerve.drive(new Translation2d(), new Rotation2d(), true, true);
-        DriverStation.reportWarning("POINT MOVE ENDED", false);
+        DriverStation.reportWarning("POINT MOVE ENDED " + interrupted, false);
     }
 
     // Returns true when the command should end.
