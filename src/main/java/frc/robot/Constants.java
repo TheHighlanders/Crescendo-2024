@@ -312,7 +312,7 @@ public final class Constants {
             public static final double absoluteEncoderOffset = 337d;
 
             public static final double intakePivotRatio = 1;
-            public static final double intakeInit = -13.3;
+            public static final double intakeInit = 0;
             public static final float intakeAngleDeadzone = 0.5f;
             public static final float intakeVelocityDeadzone = 0.1f;
 
