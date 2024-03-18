@@ -312,14 +312,14 @@ public final class Constants {
             public static final double absoluteEncoderOffset = 337d;
 
             public static final double intakePivotRatio = 1;
-            public static final double intakeInit = 0;
+            public static final double intakeInit = -115.07924462698114;
             public static final float intakeAngleDeadzone = 0.5f;
             public static final float intakeVelocityDeadzone = 0.1f;
 
             public static class PIDValues {
 
-                public static final double minOut = -0.4;
-                public static final double maxOut = 0.4;
+                public static final double minOut = -0.3;
+                public static final double maxOut = 0.3;
                 public static final double kP = 0.03d;
                 public static final double kI = 0d;
                 public static final double kD = 0d;

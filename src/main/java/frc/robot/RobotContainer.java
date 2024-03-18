@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -90,6 +91,7 @@ public class RobotContainer {
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
     public static Command intakeRetract = new ParallelDeadlineGroup(
         new WaitCommand(0.75),
+        new InstantCommand(() -> setRumble(0.5, 0.5, false, true)),
         new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true)
     );
@@ -224,5 +226,30 @@ public class RobotContainer {
         // Uses an Auto to assign a starting position
         //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
+    }
+
+    public static void setRumble(double value, double length, boolean right, boolean driverController) {
+        RumbleType rumbleSide = right ? RumbleType.kRightRumble : RumbleType.kLeftRumble;
+        if (driverController) {
+            new InstantCommand(() -> {
+                driver.getHID().setRumble(rumbleSide, value);
+            })
+                .andThen(new WaitCommand(length))
+                .andThen(
+                    new InstantCommand(() -> {
+                        driver.getHID().setRumble(rumbleSide, value);
+                    })
+                );
+        } else {
+            new InstantCommand(() -> {
+                operator.getHID().setRumble(rumbleSide, value);
+            })
+                .andThen(new WaitCommand(length))
+                .andThen(
+                    new InstantCommand(() -> {
+                        operator.getHID().setRumble(rumbleSide, value);
+                    })
+                );
+        }
     }
 }
