@@ -37,11 +37,10 @@ public class Intake extends SubsystemBase {
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         intakeMotor.setSpikeCurrentLimit(
-            Constants.Intake.IntakeCurrentLimit.kLimitToAmps,
-            Constants.Intake.IntakeCurrentLimit.kMaxSpikeTime,
-            Constants.Intake.IntakeCurrentLimit.kMaxSpikeAmps,
-            Constants.Intake.IntakeCurrentLimit.kSmartLimit
-        );
+                Constants.Intake.IntakeCurrentLimit.kLimitToAmps,
+                Constants.Intake.IntakeCurrentLimit.kMaxSpikeTime,
+                Constants.Intake.IntakeCurrentLimit.kMaxSpikeAmps,
+                Constants.Intake.IntakeCurrentLimit.kSmartLimit);
     }
 
     @Override
@@ -52,14 +51,16 @@ public class Intake extends SubsystemBase {
             RobotContainer.intakeRetract.schedule();
         }
 
+        hasGamePiece = !beamBreak.get();
+
         if (hasGamePiece) {
             RobotContainer.s_RGB.setLED(State.ORANGESOLID); // 6 is solid orange meaning the robot has a note.
         } else {
             RobotContainer.s_RGB.setLED(State.ORANGEBLINK); // 5 is orange blink meaning there is no note.
         }
-        hasGamePiece = !beamBreak.get();
 
-        // RobotContainer.s_RGB.setLED((hasGamePiece ? State.ORANGESOLID : State.ORANGEBLINK));
+        // RobotContainer.s_RGB.setLED((hasGamePiece ? State.ORANGESOLID :
+        // State.ORANGEBLINK));
 
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
     }
