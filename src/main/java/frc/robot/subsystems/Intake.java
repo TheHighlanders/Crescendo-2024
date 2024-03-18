@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
             RobotContainer.intakeRetract.schedule();
         }
 
-        if (hasGamePiece == true) {
+        if (hasGamePiece) {
             RobotContainer.s_RGB.setLED(State.ORANGESOLID); // 6 is solid orange meaning the robot has a note.
         } else {
             RobotContainer.s_RGB.setLED(State.ORANGEBLINK); // 5 is orange blink meaning there is no note.
