@@ -80,7 +80,15 @@ public class alignShootCMDG extends ParallelCommandGroup {
         // alignPivot = new InstantCommand(() -> m_Pivot.alignPivot(() -> data.get().getArmExtension()), m_Pivot).andThen(new PrintCommand("AlignPivot Post"));
         alignPivot =
             new FunctionalCommand(
-                () -> m_Pivot.alignPivot(() -> {try{return data.get().getArmExtension();} catch(Exception e){return 13;}}),
+                () ->
+                    m_Pivot.alignPivot(() -> {
+                        try {
+                            return data.get().getArmExtension();
+                        } catch (Exception e) {
+                            DriverStation.reportWarning(e.toString(), false);
+                            return 16;
+                        }
+                    }),
                 emptyRunnable,
                 i -> {
                     DriverStation.reportWarning("Align Pivot End " + i, false);
@@ -98,7 +106,13 @@ public class alignShootCMDG extends ParallelCommandGroup {
         addCommands(
             // alignRobot
             new InstantCommand(() -> {
-                m_shooter.shoot(() -> {try{return data.get().getRPM() + 75;} catch(Exception e){return 3000;}});
+                m_shooter.shoot(() -> {
+                    try {
+                        return data.get().getRPM() + 75;
+                    } catch (Exception e) {
+                        return 3000;
+                    }
+                });
             }),
             // alignRobot,
             new SequentialCommandGroup(

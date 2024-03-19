@@ -282,6 +282,6 @@ public class Pivot extends SubsystemBase {
         intakeAngleMotor.periodicLimit();
 
         SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
-        SmartDashboard.putNumber("shooter pos differential", getPositionDiffrential());
+        SmartDashboard.putNumber("intake pos", intakeAngleEncoder.getPosition());
     }
 }

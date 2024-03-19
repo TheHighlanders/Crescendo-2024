@@ -87,7 +87,7 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         odometer.update(gyro.getRotation2d(), getModulePositions());
         // SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
-
+        SmartDashboard.putNumber("Module 2 inverted", (modules[2].driveMotor.getInverted() ? 1 : -1));
         // SmartDashboard.putNumber("xCalc", -1);
         // SmartDashboard.putNumber("yCalc", -1);
         // SmartDashboard.putBoolean("Running", false);

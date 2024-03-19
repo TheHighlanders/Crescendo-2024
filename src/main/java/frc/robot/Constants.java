@@ -93,11 +93,11 @@ public final class Constants {
         public static final Translation2d kRedSpeaker = new Translation2d(16.58 - Units.inchesToMeters(6), 5.55);
 
         public static final Translation3d robotCameraTranslation0 = new Translation3d(0.23, 0.288, 0.259); //-x, -y, z
-        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(10));
+        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(25));
         public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
 
         public static final Translation3d robotCameraTranslation1 = new Translation3d(0.233, -0.288, 0.259); //-x, -y, z
-        public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, Units.degreesToRadians(25), -Units.degreesToRadians(10));
+        public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, Units.degreesToRadians(25), -Units.degreesToRadians(25));
         public static final Transform3d kRobotCamera1 = new Transform3d(robotCameraTranslation1, robotCameraRotation1);
     }
 
@@ -312,7 +312,7 @@ public final class Constants {
             public static final double absoluteEncoderOffset = 337d;
 
             public static final double intakePivotRatio = 1;
-            public static final double intakeInit = -115.07924462698114;
+            public static final double intakeInit = -13.2;
             public static final float intakeAngleDeadzone = 0.5f;
             public static final float intakeVelocityDeadzone = 0.1f;
 

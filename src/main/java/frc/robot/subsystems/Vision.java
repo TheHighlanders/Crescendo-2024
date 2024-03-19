@@ -32,8 +32,8 @@ public class Vision extends SubsystemBase {
 
     /** Creates a new Vision. */
     public Vision() {
-        cam0 = new PhotonCamera("Arducam_OV9281_USB_Camera");
-        cam1 = new PhotonCamera("6201_Cam_1");
+        cam0 = new PhotonCamera("6201leftEye");
+        cam1 = new PhotonCamera("6201rightEye");
 
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
