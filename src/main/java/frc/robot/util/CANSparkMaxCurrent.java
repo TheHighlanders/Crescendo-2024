@@ -29,7 +29,6 @@ public class CANSparkMaxCurrent extends CANSparkMax {
     }
 
     public void setCurrent(int amps) {
-        // Math.abs(amps)
         this.setSmartCurrentLimit(Math.abs(amps));
         this.set(0.2 * Math.signum(amps));
     }

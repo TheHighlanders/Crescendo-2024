@@ -57,9 +57,6 @@ public class Intake extends SubsystemBase {
             RobotContainer.s_RGB.setLED(State.ORANGEBLINK); // 5 is orange blink meaning there is no note.
         }
 
-        // RobotContainer.s_RGB.setLED((hasGamePiece ? State.ORANGESOLID :
-        // State.ORANGEBLINK));
-
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
     }
 

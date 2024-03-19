@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -156,25 +157,25 @@ public class Pivot extends SubsystemBase {
         return intakeAngleEncoder.getPosition();
     }
 
-    public Command retractIntake(){
+    public Command retractIntake() {
         return new FunctionalCommand(
-                () -> {},
-                () -> {
-                    intakeAngleMotor.set(
-                        -Math.max(
-                            Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),
-                            Intake.Pivot.PIDValues.minOut
-                        )
-                    );
-                    //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
-                },
-                v -> {
-                    intakeAngleHold();
-                },
-                () -> {
-                    return intakeAtSetpointShooter();
-                }
-            );
+            () -> {},
+            () -> {
+                intakeAngleMotor.set(
+                    MathUtil.clamp(
+                        differentialPidController.calculate(getPositionDiffrential(), 0),
+                        Intake.Pivot.PIDValues.minOut,
+                        Intake.Pivot.PIDValues.maxOut
+                    )
+                );
+            },
+            v -> {
+                intakeAngleHold();
+            },
+            () -> {
+                return intakeAtSetpointShooter();
+            }
+        );
     }
 
     /**Aligns both intake and shooter to a given angle */
@@ -184,7 +185,6 @@ public class Pivot extends SubsystemBase {
             double extSupplied = Extension.getAsDouble();
             DriverStation.reportWarning("After Double", false);
             alignShooterToExtension(extSupplied);
-            DriverStation.reportWarning("Between Lines", false);
             alignIntakeToShooter();
             return true;
         } catch (Exception e) {
@@ -201,8 +201,10 @@ public class Pivot extends SubsystemBase {
     }
 
     public void alignIntakeToShooter() {
-        if(DriverStation.isTeleop()){intakeShooterCommand.schedule();}
-        
+        if (DriverStation.isTeleop()) {
+            intakeShooterCommand.schedule();
+        }
+
         DriverStation.reportWarning("Set Intake Setpoint Shooter", true);
     }
 
