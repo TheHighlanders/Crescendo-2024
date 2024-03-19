@@ -19,24 +19,13 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
-import frc.robot.auton.AmpSideAutonCMDG;
-import frc.robot.auton.MidSideAutonCMDG;
-import frc.robot.auton.ShootAndLeaveMidAutonCMDG;
-import frc.robot.auton.ShootAndLeaveSourceSideAutonCMDG;
-import frc.robot.auton.ShootAutonCMDG;
-import frc.robot.auton.SourceSideAutonCMDG;
+import frc.robot.auton.*;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Localizer;
-import frc.robot.subsystems.Pivot;
-import frc.robot.subsystems.RGB;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Vision;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -52,7 +41,7 @@ import java.util.function.Supplier;
  */
 public class RobotContainer {
 
-    public static double speedMult = 0.5;
+    public static final double speedMult = 0.5;
     public static DoubleSupplier distToSpeaker;
 
     /* Controllers */
@@ -107,10 +96,18 @@ public class RobotContainer {
         s_Shooter // Requirements
     );
 
-    // private static final Command climbCMD = new climbCMD(operator.leftBumper(), operator.rightBumper(), S_Climber);
-
     public static Command deployIntake = new deployIntakeCMD(s_Pivot, s_Intake, false);
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
+    public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
+    public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter).andThen(setRumble(1, 0.2, false, false));
+    public static Command intakeHoldPos = new InstantCommand(() -> s_Pivot.shooterAngleHold());
+    public static Command intakeRetract = new ParallelDeadlineGroup(
+        new WaitCommand(0.75),
+        setRumble(1, 0.5, true, true),
+        new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),
+        new deployIntakeCMD(s_Pivot, s_Intake, true)
+    );
+
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
     public static Command climbLeftSoft = new StartEndCommand(
         () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * speedMult),
@@ -122,28 +119,9 @@ public class RobotContainer {
     );
     public static Command climbRight = new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed), () -> S_Climber.climbRight(0));
     public static Command climbLeft = new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed), () -> S_Climber.climbLeft(0));
-    // public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
-    //public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
-    public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
-    public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter).andThen(setRumble(1, 0.2, false, false));
-    public static Command intakeHoldPos = new InstantCommand(() -> s_Pivot.shooterAngleHold());
-    public static Command intakeRetract = new ParallelDeadlineGroup(
-        new WaitCommand(0.75),
-        setRumble(1, 0.5, true, true),
-        new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),
-        new deployIntakeCMD(s_Pivot, s_Intake, true)
-    );
 
-    public static Command deployIntakeCMD = new InstantCommand(
-        () -> {
-            if (s_Pivot.getIntakeDeploy()) {
-                intakeShooterCommand.schedule();
-            } else {
-                intakeFloorCommand.schedule();
-            }
-        },
-        s_Pivot
-    );
+    public static Command resetModules = new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol());
+    public static Command zeroGyroCommand = new InstantCommand(() -> s_Swerve.zeroGyro());
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(
         s_Shooter,
@@ -154,30 +132,23 @@ public class RobotContainer {
         () -> s_Localizer.getDistanceToSpeaker()
     );
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
     public RobotContainer() {
         s_RGB.changeString("7");
-        // registerNamedCommands();
-        // Configure the trigger bindings
         configureBindings();
         configureAuton();
-        // Set Default commands for subsystems
         setDefaultCommands();
     }
 
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
-        driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-
-        // driver.x().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+        driver.y().onTrue(zeroGyroCommand);
 
         /* Intake Button Bindings */
         driver.rightTrigger(0.75).whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
         driver.a().onTrue(deployIntake);
         driver.x().onTrue(intakeRetract);
+
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
         operator.rightStick().whileTrue(driveShooterAngle);
@@ -187,7 +158,7 @@ public class RobotContainer {
             .whileTrue(driveShooterRPM);
         operator.back().whileTrue(climbLeftSoft);
         operator.start().whileTrue(climbRightSoft);
-        operator.povDown().onTrue(new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol()));
+        operator.povDown().onTrue(resetModules);
         operator.leftBumper().whileTrue(climbLeft);
         operator.rightBumper().and(operator.rightTrigger(0.1).negate()).whileTrue(climbRight);
         operator.rightBumper().and(operator.rightTrigger(0.1)).whileTrue(runIntakeOutCMD);
@@ -228,7 +199,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // Uses an Auto to assign a starting position
-        //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
     }
 
