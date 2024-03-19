@@ -69,8 +69,14 @@ public class alignShootCMDG extends ParallelCommandGroup {
         startShooter =
             new StartEndCommand(
                 () -> {
-                    DriverStation.reportWarning(data.get() + "", false);
-                    m_shooter.shoot(() -> data.get().getRPM() + 75);
+                    m_shooter.shoot(() -> {
+                        try {
+                            return data.get().getRPM() + 75;
+                        } catch (Exception e) {
+                            DriverStation.reportWarning("Unable to retreve RPM" + e.toString(), false);
+                            return 3000;
+                        }
+                    });
                 },
                 m_shooter::shootCancel
             );
@@ -85,7 +91,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
                         try {
                             return data.get().getArmExtension();
                         } catch (Exception e) {
-                            DriverStation.reportWarning(e.toString(), false);
+                            DriverStation.reportWarning("Unable to retreve Arm Extension" + e.toString(), false);
                             return 16;
                         }
                     }),
@@ -104,16 +110,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
 
         //Parallel CMDG
         addCommands(
-            // alignRobot
-            new InstantCommand(() -> {
-                m_shooter.shoot(() -> {
-                    try {
-                        return data.get().getRPM() + 75;
-                    } catch (Exception e) {
-                        return 3000;
-                    }
-                });
-            }),
+            startShooter,
             // alignRobot,
             new SequentialCommandGroup(
                 // move swere to face speaker and align pivot

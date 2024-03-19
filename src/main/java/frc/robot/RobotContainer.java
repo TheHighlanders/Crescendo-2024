@@ -25,7 +25,7 @@ import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Climber;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -70,29 +70,30 @@ public class RobotContainer {
     private SendableChooser<Command> autoChooser;
 
     /* Commands */
+
+    static Runnable emptyRunnable = () -> {};
+    static BooleanSupplier falseSupplier = () -> false;
+    static Consumer<Boolean> emptyConsumable = t -> {};
+
     public static Command driveShooterAngle = new FunctionalCommand(
-        () -> {},
+        emptyRunnable,
         () -> {
             s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.5);
         },
-        v -> {},
-        () -> {
-            return false;
-        },
+        emptyConsumable,
+        falseSupplier,
         s_Pivot
     );
 
     public static Command driveShooterRPM = new FunctionalCommand(
-        () -> {}, // Initialize
+        emptyRunnable, // Initialize
         () -> {
             s_Shooter.shoot(() -> operator.getLeftY() * -3000); //Execute
         },
         v -> {
             s_Shooter.shootCancel(); // End
         },
-        () -> {
-            return false; // Is Finished
-        },
+        falseSupplier,
         s_Shooter // Requirements
     );
 
@@ -129,7 +130,7 @@ public class RobotContainer {
         s_Pivot,
         s_Swerve,
         s_Localizer,
-        () -> s_Localizer.getDistanceToSpeaker()
+        s_Localizer::getDistanceToSpeaker
     );
 
     public RobotContainer() {
@@ -162,7 +163,10 @@ public class RobotContainer {
         operator.leftBumper().whileTrue(climbLeft);
         operator.rightBumper().and(operator.rightTrigger(0.1).negate()).whileTrue(climbRight);
         operator.rightBumper().and(operator.rightTrigger(0.1)).whileTrue(runIntakeOutCMD);
-    }
+
+        operator.b().onTrue(alignShootCMDG.alignRobot);
+        operator.x().onTrue(alignShootCMDG.alignPivot);
+    } 
 
     private void configureAuton() {
         // autoChooser = AutoBuilder.buildAutoChooser();
