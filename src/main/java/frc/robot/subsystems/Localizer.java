@@ -101,6 +101,7 @@ public class Localizer extends SubsystemBase {
         return field;
     }
 
+
     public double getDistanceToSpeaker() {
         if (DriverStation.getAlliance().isEmpty()) {
             return -1;
@@ -113,7 +114,9 @@ public class Localizer extends SubsystemBase {
                     : Constants.VisionConstants.kRedSpeaker
             );
         // SmartDashboard.putString("Cached in fucntion", cached.get().toString());
-        return Math.hypot(cached.get().getX() - goal.getX(), cached.get().getY() - goal.getY());
+         
+        double dist = Math.hypot(cached.get().getX() - goal.getX(), cached.get().getY() - goal.getY());
+        return dist;
     }
 
     public Rotation2d getAngleToSpeaker() {
@@ -127,9 +130,6 @@ public class Localizer extends SubsystemBase {
                     ? Constants.VisionConstants.kRedSpeaker
                     : Constants.VisionConstants.kBlueSpeaker
             );
-        // double comp = DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? Units.degreesToRadians(2) : -Units.degreesToRadians(2);
-        // comp *= 2/getDistanceToSpeaker();
-        // SmartDashboard.putNumber("Angle to Speaker", Math.toDegrees(Math.atan2(goal.getY() - robot.getY(), goal.getX() - robot.getX())));
         return new Rotation2d(Math.atan2(robot.getY() - goal.getY(), robot.getX() - goal.getX()) + Math.PI);
     }
 }

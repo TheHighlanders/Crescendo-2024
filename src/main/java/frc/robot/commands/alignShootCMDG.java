@@ -5,10 +5,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Localizer;
+import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Swerve;
 import frc.robot.util.InterpolatableShotData;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -21,6 +36,10 @@ public class alignShootCMDG extends ParallelCommandGroup {
     public final Localizer m_Localizer;
     public DoubleSupplier distance;
     private Supplier<InterpolatableShotData> data;
+
+    Runnable emptyRunnable = () -> {};
+
+    Consumer<Boolean> emptyConsumable = t -> {};
 
     public static Command startShooter;
     public static Command assignData;
@@ -40,12 +59,12 @@ public class alignShootCMDG extends ParallelCommandGroup {
         m_Localizer = localizer;
         this.distance = distance;
 
-        try {
-            data = () -> m_Pivot.interpolate(distance.getAsDouble());
-        } catch (Exception e) {
-            data = () -> m_Pivot.interpolate(distance.getAsDouble());
-            DriverStation.reportWarning("Align Data threw", true);
-        }
+        data = () -> m_Pivot.interpolate(distance.getAsDouble());
+
+        // if (data.get() == null) {
+        //     data = () -> m_Pivot.interpolate(1.5);
+        //     DriverStation.reportWarning("Align Data threw", true);
+        // }
 
         startShooter =
             new StartEndCommand(
@@ -56,27 +75,51 @@ public class alignShootCMDG extends ParallelCommandGroup {
                 m_shooter::shootCancel
             );
 
-        runIntakeOut = new runIntakeCMD(m_intake, m_shooter, false);
+        runIntakeOut = new runIntakeCMD(m_intake, false);
         // align pivot, is finished when asSetpoints returns true
-        alignPivot = new InstantCommand(() -> m_Pivot.alignPivot(() -> data.get().getArmExtension()));
+        // alignPivot = new InstantCommand(() -> m_Pivot.alignPivot(() -> data.get().getArmExtension()), m_Pivot).andThen(new PrintCommand("AlignPivot Post"));
+        alignPivot =
+            new FunctionalCommand(
+                () ->
+                    m_Pivot.alignPivot(() -> {
+                        try {
+                            return data.get().getArmExtension();
+                        } catch (Exception e) {
+                            DriverStation.reportWarning(e.toString(), false);
+                            return 16;
+                        }
+                    }),
+                emptyRunnable,
+                i -> {
+                    DriverStation.reportWarning("Align Pivot End " + i, false);
+                },
+                () -> true,
+                m_Pivot
+            );
         // runs the swerve move to command to the angle of the speaker
         alignRobot = new SwerveMoveToCMD(m_Swerve, localizer::getAngleToSpeaker);
         waitForGamePiece = new WaitUntilCommand(() -> !(!shoot.getBeamBreak() || intake.hasGamePiece())).andThen(new WaitCommand(0.5));
         waitForRpmSetpoint = new WaitUntilCommand(m_shooter::atVelocity).andThen(new PrintCommand("At velocity"));
-        deadline =
-            new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop).andThen(new PrintCommand("Override is " + intake.getGamePieceDetectionOverride()));
+        deadline = new WaitCommand(Constants.Shooter.kWaitTimeBeforeStop);
 
+        //Parallel CMDG
         addCommands(
             // alignRobot
             new InstantCommand(() -> {
-                m_shooter.shoot(() -> data.get().getRPM() + 75);
+                m_shooter.shoot(() -> {
+                    try {
+                        return data.get().getRPM() + 75;
+                    } catch (Exception e) {
+                        return 3000;
+                    }
+                });
             }),
             // alignRobot,
             new SequentialCommandGroup(
                 // move swere to face speaker and align pivot
                 new ParallelCommandGroup(alignPivot, alignRobot, waitForRpmSetpoint),
                 new PrintCommand("In Second Phase"),
-                // runs the intake and the shooter for 3 seconds and then stops them when the time us up\
+                // runs the intake for 3 seconds and then stops them when the time us up\
                 new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut),
                 new InstantCommand(() -> {
                     m_shooter.shootCancel();

@@ -6,18 +6,26 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ClimberConsts;
-import frc.robot.auton.MidSideAutonCMDG;
+import frc.robot.auton.*;
 import frc.robot.commands.SwerveTeleCMD;
 import frc.robot.commands.alignShootCMDG;
 import frc.robot.commands.deployIntakeCMD;
 import frc.robot.commands.runIntakeCMD;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Climber;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -62,19 +70,58 @@ public class RobotContainer {
     private SendableChooser<Command> autoChooser;
 
     /* Commands */
-    // private static final Command climbCMD = new climbCMD(operator.leftBumper(), operator.rightBumper(), S_Climber);
+    public static Command driveShooterAngle = new FunctionalCommand(
+        () -> {},
+        () -> {
+            s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.5);
+        },
+        v -> {},
+        () -> {
+            return false;
+        },
+        s_Pivot
+    );
 
+    public static Command driveShooterRPM = new FunctionalCommand(
+        () -> {}, // Initialize
+        () -> {
+            s_Shooter.shoot(() -> operator.getLeftY() * -3000); //Execute
+        },
+        v -> {
+            s_Shooter.shootCancel(); // End
+        },
+        () -> {
+            return false; // Is Finished
+        },
+        s_Shooter // Requirements
+    );
+
+    public static Command deployIntake = new deployIntakeCMD(s_Pivot, s_Intake, false);
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
-    public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
-    public static Command gamePieceOverrideCMD = new InstantCommand(s_Intake::gamePieceDetectionOverride);
-    //public static Command readyPositionsCMD = new InstantCommand(s_Pivot::readyPositions);
     public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
-    public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter);
+    public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter).andThen(setRumble(1, 0.2, false, false));
+    public static Command intakeHoldPos = new InstantCommand(() -> s_Pivot.shooterAngleHold());
     public static Command intakeRetract = new ParallelDeadlineGroup(
         new WaitCommand(0.75),
-        new SequentialCommandGroup(new WaitCommand(0.6), new runIntakeCMD(s_Intake, s_Shooter, true)),
+        setRumble(1, 0.5, true, true),
+        new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true)
     );
+
+    public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
+    public static Command climbLeftSoft = new StartEndCommand(
+        () -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * speedMult),
+        () -> S_Climber.climbLeft(0)
+    );
+    public static Command climbRightSoft = new StartEndCommand(
+        () -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * speedMult),
+        () -> S_Climber.climbRight(0)
+    );
+    public static Command climbRight = new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed), () -> S_Climber.climbRight(0));
+    public static Command climbLeft = new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed), () -> S_Climber.climbLeft(0));
+
+    public static Command resetModules = new InstantCommand(() -> s_Swerve.resetAllModulestoAbsol());
+    public static Command zeroGyroCommand = new InstantCommand(() -> s_Swerve.zeroGyro());
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(
         s_Shooter,
@@ -82,77 +129,53 @@ public class RobotContainer {
         s_Pivot,
         s_Swerve,
         s_Localizer,
-        s_Localizer::getDistanceToSpeaker
+        () -> s_Localizer.getDistanceToSpeaker()
     );
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
     public RobotContainer() {
-
+        s_RGB.changeString("7");
         configureBindings();
         configureAuton();
         setDefaultCommands();
-      //  s_RGB.changeString("7");
     }
 
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
-        driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        driver.y().onTrue(zeroGyroCommand);
 
         /* Intake Button Bindings */
         driver.rightTrigger(0.75).whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
-        driver.a().onTrue(new deployIntakeCMD(s_Pivot, s_Intake, false));
+        driver.a().onTrue(deployIntake);
         driver.x().onTrue(intakeRetract);
-        operator.x().onTrue(gamePieceOverrideCMD);
+
         /* Shooter Button Bindings */
         operator.y().whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
+        operator.rightStick().whileTrue(driveShooterAngle);
+        operator.rightStick().onFalse(intakeHoldPos); // Manual Pivot Angle Control
         operator
-            .rightStick()
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> {},
-                    () -> {
-                        s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.25);
-                    },
-                    v -> {},
-                    () -> {
-                        return false;
-                    }
-                )
-            );
-        operator.rightStick().onFalse(new InstantCommand(() -> s_Pivot.shooterAngleHold())); // Manual Pivot Angle Control
-        operator/* .whileTrue(new InstantCommand(() -> s_Shooter.shoot(() -> 1)));*/
             .rightTrigger(0.1) //Only runs when Trigger depressed above 0.1
-            .whileTrue(
-                new FunctionalCommand(
-                    () -> {}, // Initialize
-                    () -> {
-                        s_Shooter.shoot(() -> operator.getRightTriggerAxis() * -3000); //Execute
-                    },
-                    v -> {
-                        s_Shooter.shootCancel(); // End
-                    },
-                    () -> {
-                        return false; // Is Finished
-                    },
-                    s_Shooter // Requirements
-                )
-            );
-
-        /* Climber  */
-
-        operator.back().whileTrue(new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed * speedMult), () -> S_Climber.climbLeft(0)));
-        operator.start().whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed * speedMult), () -> S_Climber.climbRight(0)));
-        operator.leftBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbLeft(ClimberConsts.kClimbSpeed), () -> S_Climber.climbLeft(0)));
-        operator.rightBumper().whileTrue(new StartEndCommand(() -> S_Climber.climbRight(ClimberConsts.kClimbSpeed), () -> S_Climber.climbRight(0)));
+            .whileTrue(driveShooterRPM);
+        operator.back().whileTrue(climbLeftSoft);
+        operator.start().whileTrue(climbRightSoft);
+        operator.povDown().onTrue(resetModules);
+        operator.leftBumper().whileTrue(climbLeft);
+        operator.rightBumper().and(operator.rightTrigger(0.1).negate()).whileTrue(climbRight);
+        operator.rightBumper().and(operator.rightTrigger(0.1)).whileTrue(runIntakeOutCMD);
     }
 
     private void configureAuton() {
+        // autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("Mid 2Piece", new MidSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
+        autoChooser.addOption("Amp 2Piece", new AmpSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
+        autoChooser.addOption("Source 2Piece", new SourceSideAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
+        autoChooser.addOption("Just Shoot", new ShootAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
+        autoChooser.addOption("None", new SequentialCommandGroup());
+        autoChooser.addOption("Source Side 1PLeave", new ShootAndLeaveSourceSideAutonCMDG(s_Shooter, s_Intake, s_Swerve, s_Pivot, s_Localizer));
+        autoChooser.addOption("Mid 1P Leave", new ShootAndLeaveMidAutonCMDG(s_Shooter, s_Intake, s_Swerve, s_Pivot, s_Localizer));
 
+        autoChooser.setDefaultOption("Just Shoot", new ShootAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
@@ -176,7 +199,31 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // Uses an Auto to assign a starting position
-        //return new PathPlannerAuto("Testing Auton");
         return autoChooser.getSelected();
+    }
+
+    public static Command setRumble(double value, double length, boolean right, boolean driverController) {
+        RumbleType rumbleSide = right ? RumbleType.kRightRumble : RumbleType.kLeftRumble;
+        if (driverController) {
+            return new InstantCommand(() -> {
+                driver.getHID().setRumble(rumbleSide, value);
+            })
+                .andThen(new WaitCommand(length))
+                .andThen(
+                    new InstantCommand(() -> {
+                        driver.getHID().setRumble(rumbleSide, 0);
+                    })
+                );
+        } else {
+            return new InstantCommand(() -> {
+                operator.getHID().setRumble(rumbleSide, value);
+            })
+                .andThen(new WaitCommand(length))
+                .andThen(
+                    new InstantCommand(() -> {
+                        operator.getHID().setRumble(rumbleSide, 0);
+                    })
+                );
+        }
     }
 }

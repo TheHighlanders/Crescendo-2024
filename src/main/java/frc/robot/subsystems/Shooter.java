@@ -72,6 +72,11 @@ public class Shooter extends SubsystemBase {
         pidTop.setReference(setpoint, CANSparkMax.ControlType.kVelocity);
     }
 
+    public void shoot(double speed) {
+        pidBottom.setReference(speed, CANSparkMax.ControlType.kVelocity);
+        pidTop.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    }
+
     public boolean atVelocity() {
         return (
             Math.abs(bottomFlywheelEncoder.getVelocity() - setpoint) < Constants.Shooter.velocityTolerance &&

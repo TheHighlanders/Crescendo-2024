@@ -10,7 +10,11 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -39,9 +43,9 @@ public final class Constants {
         public static final double kTranslateI = 0;
         public static final double kTranslateD = 0;
 
-        public static final double kRotateP = 2.5;
+        public static final double kRotateP = 1.5;
         public static final double kRotateI = 0.0;
-        public static final double kRotateD = 0.25;
+        public static final double kRotateD = 0.5;
 
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
@@ -62,10 +66,21 @@ public final class Constants {
         public static final double slowSpeedLimit = 1.0;
 
         public static final double accelerationLimit = 1.5;
-        public static final double slowAccelerationLimit = 2;
+        public static final double slowAccelerationLimit = 1;
 
         public static final double angularVelocityLimit = 180.0;
         public static final double slowAngularVelocityLimit = 45.0;
+    }
+
+    public static class Autonomous {
+
+        public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
+            2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
+            0.38615, // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        );
     }
 
     public static class VisionConstants {
@@ -78,11 +93,11 @@ public final class Constants {
         public static final Translation2d kRedSpeaker = new Translation2d(16.58 - Units.inchesToMeters(6), 5.55);
 
         public static final Translation3d robotCameraTranslation0 = new Translation3d(0.23, 0.288, 0.259); //-x, -y, z
-        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(10));
+        public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(25));
         public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
 
         public static final Translation3d robotCameraTranslation1 = new Translation3d(0.233, -0.288, 0.259); //-x, -y, z
-        public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, Units.degreesToRadians(25), -Units.degreesToRadians(10));
+        public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, Units.degreesToRadians(25), -Units.degreesToRadians(25));
         public static final Transform3d kRobotCamera1 = new Transform3d(robotCameraTranslation1, robotCameraRotation1);
     }
 
@@ -185,13 +200,15 @@ public final class Constants {
 
         public static final float posPosTolerance = 0.05f;
         public static final float posVelTolerance = 0.1f;
-        public static final float aPosTolerance = 2.5f;
+        public static final float aPosTolerance = 5f;
         public static final float aVelTolerance = 2f;
+
+        public static final float aVelocityTolerance = 1;
     }
 
     public static class Shooter {
 
-        public static final double kWaitTimeBeforeStop = 3; //seconds
+        public static double kWaitTimeBeforeStop = 2; //seconds
 
         public static final int bottomFlywheelMotorID = 51;
         public static final int topFlywheelMotorID = 52;
@@ -241,6 +258,8 @@ public final class Constants {
             public static final double shooterPivotRatio = 1 / 7.0f;
 
             public static final float shooterExtensionDeadzone = 0.0625f;
+
+            public static final double shooterBaseToArmPivotAxis = 7.4353; //inches
 
             public static class PIDValues {
 
@@ -293,13 +312,14 @@ public final class Constants {
             public static final double absoluteEncoderOffset = 337d;
 
             public static final double intakePivotRatio = 1;
-            public static final double intakeInit = -13.3;
+            public static final double intakeInit = -13.2;
             public static final float intakeAngleDeadzone = 0.5f;
+            public static final float intakeVelocityDeadzone = 0.1f;
 
             public static class PIDValues {
 
-                public static final double minOut = -0.4;
-                public static final double maxOut = 0.4;
+                public static final double minOut = -0.3;
+                public static final double maxOut = 0.3;
                 public static final double kP = 0.03d;
                 public static final double kI = 0d;
                 public static final double kD = 0d;
@@ -331,6 +351,9 @@ public final class Constants {
         public static final int CLIMBER_LEFT = 61;
         public static final int CLIMBER_RIGHT = 62;
 
+        public static final int kServoRightID = 3;
+        public static final int kServoLeftID = 4;
+
         public static final double kClimbSpeed = 0.40;
 
         public static final double kClimberP = 0.0;
@@ -342,5 +365,11 @@ public final class Constants {
         public static final Translation2d AmpClose = new Translation2d(2.6, 7.0104);
         public static final Translation2d MidClose = new Translation2d(2.6, 5.5626);
         public static final Translation2d SourceClose = new Translation2d(2.6, 4.1148);
+    }
+
+    public static final class Points {
+        public static final Translation2d shootAndLeaveS1 = new Translation2d(2, 2);
+        public static final Translation2d shootAndLeaveS2 = new Translation2d(4,2);
+        public static final Translation2d shootAndLeaveM1 = new Translation2d(4, 5.5);
     }
 }

@@ -65,6 +65,10 @@ public class SwerveMoveToCMD extends Command {
         addRequirements(s_Swerve);
     }
 
+    public SwerveMoveToCMD(Swerve s_Swerve, Pose2d target, boolean translate) {
+        this(s_Swerve, () -> target, translate);
+    }
+
     public SwerveMoveToCMD(Swerve s_Swerve, Supplier<Rotation2d> heading) {
         this(s_Swerve, () -> new Pose2d(new Translation2d(), heading.get()), false);
     }
@@ -75,16 +79,16 @@ public class SwerveMoveToCMD extends Command {
 
     /** Mirrors Pose for Auton */
     public SwerveMoveToCMD(Swerve s_Swerve, Pose2d pose, int i) {
+
         this(s_Swerve, () -> pose, true);
     }
 
-    public static SwerveMoveToCMD getAutoPath(Swerve swerve, Pose2d pose) {
-        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-            pose = new Pose2d(fieldLine + (fieldLine - pose.getX()), pose.getY(), pose.getRotation());
+    public static SwerveMoveToCMD getAutoPath(Swerve swerve, Pose2d pose){
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
+            pose = new Pose2d(fieldLine + (fieldLine - pose.getX()), pose.getY(), new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin()));
         }
         return new SwerveMoveToCMD(swerve, pose);
     }
-
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
@@ -105,12 +109,7 @@ public class SwerveMoveToCMD extends Command {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xCalc, yCalc, aCalc);
             ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, s_Swerve.getYaw());
 
-            s_Swerve.drive(
-                new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond),
-                Rotation2d.fromDegrees(aCalc),
-                false,
-                true
-            );
+            s_Swerve.drive(new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond), Rotation2d.fromDegrees(aCalc), false, true);
         } else {
             s_Swerve.drive(new Translation2d(), Rotation2d.fromDegrees(aCalc), true, true);
         }
@@ -120,7 +119,7 @@ public class SwerveMoveToCMD extends Command {
     @Override
     public void end(boolean interrupted) {
         s_Swerve.drive(new Translation2d(), new Rotation2d(), true, true);
-        DriverStation.reportWarning("POINT MOVE ENDED", false);
+        DriverStation.reportWarning("POINT MOVE ENDED " + interrupted, false);
     }
 
     // Returns true when the command should end.

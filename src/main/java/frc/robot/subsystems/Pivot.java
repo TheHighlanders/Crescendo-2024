@@ -132,7 +132,11 @@ public class Pivot extends SubsystemBase {
     }
 
     public InterpolatableShotData interpolate(double dist) {
-        return iTreeMapContainer.interpolate(dist);
+        InterpolatableShotData i = iTreeMapContainer.interpolate(dist);
+        if (i == null) {
+            return iTreeMapContainer.interpolate(1.5);
+        }
+        return i;
     }
 
     // Encoder offsets
@@ -152,11 +156,35 @@ public class Pivot extends SubsystemBase {
         return intakeAngleEncoder.getPosition();
     }
 
+    public Command retractIntake(){
+        return new FunctionalCommand(
+                () -> {},
+                () -> {
+                    intakeAngleMotor.set(
+                        -Math.max(
+                            Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),
+                            Intake.Pivot.PIDValues.minOut
+                        )
+                    );
+                    //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
+                },
+                v -> {
+                    intakeAngleHold();
+                },
+                () -> {
+                    return intakeAtSetpointShooter();
+                }
+            );
+    }
+
     /**Aligns both intake and shooter to a given angle */
     public boolean alignPivot(DoubleSupplier Extension) {
+        DriverStation.reportWarning("In Align Pivot Pivto Subsystem", true);
         try {
             double extSupplied = Extension.getAsDouble();
+            DriverStation.reportWarning("After Double", false);
             alignShooterToExtension(extSupplied);
+            DriverStation.reportWarning("Between Lines", false);
             alignIntakeToShooter();
             return true;
         } catch (Exception e) {
@@ -173,7 +201,8 @@ public class Pivot extends SubsystemBase {
     }
 
     public void alignIntakeToShooter() {
-        intakeShooterCommand.schedule();
+        if(DriverStation.isTeleop()){intakeShooterCommand.schedule();}
+        
         DriverStation.reportWarning("Set Intake Setpoint Shooter", true);
     }
 
@@ -252,7 +281,7 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
 
-        // SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
-        SmartDashboard.putBoolean("Shooter at setpoint", shooterAtSetpoint());
+        SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
+        SmartDashboard.putNumber("intake pos", intakeAngleEncoder.getPosition());
     }
 }

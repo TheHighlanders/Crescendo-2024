@@ -37,7 +37,7 @@ public class deployIntakeCMD extends Command {
     public void initialize() {
         if (desiredState) {
             pivot.alignIntakeToShooter();
-            intake.intakeForward();
+            // intake.intakeForward();
         } else {
             pivot.alignIntakeToGround();
         }
