@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -131,7 +130,7 @@ public class RobotContainer {
     public static Command intakeRetract = new ParallelDeadlineGroup(
         new WaitCommand(0.75),
         setRumble(1, 0.5, true, true),
-        new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),
+        new SequentialCommandGroup(new WaitCommand(0.15), new runIntakeCMD(s_Intake, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true),
         new InstantCommand(s_Shooter::shootIdle)
     );
@@ -140,7 +139,7 @@ public class RobotContainer {
 
     public static Command climbBoth = new StartEndCommand(() -> S_Climber.climbBoth(ClimberConsts.kClimbSpeed), S_Climber::climberStop);
 
-    public static Command resetModules = new InstantCommand(s_Swerve::resetAllModules);
+    public static Command resetModules = new InstantCommand(s_Swerve::resetAllModulestoAbsol);
     public static Command zeroGyroCommand = new InstantCommand(s_Swerve::zeroGyro);
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(

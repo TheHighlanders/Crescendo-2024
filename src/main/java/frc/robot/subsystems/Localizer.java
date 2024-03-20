@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,15 +37,14 @@ public class Localizer extends SubsystemBase {
 
         swervePoseEstimator =
             new SwerveDrivePoseEstimator(Constants.SwerveConst.kinematics, this.swerve.getYaw(), this.swerve.getModulePositions(), new Pose2d());
-
         SmartDashboard.putData(field);
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Distance Driven Position", this.swerve.getModulePositions()[2].distanceMeters);
-        swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
-
+        // swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
+        swervePoseEstimator.updateWithTime(Timer.getFPGATimestamp(),this.swerve.getYaw(), this.swerve.getModulePositions());
         // SwerveModulePosition[] blank = {new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d())};
         // swervePoseEstimator.update(this.swerve.getYaw(), blank);
 

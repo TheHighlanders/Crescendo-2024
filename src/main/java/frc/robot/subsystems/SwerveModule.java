@@ -146,33 +146,34 @@ public class SwerveModule {
      * @return Position of the module between 0 and 360, as a Rotation2d
      */
     public Rotation2d getAbsolutePosition() {
-        double[] array = new double[10];
-        array[0] = absoluteEncoder.getPosition();
-        double maxID = 0;
-        double minID = 0;
-        for (int i = 1; i < array.length; i++) {
-            array[i] = absoluteEncoder.getPosition();
+        // double[] array = new double[10];
+        // array[0] = absoluteEncoder.getPosition();
+        // double maxID = 0;
+        // double minID = 0;
+        // for (int i = 1; i < array.length; i++) {
+        //     array[i] = absoluteEncoder.getPosition();
 
-            if (array[i] < minID) {
-                minID = i;
-            } else if (array[i] > maxID) {
-                maxID = i;
-            }
-        }
+        //     if (array[i] < minID) {
+        //         minID = i;
+        //     } else if (array[i] > maxID) {
+        //         maxID = i;
+        //     }
+        // }
 
-        double avg = 0;
-        for (int i = 0; i < array.length; i++) {
-            if (i != maxID && i != minID) {
-                avg += array[i];
-            }
-        }
-        avg /= (array.length - 2);
-
-        /* Gets Position from SparkMAX absol encoder * 360 to degrees */
-        double positionDeg = avg * 360.0d;
+        // double avg = 0;
+        // for (int i = 0; i < array.length; i++) {
+        //     if (i != maxID && i != minID) {
+        //         avg += array[i];
+        //     }
+        // }
+        // avg /= (array.length - 2);
 
         /* Gets Position from SparkMAX absol encoder * 360 to degrees */
-        // double positionDeg = absoluteEncoder.getPosition() * 360.0d;
+        // double positionDeg = avg * 360.0d;
+
+
+        /* Gets Position from SparkMAX absol encoder * 360 to degrees */
+        double positionDeg = absoluteEncoder.getPosition() * 360.0d;
 
         /* Subtracts magnetic offset to get wheel position */
         positionDeg -= KModuleAbsoluteOffset.getDegrees();
