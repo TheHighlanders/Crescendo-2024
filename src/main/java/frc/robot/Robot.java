@@ -39,7 +39,11 @@ public class Robot extends TimedRobot {
         // and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
-        CommandScheduler.getInstance().onCommandInterrupt((command) -> DriverStation.reportWarning("Interrupted Com:" + command.getName() + " Sub: " + command.getSubsystem() , false));
+        CommandScheduler
+            .getInstance()
+            .onCommandInterrupt(command ->
+                DriverStation.reportWarning("Interrupted Com:" + command.getName() + " Sub: " + command.getSubsystem(), false)
+            );
     }
 
     /**
@@ -77,6 +81,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         RobotContainer.s_Pivot.setShooterBrakeMode();
+        RobotContainer.resetModules.schedule();
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -92,6 +97,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         RobotContainer.s_Pivot.setShooterBrakeMode();
+        RobotContainer.resetModules.schedule();
 
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to

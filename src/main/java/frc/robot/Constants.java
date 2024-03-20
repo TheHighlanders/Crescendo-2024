@@ -39,9 +39,9 @@ public final class Constants {
 
         public static final boolean kOpenLoop = true;
 
-        public static final double kTranslateP = 2.5;
+        public static final double kTranslateP = 1;
         public static final double kTranslateI = 0;
-        public static final double kTranslateD = 0;
+        public static final double kTranslateD = 0.1;
 
         public static final double kRotateP = 1.5;
         public static final double kRotateI = 0.0;
@@ -52,8 +52,8 @@ public final class Constants {
 
         public static final double kStickDeadband = 0.01;
 
-        public static final double kTrackWidth = Units.inchesToMeters(23.5);
-        public static final double kWheelBase = Units.inchesToMeters(23.5);
+        public static final double kTrackWidth = Units.inchesToMeters(20.5);
+        public static final double kWheelBase = Units.inchesToMeters(20.5);
 
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
@@ -250,7 +250,7 @@ public final class Constants {
             public static final boolean isInversed = true;
             public static final int inversionFactor = (isInversed ? -1 : 1);
             public static final int kAbsolDutyCycleDIOPin = 2;
-            public static final double absoluteEncoderOffset = -70;
+            public static final double absoluteEncoderOffset = -185;
 
             public static final double initExtension = 13.231982231140137; // Inches
             public static final double readyInches = 12.6; // Inches

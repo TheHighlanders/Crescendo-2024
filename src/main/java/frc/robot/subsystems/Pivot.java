@@ -89,19 +89,16 @@ public class Pivot extends SubsystemBase {
                 () -> {},
                 () -> {
                     intakeAngleMotor.set(
-                        -Math.max(
-                            Math.min(differentialPidController.calculate(getPositionDiffrential(), 0), Intake.Pivot.PIDValues.maxOut),
-                            Intake.Pivot.PIDValues.minOut
+                        -MathUtil.clamp(
+                            differentialPidController.calculate(getPositionDiffrential(), 0),
+                            Intake.Pivot.PIDValues.minOut,
+                            Intake.Pivot.PIDValues.maxOut
                         )
                     );
                     //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
                 },
-                v -> {
-                    intakeAngleHold();
-                },
-                () -> {
-                    return intakeAtSetpointShooter();
-                }
+                v -> intakeAngleHold(),
+                () -> intakeAtSetpointShooter()
             );
 
         intakeDeployed = false;
@@ -143,6 +140,10 @@ public class Pivot extends SubsystemBase {
     // Encoder offsets
     public double getPositionDiffrential() {
         return ((absolShooter.get() * 360) * Shooter.Pivot.inversionFactor) - Shooter.Pivot.absoluteEncoderOffset;
+    }
+
+    public void goLimp() {
+        pidShooterExtensionController.setReference(0, ControlType.kDutyCycle);
     }
 
     public double getIntakeAbsolutePosition() {
@@ -283,7 +284,14 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
 
-        SmartDashboard.putNumber("Actuator Extension", shooterExtensionEncoder.getPosition());
-        SmartDashboard.putNumber("intake pos", intakeAngleEncoder.getPosition());
+        SmartDashboard.putNumber(
+            "PID intake value",
+            -MathUtil.clamp(
+                differentialPidController.calculate(getPositionDiffrential(), 0),
+                Intake.Pivot.PIDValues.minOut,
+                Intake.Pivot.PIDValues.maxOut
+            )
+        );
+        SmartDashboard.putNumber("!Shooter extension", getShooterRelativePosition());
     }
 }

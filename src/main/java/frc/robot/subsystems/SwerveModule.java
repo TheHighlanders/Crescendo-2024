@@ -198,7 +198,7 @@ public class SwerveModule {
      * @return Swerve Module Position (Position & Angle)
      */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(-getDrivePosition(), getAnglePosition());
+        return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
     }
 
     /**
@@ -219,7 +219,7 @@ public class SwerveModule {
     /**
      * Configures Drive Motor using parameters from Constants
      */
-    private void configureDriveMotor() {
+    public void configureDriveMotor() {
         driveMotor.restoreFactoryDefaults();
 
         driveMotor.setInverted(Module.driveMotorInverted);
@@ -242,14 +242,14 @@ public class SwerveModule {
             Module.DriveCurrentLimit.kSmartLimit
         );
 
-        driveMotor.burnFlash();
+        // driveMotor.burnFlash();
         driveEncoder.setPosition(0.0);
     }
 
     /**
      * Configures Angle Motor using parameters from Constants
      */
-    private void configureAngleMotor() {
+    public void configureAngleMotor() {
         angleMotor.restoreFactoryDefaults();
 
         angleMotor.setInverted(Module.angleMotorInverted);
@@ -277,7 +277,7 @@ public class SwerveModule {
             Module.AngleCurrentLimit.kSmartLimit
         );
 
-        angleMotor.burnFlash();
+        // angleMotor.burnFlash();
 
         setIntegratedAngleToAbsolute();
     }

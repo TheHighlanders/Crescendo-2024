@@ -41,15 +41,13 @@ public class alignShootCMDG extends ParallelCommandGroup {
 
     Consumer<Boolean> emptyConsumable = t -> {};
 
-    public static Command startShooter;
-    public static Command assignData;
-    public static Command alignPivot;
-    public static Command alignRobot;
-    public static Command waitForGamePiece;
-    public static Command outTake;
-    public static Command waitForRpmSetpoint;
-    public static Command deadline;
-    public static Command runIntakeOut;
+    private static Command startShooter;
+    private static Command alignPivot;
+    private static Command alignRobot;
+    private static Command waitForGamePiece;
+    private static Command waitForRpmSetpoint;
+    private static Command deadline;
+    private static Command runIntakeOut;
 
     public alignShootCMDG(Shooter shoot, Intake intake, Pivot pivot, Swerve swerve, Localizer localizer, DoubleSupplier distance) {
         m_shooter = shoot;
@@ -58,13 +56,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
         m_Swerve = swerve;
         m_Localizer = localizer;
         this.distance = distance;
-
         data = () -> m_Pivot.interpolate(distance.getAsDouble());
-
-        // if (data.get() == null) {
-        //     data = () -> m_Pivot.interpolate(1.5);
-        //     DriverStation.reportWarning("Align Data threw", true);
-        // }
 
         startShooter =
             new StartEndCommand(
@@ -110,19 +102,19 @@ public class alignShootCMDG extends ParallelCommandGroup {
 
         //Parallel CMDG
         addCommands(
-            startShooter,
-            // alignRobot,
-            new SequentialCommandGroup(
-                // move swere to face speaker and align pivot
-                new ParallelCommandGroup(alignPivot, alignRobot, waitForRpmSetpoint),
-                new PrintCommand("In Second Phase"),
-                // runs the intake for 3 seconds and then stops them when the time us up\
-                new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut),
-                new InstantCommand(() -> {
-                    m_shooter.shootCancel();
-                }),
-                new PrintCommand("Ended")
-            ),
+            new ParallelDeadlineGroup(
+                new SequentialCommandGroup(
+                    // move swere to face speaker and align pivot
+                    new ParallelCommandGroup(alignPivot, alignRobot, waitForRpmSetpoint),
+                    new PrintCommand("In Second Phase"),
+                    // runs the intake for 3 seconds and then stops them when the time us up\
+                    new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut),
+                    new InstantCommand(() -> {
+                        m_shooter.shootCancel();
+                    }),
+                    new PrintCommand("Ended")
+                ),
+                startShooter),
             new PrintCommand("Automatic Shooter")
         );
     }

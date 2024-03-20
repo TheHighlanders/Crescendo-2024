@@ -25,7 +25,7 @@ public class Swerve extends SubsystemBase {
     private AHRS gyro;
     public ChassisSpeeds chassisSpeeds;
 
-    public SwerveDriveOdometry odometer;
+    // public SwerveDriveOdometry odometer;
 
     public Swerve() {
         /* Initializes modules from Constants */
@@ -48,7 +48,7 @@ public class Swerve extends SubsystemBase {
         // SmartDashboard.putNumber("PP Y", 5);
         // SmartDashboard.putNumber("PP O", 6);
 
-        odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
+        // odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
 
         chassisSpeeds = new ChassisSpeeds();
         // SmartDashboard.putData(field);
@@ -56,9 +56,12 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        odometer.update(gyro.getRotation2d(), getModulePositions());
+        // odometer.update(gyro.getRotation2d(), getModulePositions());
+        // SmartDashboard.putNumber("swerveOdoX", odometer.getPoseMeters().getX());
+        // SmartDashboard.putNumber("swerveOdoY", odometer.getPoseMeters().getY());
+
         // SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
-        SmartDashboard.putNumber("Module 2 inverted", (modules[2].driveMotor.getInverted() ? 1 : -1));
+        // SmartDashboard.putNumber("Module 2 inverted", (modules[2].driveMotor.getInverted() ? 1 : -1));
         // SmartDashboard.putNumber("xCalc", -1);
         // SmartDashboard.putNumber("yCalc", -1);
         // SmartDashboard.putBoolean("Running", false);
@@ -118,7 +121,7 @@ public class Swerve extends SubsystemBase {
     // For PP
     public void resetPose(Pose2d pose) {
         RobotContainer.s_Localizer.resetOdoPose2d(pose);
-        odometer.resetPosition(getYaw(), getModulePositions(), pose);
+        // odometer.resetPosition(getYaw(), getModulePositions(), pose);
         // SmartDashboard.putNumber("ResetPoseX", pose.getX());
         // SmartDashboard.putNumber("ResetPoseY", pose.getY());
     }
@@ -179,6 +182,13 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public void resetAllModules(){
+        for(SwerveModule m : modules){
+            m.configureAngleMotor();
+            m.configureDriveMotor();
+        }
+    }
+
     /**
      *  Sends actual angle encoder data to SmartDashboard, paired with module number (drive motor ID), for use in debuging w/ sendAngleTargetDiagnostic()
      */
@@ -203,6 +213,7 @@ public class Swerve extends SubsystemBase {
     public void sendDriveDiagnostic() {
         double[] wheelSpeeds = new double[4];
         for (SwerveModule m : modules) {
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Position Drive Actual", m.driveEncoder.getPosition());
             SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Actual", m.driveEncoder.getVelocity());
             wheelSpeeds[m.driveMotor.getDeviceId() / 10] = m.driveEncoder.getVelocity();
         }
@@ -233,7 +244,7 @@ public class Swerve extends SubsystemBase {
         sendAngleDiagnostic();
         sendAngleTargetDiagnostic();
 
-        // sendDriveDiagnostic();
+        sendDriveDiagnostic();
         // sendDriveTargetDiagnostic();
 
         sendAbsoluteDiagnostic();

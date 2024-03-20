@@ -42,6 +42,7 @@ public class Localizer extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Distance Driven Position", this.swerve.getModulePositions()[2].distanceMeters); 
         swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
 
         // SwerveModulePosition[] blank = {new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d())};

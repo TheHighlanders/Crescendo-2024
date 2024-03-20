@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -93,6 +94,11 @@ public class Shooter extends SubsystemBase {
         pidTop.setReference(0, CANSparkMax.ControlType.kDutyCycle);
     }
 
+    public void shootIdle() {
+        pidBottom.setReference(2000, ControlType.kVelocity);
+        pidTop.setReference(2000, ControlType.kVelocity);
+    }
+
     public boolean getBeamBreak() {
         return beamBreak.get();
     }
@@ -103,5 +109,6 @@ public class Shooter extends SubsystemBase {
 
         topFlywheelMotor.periodicLimit();
         bottomFlywheelMotor.periodicLimit();
+        SmartDashboard.putNumber("!Shooter velocity", topFlywheelEncoder.getVelocity());
     }
 }

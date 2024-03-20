@@ -11,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ClimberConsts;
 import frc.robot.util.CANSparkMaxCurrent;
 
@@ -52,6 +53,8 @@ public class Climber extends SubsystemBase {
     public void periodic() {}
 
     public void climbBoth(double speed) {
+        RobotContainer.s_Pivot.setShooterCoastMode();
+        RobotContainer.s_Pivot.goLimp();
         climberMotorRight.set(speed);
         climberMotorLeft.set(speed);
     }
