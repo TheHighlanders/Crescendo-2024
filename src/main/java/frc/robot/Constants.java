@@ -280,6 +280,7 @@ public final class Constants {
             }
 
             public static class actuatorConst {
+
                 public static final double extensionVelocityDeadzone = 0.5;
                 public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
             }
@@ -368,8 +369,9 @@ public final class Constants {
     }
 
     public static final class Points {
+
         public static final Translation2d shootAndLeaveS1 = new Translation2d(2, 2);
-        public static final Translation2d shootAndLeaveS2 = new Translation2d(4,2);
+        public static final Translation2d shootAndLeaveS2 = new Translation2d(4, 2);
         public static final Translation2d shootAndLeaveM1 = new Translation2d(4, 5.5);
     }
 }

@@ -21,15 +21,16 @@ import frc.robot.subsystems.Swerve;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootAndLeaveSourceSideAutonCMDG extends SequentialCommandGroup {
-  /** Creates a new ShootAndLeaveSourceSideAutonCMDG. */
-  public ShootAndLeaveSourceSideAutonCMDG(Shooter shooter, Intake intake, Swerve swerve, Pivot pivot, Localizer localizer) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      new alignShootCMDG(shooter, intake, pivot, swerve, localizer,  () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
-      SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Points.shootAndLeaveS1, new Rotation2d(Math.PI)))
-      //TODO: Uncomment
-      // SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Points.shootAndLeaveS2, new Rotation2d(Math.PI)))
-    );
-  }
+
+    /** Creates a new ShootAndLeaveSourceSideAutonCMDG. */
+    public ShootAndLeaveSourceSideAutonCMDG(Shooter shooter, Intake intake, Swerve swerve, Pivot pivot, Localizer localizer) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
+            new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
+            SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Points.shootAndLeaveS1, new Rotation2d(Math.PI)))
+            //TODO: Uncomment
+            // SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Points.shootAndLeaveS2, new Rotation2d(Math.PI)))
+        );
+    }
 }

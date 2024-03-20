@@ -182,8 +182,8 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    public void resetAllModules(){
-        for(SwerveModule m : modules){
+    public void resetAllModules() {
+        for (SwerveModule m : modules) {
             m.configureAngleMotor();
             m.configureDriveMotor();
         }

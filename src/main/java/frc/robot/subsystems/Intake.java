@@ -35,10 +35,11 @@ public class Intake extends SubsystemBase {
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         intakeMotor.setSpikeCurrentLimit(
-                Constants.Intake.IntakeCurrentLimit.kLimitToAmps,
-                Constants.Intake.IntakeCurrentLimit.kMaxSpikeTime,
-                Constants.Intake.IntakeCurrentLimit.kMaxSpikeAmps,
-                Constants.Intake.IntakeCurrentLimit.kSmartLimit);
+            Constants.Intake.IntakeCurrentLimit.kLimitToAmps,
+            Constants.Intake.IntakeCurrentLimit.kMaxSpikeTime,
+            Constants.Intake.IntakeCurrentLimit.kMaxSpikeAmps,
+            Constants.Intake.IntakeCurrentLimit.kSmartLimit
+        );
     }
 
     @Override

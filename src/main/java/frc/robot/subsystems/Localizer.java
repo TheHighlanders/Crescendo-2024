@@ -42,7 +42,7 @@ public class Localizer extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Distance Driven Position", this.swerve.getModulePositions()[2].distanceMeters); 
+        SmartDashboard.putNumber("Distance Driven Position", this.swerve.getModulePositions()[2].distanceMeters);
         swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
 
         // SwerveModulePosition[] blank = {new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d())};
@@ -102,7 +102,6 @@ public class Localizer extends SubsystemBase {
         return field;
     }
 
-
     public double getDistanceToSpeaker() {
         if (DriverStation.getAlliance().isEmpty()) {
             return -1;
@@ -115,7 +114,7 @@ public class Localizer extends SubsystemBase {
                     : Constants.VisionConstants.kRedSpeaker
             );
         // SmartDashboard.putString("Cached in fucntion", cached.get().toString());
-         
+
         double dist = Math.hypot(cached.get().getX() - goal.getX(), cached.get().getY() - goal.getY());
         return dist;
     }

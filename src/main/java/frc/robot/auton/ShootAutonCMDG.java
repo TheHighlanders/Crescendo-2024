@@ -17,15 +17,15 @@ import frc.robot.subsystems.Swerve;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootAutonCMDG extends SequentialCommandGroup {
-  /** Creates a new AmpSideAutonCMDG. */
-  public ShootAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    
 
-    addCommands(
-      // RobotContainer.autonShootRoutineCMDG,
-      new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker())
-    );
-  }
+    /** Creates a new AmpSideAutonCMDG. */
+    public ShootAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+
+        addCommands(
+            // RobotContainer.autonShootRoutineCMDG,
+            new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker())
+        );
+    }
 }

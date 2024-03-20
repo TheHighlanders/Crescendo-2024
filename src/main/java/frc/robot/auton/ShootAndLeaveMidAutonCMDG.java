@@ -21,13 +21,14 @@ import frc.robot.subsystems.Swerve;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootAndLeaveMidAutonCMDG extends SequentialCommandGroup {
-  /** Creates a new ShootAndLeaveMidAutonCMDG. */
-  public ShootAndLeaveMidAutonCMDG(Shooter shooter, Intake intake, Swerve swerve, Pivot pivot, Localizer localizer) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      new alignShootCMDG(shooter, intake, pivot, swerve, localizer,  () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
-      SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Points.shootAndLeaveM1, new Rotation2d(Math.PI)))
-    );
-  }
+
+    /** Creates a new ShootAndLeaveMidAutonCMDG. */
+    public ShootAndLeaveMidAutonCMDG(Shooter shooter, Intake intake, Swerve swerve, Pivot pivot, Localizer localizer) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
+            new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
+            SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Points.shootAndLeaveM1, new Rotation2d(Math.PI)))
+        );
+    }
 }

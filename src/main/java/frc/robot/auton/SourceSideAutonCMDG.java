@@ -27,37 +27,35 @@ import frc.robot.subsystems.Swerve;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SourceSideAutonCMDG extends SequentialCommandGroup {
-  /** Creates a new AmpSideAutonCMDG. */
-  public SourceSideAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    
 
-    addCommands(
-      // RobotContainer.autonShootRoutineCMDG,
-      new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
-      new PrintCommand("Post Shoot"),
-      new WaitCommand(3),
-      new deployIntakeCMD(pivot, intake, false),
-      new PrintCommand("Post Deploy"),
-      new WaitUntilCommand(()->pivot.intakeAtSetpointGround()),
-      new InstantCommand(()->intake.intakeForward()),
+    /** Creates a new AmpSideAutonCMDG. */
+    public SourceSideAutonCMDG(Swerve swerve, Intake intake, Pivot pivot, Shooter shooter, Localizer localizer) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
 
-      new ParallelCommandGroup(
-        SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.SourceClose, new Rotation2d(Math.PI))),
-        new SequentialCommandGroup(
-          new WaitUntilCommand(() -> intake.hasGamePiece()),
-          new PrintCommand("Had Game Piece"),
-          new InstantCommand(()-> intake.intakeStop()),
-          pivot.retractIntake(),
-          new WaitUntilCommand(()->pivot.intakeAtSetpointShooter()),
-          new PrintCommand("Retracted")
-        )
-      ),
-
-      new PrintCommand("Post Move PCMDG"),
-      new WaitCommand(1),
-      new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker())
-      );
-  }
+        addCommands(
+            // RobotContainer.autonShootRoutineCMDG,
+            new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
+            new PrintCommand("Post Shoot"),
+            new WaitCommand(3),
+            new deployIntakeCMD(pivot, intake, false),
+            new PrintCommand("Post Deploy"),
+            new WaitUntilCommand(() -> pivot.intakeAtSetpointGround()),
+            new InstantCommand(() -> intake.intakeForward()),
+            new ParallelCommandGroup(
+                SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.SourceClose, new Rotation2d(Math.PI))),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> intake.hasGamePiece()),
+                    new PrintCommand("Had Game Piece"),
+                    new InstantCommand(() -> intake.intakeStop()),
+                    pivot.retractIntake(),
+                    new WaitUntilCommand(() -> pivot.intakeAtSetpointShooter()),
+                    new PrintCommand("Retracted")
+                )
+            ),
+            new PrintCommand("Post Move PCMDG"),
+            new WaitCommand(1),
+            new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker())
+        );
+    }
 }
