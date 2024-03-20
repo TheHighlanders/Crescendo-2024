@@ -46,9 +46,9 @@ public class AmpSideAutonCMDG extends SequentialCommandGroup {
       new ParallelCommandGroup(
         SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.AmpClose, new Rotation2d(Math.PI))),
         new SequentialCommandGroup(
-          new WaitUntilCommand(() -> intake.hasGamePiece()),
+          new WaitUntilCommand(intake::hasGamePiece),
           new PrintCommand("Had Game Piece"),
-          new InstantCommand(()-> intake.intakeStop()),
+          new InstantCommand(intake::intakeStop),
           pivot.retractIntake(),
           new WaitUntilCommand(()->pivot.intakeAtSetpointShooter()),
           new PrintCommand("Retracted")

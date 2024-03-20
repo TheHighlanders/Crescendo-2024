@@ -60,7 +60,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
 
         startShooter =
             new StartEndCommand(
-                () -> {
+                () ->
                     m_shooter.shoot(() -> {
                         try {
                             return data.get().getRPM() + 75;
@@ -68,8 +68,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
                             DriverStation.reportWarning("Unable to retreve RPM" + e.toString(), false);
                             return 3000;
                         }
-                    });
-                },
+                    }),
                 m_shooter::shootCancel
             );
 
@@ -88,9 +87,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
                         }
                     }),
                 emptyRunnable,
-                i -> {
-                    DriverStation.reportWarning("Align Pivot End " + i, false);
-                },
+                i -> DriverStation.reportWarning("Align Pivot End " + i, false),
                 () -> true,
                 m_Pivot
             );
@@ -109,12 +106,11 @@ public class alignShootCMDG extends ParallelCommandGroup {
                     new PrintCommand("In Second Phase"),
                     // runs the intake for 3 seconds and then stops them when the time us up\
                     new ParallelDeadlineGroup(new ParallelRaceGroup(waitForGamePiece, deadline), runIntakeOut),
-                    new InstantCommand(() -> {
-                        m_shooter.shootCancel();
-                    }),
+                    new InstantCommand(m_shooter::shootCancel),
                     new PrintCommand("Ended")
                 ),
-                startShooter),
+                startShooter
+            ),
             new PrintCommand("Automatic Shooter")
         );
     }

@@ -102,18 +102,14 @@ public class RobotContainer {
                 }
             }),
         emptyRunnable,
-        i -> {
-            DriverStation.reportWarning("Align Pivot End " + i, false);
-        },
+        i -> DriverStation.reportWarning("Align Pivot End " + i, false),
         () -> true,
         s_Pivot
     );
 
     public static Command driveShooterAngle = new FunctionalCommand(
         emptyRunnable,
-        () -> {
-            s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.5);
-        },
+        () -> s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.5),
         emptyConsumable,
         falseSupplier,
         s_Pivot
@@ -121,12 +117,8 @@ public class RobotContainer {
 
     public static Command driveShooterRPM = new FunctionalCommand(
         emptyRunnable, // Initialize
-        () -> {
-            s_Shooter.shoot(() -> operator.getLeftY() * -4000); //Execute
-        },
-        v -> {
-            s_Shooter.shootCancel(); // End
-        },
+        () -> s_Shooter.shoot(() -> operator.getLeftY() * -4000), //Execute
+        v -> s_Shooter.shootCancel(), // End
         falseSupplier,
         s_Shooter // Requirements
     );
@@ -135,23 +127,21 @@ public class RobotContainer {
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
     public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter).andThen(setRumble(1, 0.2, false, false));
-    public static Command intakeHoldPos = new InstantCommand(() -> s_Pivot.shooterAngleHold());
+    public static Command intakeHoldPos = new InstantCommand(s_Pivot::shooterAngleHold);
     public static Command intakeRetract = new ParallelDeadlineGroup(
         new WaitCommand(0.75),
         setRumble(1, 0.5, true, true),
         new SequentialCommandGroup(new WaitCommand(0.5), new runIntakeCMD(s_Intake, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true),
-        new InstantCommand(() -> s_Shooter.shootIdle())
+        new InstantCommand(s_Shooter::shootIdle)
     );
 
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
 
     public static Command climbBoth = new StartEndCommand(() -> S_Climber.climbBoth(ClimberConsts.kClimbSpeed), S_Climber::climberStop);
 
-    public static Command resetModules = new InstantCommand(() -> {
-        s_Swerve.resetAllModules();
-    });
-    public static Command zeroGyroCommand = new InstantCommand(() -> s_Swerve.zeroGyro());
+    public static Command resetModules = new InstantCommand(s_Swerve::resetAllModules);
+    public static Command zeroGyroCommand = new InstantCommand(s_Swerve::zeroGyro);
 
     public static alignShootCMDG autonShootRoutineCMDG = new alignShootCMDG(
         s_Shooter,
@@ -191,8 +181,8 @@ public class RobotContainer {
         operator.leftBumper().whileTrue(climbBoth);
         operator.rightBumper().whileTrue(runIntakeOutCMD);
 
-        operator.b().onTrue(alignRobot);
-        operator.x().onTrue(alignPivot);
+        operator.b().whileTrue(alignRobot);
+        operator.x().whileTrue(alignPivot);
     }
 
     private void configureAuton() {
@@ -220,7 +210,6 @@ public class RobotContainer {
                 () -> driver.povDown().getAsBoolean(),
                 () -> driver.leftBumper().getAsBoolean()
             )
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
         );
     }
 
@@ -237,21 +226,13 @@ public class RobotContainer {
     public static Command setRumble(double value, double length, boolean right, boolean driverController) {
         RumbleType rumbleSide = right ? RumbleType.kRightRumble : RumbleType.kLeftRumble;
         if (driverController) {
-            return new InstantCommand(() -> {
-                driver.getHID().setRumble(rumbleSide, value);
-            })
+            return new InstantCommand(() -> driver.getHID().setRumble(rumbleSide, value))
                 .andThen(new WaitCommand(length))
                 .finallyDo(v -> driver.getHID().setRumble(rumbleSide, 0));
         } else {
-            return new InstantCommand(() -> {
-                operator.getHID().setRumble(rumbleSide, value);
-            })
+            return new InstantCommand(() -> operator.getHID().setRumble(rumbleSide, value))
                 .andThen(new WaitCommand(length))
-                .andThen(
-                    new InstantCommand(() -> {
-                        operator.getHID().setRumble(rumbleSide, 0);
-                    })
-                );
+                .andThen(new InstantCommand(() -> operator.getHID().setRumble(rumbleSide, 0)));
         }
     }
 }

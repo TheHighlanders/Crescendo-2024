@@ -87,16 +87,14 @@ public class Pivot extends SubsystemBase {
         intakeShooterCommand =
             new FunctionalCommand(
                 () -> {},
-                () -> {
+                () ->
                     intakeAngleMotor.set(
                         -MathUtil.clamp(
                             differentialPidController.calculate(getPositionDiffrential(), 0),
                             Intake.Pivot.PIDValues.minOut,
                             Intake.Pivot.PIDValues.maxOut
                         )
-                    );
-                    //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
-                },
+                    ), //pidIntakeAngleController.setReference(-(differentialPidController.calculate(getPositionDiffrential(), 0)),ControlType.kDutyCycle);
                 v -> intakeAngleHold(),
                 () -> intakeAtSetpointShooter()
             );
@@ -161,21 +159,18 @@ public class Pivot extends SubsystemBase {
     public Command retractIntake() {
         return new FunctionalCommand(
             () -> {},
-            () -> {
+            () ->
                 intakeAngleMotor.set(
                     MathUtil.clamp(
                         differentialPidController.calculate(getPositionDiffrential(), 0),
                         Intake.Pivot.PIDValues.minOut,
                         Intake.Pivot.PIDValues.maxOut
                     )
-                );
-            },
+                ),
             v -> {
                 intakeAngleHold();
             },
-            () -> {
-                return intakeAtSetpointShooter();
-            }
+            () -> intakeAtSetpointShooter()
         );
     }
 

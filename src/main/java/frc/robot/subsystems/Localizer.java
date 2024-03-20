@@ -94,7 +94,7 @@ public class Localizer extends SubsystemBase {
     }
 
     public Supplier<Pose2d> getPose() {
-        cached = () -> swervePoseEstimator.getEstimatedPosition();
+        cached = swervePoseEstimator::getEstimatedPosition;
         return cached;
     }
 
