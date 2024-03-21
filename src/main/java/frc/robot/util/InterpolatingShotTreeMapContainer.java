@@ -10,7 +10,9 @@ public class InterpolatingShotTreeMapContainer {
         { 2.3, 12.9, 3500 }, //54, 13.75, 2100
         { 2.9, 12.73, 3500 },
         { 139, 12.65, 2900 },
-        { 170, 12.5, 3200 },
+        { 170, 12.5, 3200 },// distance, extenstion, 
+        { 3.9, 12.6, 3500},// distance, extenstion, 
+        
     };
 
     public InterpolatingShotTreeMapContainer() {

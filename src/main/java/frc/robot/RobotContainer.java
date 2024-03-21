@@ -128,7 +128,7 @@ public class RobotContainer {
     public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter).andThen(setRumble(1, 0.2, false, false));
     public static Command intakeHoldPos = new InstantCommand(s_Pivot::shooterAngleHold);
     public static Command intakeRetract = new ParallelDeadlineGroup(
-        new WaitCommand(0.75),
+        new WaitCommand(1.25),
         setRumble(1, 0.5, true, true),
         new SequentialCommandGroup(new WaitCommand(0.15), new runIntakeCMD(s_Intake, true)),
         new deployIntakeCMD(s_Pivot, s_Intake, true),
