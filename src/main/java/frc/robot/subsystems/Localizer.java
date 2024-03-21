@@ -66,15 +66,15 @@ public class Localizer extends SubsystemBase {
         //SmartDashboard.putString("estPoses", estPose0.get().toString() + " " + estPose1.get().toString());
 
         if (estPose0.isPresent()) {
-            // var estStdDevs = vision.getEstimationStdDevs(estPose0.get().estimatedPose.toPose2d(), 0);
+            var estStdDevs = vision.getEstimationStdDevs(estPose0.get().estimatedPose.toPose2d(), 0);
             previous0 = estPose0.get().estimatedPose.toPose2d();
-            swervePoseEstimator.addVisionMeasurement(estPose0.get().estimatedPose.toPose2d(), estPose0.get().timestampSeconds/* , estStdDevs*/);
+            swervePoseEstimator.addVisionMeasurement(estPose0.get().estimatedPose.toPose2d(), estPose0.get().timestampSeconds, estStdDevs);
         }
 
         if (estPose1.isPresent()) {
-            // var estStdDevs = vision.getEstimationStdDevs(estPose1.get().estimatedPose.toPose2d(), 1);
+            var estStdDevs = vision.getEstimationStdDevs(estPose1.get().estimatedPose.toPose2d(), 1);
             previous1 = estPose1.get().estimatedPose.toPose2d();
-            swervePoseEstimator.addVisionMeasurement(estPose1.get().estimatedPose.toPose2d(), estPose1.get().timestampSeconds/* , estStdDevs*/);
+            swervePoseEstimator.addVisionMeasurement(estPose1.get().estimatedPose.toPose2d(), estPose1.get().timestampSeconds, estStdDevs);
         }
 
         field.setRobotPose(getPose().get());
