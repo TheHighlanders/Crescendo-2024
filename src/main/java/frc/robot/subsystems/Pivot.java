@@ -135,6 +135,10 @@ public class Pivot extends SubsystemBase {
         return i;
     }
 
+    public InterpolatableShotData interpolate(DoubleSupplier dist) {
+        return interpolate(dist.getAsDouble());
+    }
+
     // Encoder offsets
     public double getPositionDiffrential() {
         return ((absolShooter.get() * 360) * Shooter.Pivot.inversionFactor) - Shooter.Pivot.absoluteEncoderOffset;
@@ -167,9 +171,7 @@ public class Pivot extends SubsystemBase {
                         Intake.Pivot.PIDValues.maxOut
                     )
                 ),
-            v -> {
-                intakeAngleHold();
-            },
+            v -> intakeAngleHold(),
             () -> intakeAtSetpointShooter()
         );
     }
@@ -187,6 +189,10 @@ public class Pivot extends SubsystemBase {
             DriverStation.reportWarning("Arm Threw an Exception", true);
             return false;
         }
+    }
+
+    public boolean alignPivot(double extension) {
+        return alignPivot(() -> extension);
     }
 
     public void alignShooterToExtension(double Extension) {
@@ -279,14 +285,8 @@ public class Pivot extends SubsystemBase {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
 
-        SmartDashboard.putNumber(
-            "PID intake value",
-            -MathUtil.clamp(
-                differentialPidController.calculate(getPositionDiffrential(), 0),
-                Intake.Pivot.PIDValues.minOut,
-                Intake.Pivot.PIDValues.maxOut
-            )
-        );
-        SmartDashboard.putNumber("!Shooter extension", getShooterRelativePosition());
+        SmartDashboard.putBoolean("Arm setpoint intaks", intakeAtSetpointShooter());
+        SmartDashboard.putBoolean("Extension at setpoint", shooterAtSetpoint());
+        SmartDashboard.putNumber("extension", shooterExtensionEncoder.getPosition());
     }
 }

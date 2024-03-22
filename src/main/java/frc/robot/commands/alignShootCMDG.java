@@ -88,7 +88,7 @@ public class alignShootCMDG extends ParallelCommandGroup {
                     }),
                 emptyRunnable,
                 i -> DriverStation.reportWarning("Align Pivot End " + i, false),
-                () -> true,
+                () -> m_Pivot.shooterAtSetpoint(),
                 m_Pivot
             );
         // runs the swerve move to command to the angle of the speaker

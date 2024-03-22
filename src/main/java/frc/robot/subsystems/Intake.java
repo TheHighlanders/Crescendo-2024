@@ -23,10 +23,7 @@ public class Intake extends SubsystemBase {
 
     private DigitalInput beamBreak;
 
-    private boolean hasGamePiece;
-
     public Intake() {
-        this.hasGamePiece = true;
 
         beamBreak = new DigitalInput(Constants.Intake.kIntakeBeamBreakDIOPin);
 
@@ -44,25 +41,12 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Checks if we have gained a piece, and schedules retraction
-        if (hasGamePiece == beamBreak.get() && hasGamePiece == false && !DriverStation.isAutonomous()) {
-            DriverStation.reportWarning("Intake Retraction AutoCommanded", true);
-            RobotContainer.intakeRetract.schedule();
-        }
 
-        hasGamePiece = !beamBreak.get();
-
-        if (hasGamePiece) {
-            RobotContainer.s_RGB.setLED(State.ORANGESOLID); // 6 is solid orange meaning the robot has a note.
-        } else {
-            RobotContainer.s_RGB.setLED(State.ORANGEBLINK); // 5 is orange blink meaning there is no note.
-        }
-
-        SmartDashboard.putBoolean("Has Game Piece", hasGamePiece);
+        SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
     }
 
     public boolean hasGamePiece() {
-        return hasGamePiece;
+        return !beamBreak.get();
     }
 
     public void intakeStop() {
@@ -72,11 +56,11 @@ public class Intake extends SubsystemBase {
 
     public void intakeForward() {
         DriverStation.reportWarning("Intake forward", false);
-        intakeMotor.set(1);
+        intakeMotor.set(0.7);
     }
 
     public void intakeReverse() {
         DriverStation.reportWarning("Intake reverse", false);
-        intakeMotor.set(-1);
+        intakeMotor.set(-0.7);
     }
 }

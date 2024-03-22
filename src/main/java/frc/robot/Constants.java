@@ -43,9 +43,9 @@ public final class Constants {
         public static final double kTranslateI = 0;
         public static final double kTranslateD = 0.1;
 
-        public static final double kRotateP = 1.5;
+        public static final double kRotateP = 2;
         public static final double kRotateI = 0.0;
-        public static final double kRotateD = 0.5;
+        public static final double kRotateD = 0;
 
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
@@ -63,10 +63,10 @@ public final class Constants {
         );
 
         public static final double speedLimit = 3.0;
-        public static final double slowSpeedLimit = 1.0;
+        public static final double slowSpeedLimit = 0.5;
 
         public static final double accelerationLimit = 1.5;
-        public static final double slowAccelerationLimit = 1;
+        public static final double slowAccelerationLimit = 0.5;
 
         public static final double angularVelocityLimit = 180.0;
         public static final double slowAngularVelocityLimit = 45.0;
@@ -265,8 +265,8 @@ public final class Constants {
 
                 public static final double minOut = -0.25;
                 public static final double maxOut = 1;
-                public static final double kP = 1.2d;
-                public static final double kI = 0d; //.005d;
+                public static final double kP = 1.4d;
+                public static final double kI = 0.0005d; //.005d;
                 public static final double kD = 0; //30;
                 public static final double iMaxAccum = 10d;
             }
@@ -329,10 +329,10 @@ public final class Constants {
 
                 public static class deviationPID {
 
-                    public static final double kP = 0.003d;
+                    public static final double kP = 0.0045d;
                     public static final double kI = 0d;
                     public static final double kD = 0d;
-                    public static final double posTolerance = 0.2d;
+                    public static final double posTolerance = 1d;
                     public static final double velTolerance = 0.2d;
                 }
             }
@@ -355,7 +355,7 @@ public final class Constants {
         public static final int kServoRightID = 3;
         public static final int kServoLeftID = 4;
 
-        public static final double kClimbSpeed = 0.40;
+        public static final double kClimbSpeed = 0.45;
 
         public static final double kClimberP = 0.0;
         public static final double kClimberPrimePoint = 0.0;

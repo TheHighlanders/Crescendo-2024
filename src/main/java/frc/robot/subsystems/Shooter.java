@@ -95,8 +95,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shootIdle() {
-        pidBottom.setReference(2000, ControlType.kVelocity);
-        pidTop.setReference(2000, ControlType.kVelocity);
+        pidBottom.setReference(3000, ControlType.kVelocity);
+        pidTop.setReference(3000, ControlType.kVelocity);
     }
 
     public boolean getBeamBreak() {
