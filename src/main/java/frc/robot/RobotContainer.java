@@ -173,6 +173,7 @@ public class RobotContainer {
         driver.a().onTrue(deployIntake);
         driver.x().onTrue(retractIntake);
         driver.b().onTrue(ampPosIntake);
+        driver.y().onTrue(new InstantCommand(()->{s_RGB.setLED(RGB.State.BROWN);})); // Toggles Poop Mode
 
         /* Shooter Button Bindings */
         operator.y().and(hasGamePiece).whileTrue(autonShootRoutineCMDG);

@@ -23,7 +23,11 @@ public class RGB extends SubsystemBase {
         ORANGESOLID,
         POPSICLE,
         BROWN,
+        FLAMEGRADIENT,
+        FLAME,
+        LOADINGBAR
     }
+    private boolean poopMode;
 
     public EnumMap<State, String> stateMap = new EnumMap<>(State.class);
 
@@ -38,9 +42,14 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.ORANGESOLID, "6");
         stateMap.put(State.POPSICLE, "7");
         stateMap.put(State.BROWN, "8");
+        stateMap.put(State.LOADINGBAR, "9");
+        stateMap.put(State.FLAMEGRADIENT, "10");
+        stateMap.put(State.FLAME, "11");
 
         setLED(State.OFF);
         // setArmLEDLoadingBar(10, 30);
+
+        poopMode = false;
     }
 
     public void changeString(String str) {
@@ -48,7 +57,13 @@ public class RGB extends SubsystemBase {
     }
 
     public void setLED(State state) {
-        changeString(stateMap.get(state));
+        if(!poopMode){
+            changeString(stateMap.get(state));
+        }
+        if(state == State.BROWN){
+            poopMode = !poopMode;
+        }
+        
     }
 
     /**

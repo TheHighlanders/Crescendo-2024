@@ -63,11 +63,11 @@ public class Intake extends SubsystemBase {
 
     public void intakeForward() {
         DriverStation.reportWarning("Intake forward", false);
-        intakeMotor.set(0.7);
+        intakeMotor.set(1.0);
     }
 
     public void intakeReverse() {
         DriverStation.reportWarning("Intake reverse", false);
-        intakeMotor.set(-0.7);
+        intakeMotor.set(-1.0);
     }
 }
