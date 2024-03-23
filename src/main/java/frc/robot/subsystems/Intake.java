@@ -20,12 +20,12 @@ public class Intake extends SubsystemBase {
     // public static RGB s_RGB = new RGB();
 
     private CANSparkMaxCurrent intakeMotor;
-
+    private boolean gamePiece;
     private DigitalInput beamBreak;
 
     public Intake() {
-
         beamBreak = new DigitalInput(Constants.Intake.kIntakeBeamBreakDIOPin);
+        gamePiece = hasGamePiece();
 
         intakeMotor = new CANSparkMaxCurrent(Constants.Intake.INTAKE, MotorType.kBrushed);
 
@@ -41,8 +41,15 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
+        if(DriverStation.isTeleopEnabled()){
+            if(gamePiece != hasGamePiece() && hasGamePiece()){
+                RobotContainer.s_RGB.setLED(State.ORANGESOLID);
+            } else if (gamePiece != hasGamePiece() && !hasGamePiece()){
+                RobotContainer.s_RGB.setLED(State.ORANGEBLINK);
+            }
+        }
+        gamePiece = hasGamePiece();
     }
 
     public boolean hasGamePiece() {

@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -43,9 +42,9 @@ public class Localizer extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Distance Driven Position", this.swerve.getModulePositions()[2].distanceMeters);
+        // SmartDashboard.putNumber("Distance Driven Position", this.swerve.getModulePositions()[2].distanceMeters);
         // swervePoseEstimator.update(this.swerve.getYaw(), this.swerve.getModulePositions());
-        swervePoseEstimator.updateWithTime(Timer.getFPGATimestamp(),this.swerve.getYaw(), this.swerve.getModulePositions());
+        swervePoseEstimator.updateWithTime(Timer.getFPGATimestamp(), this.swerve.getYaw(), this.swerve.getModulePositions());
         // SwerveModulePosition[] blank = {new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d()), new SwerveModulePosition(0, new Rotation2d())};
         // swervePoseEstimator.update(this.swerve.getYaw(), blank);
 
@@ -114,7 +113,6 @@ public class Localizer extends SubsystemBase {
                     ? Constants.VisionConstants.kBlueSpeaker
                     : Constants.VisionConstants.kRedSpeaker
             );
-        // SmartDashboard.putString("Cached in fucntion", cached.get().toString());
 
         double dist = Math.hypot(cached.get().getX() - goal.getX(), cached.get().getY() - goal.getY());
         return dist;
@@ -132,23 +130,5 @@ public class Localizer extends SubsystemBase {
                     : Constants.VisionConstants.kBlueSpeaker
             );
         return new Rotation2d(Math.atan2(robot.getY() - goal.getY(), robot.getX() - goal.getX()) + Math.PI);
-    }
-
-    public double getAngleToSpeakerValue() {
-        if (DriverStation.getAlliance().isEmpty()) {
-            return 0;
-        }
-        Translation2d robot = getPose().get().getTranslation();
-        Translation2d goal =
-            (
-                DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                    ? Constants.VisionConstants.kRedSpeaker
-                    : Constants.VisionConstants.kBlueSpeaker
-            );
-        return Math.atan2(robot.getY() - goal.getY(), robot.getX() - goal.getX()) + Math.PI;
-    }
-
-    public boolean alignedToSpeaker() {
-        return MathUtil.applyDeadband(getAngleToSpeakerValue(), Constants.SwerveMoveConsts.aPosTolerance) == 0;
     }
 }

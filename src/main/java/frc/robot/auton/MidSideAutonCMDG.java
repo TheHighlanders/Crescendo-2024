@@ -37,7 +37,7 @@ public class MidSideAutonCMDG extends SequentialCommandGroup {
             // RobotContainer.autonShootRoutineCMDG,
             new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
             new PrintCommand("Post Shoot"),
-            new WaitCommand(3),
+            new WaitCommand(0.5),
             new deployIntakeCMD(pivot, intake, false),
             new PrintCommand("Post Deploy"),
             new WaitUntilCommand(() -> pivot.intakeAtSetpointGround()),
@@ -47,12 +47,11 @@ public class MidSideAutonCMDG extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> intake.hasGamePiece()),
                     new PrintCommand("Had Game Piece"),
-                    new InstantCommand(() -> intake.intakeStop()),
-                    pivot.retractIntake(),
-                    new WaitUntilCommand(() -> pivot.intakeAtSetpointShooter()),
-                    new PrintCommand("Retracted")
+                    new InstantCommand(() -> intake.intakeStop())
                 )
             ),
+            pivot.retractIntake(),
+             new WaitUntilCommand(() -> pivot.intakeAtSetpointShooter()),
             new PrintCommand("Post Move PCMDG"),
             new WaitCommand(1),
             new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker())

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.RGB.State;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,6 +47,14 @@ public class Robot extends TimedRobot {
             .onCommandInterrupt(command ->
                 DriverStation.reportWarning("Interrupted Com:" + command.getName() + " Sub: " + command.getSubsystem(), false)
             );
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                sendAllianceRGB();
+            } catch (Exception e) {}
+        })
+            .start();
     }
 
     /**
@@ -72,6 +81,7 @@ public class Robot extends TimedRobot {
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {
+        RobotContainer.s_RGB.setLED(State.POPSICLE);
         RobotContainer.s_Pivot.setShooterCoastMode();
         CommandScheduler.getInstance().cancelAll();
     }
@@ -84,7 +94,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         RobotContainer.s_Pivot.setShooterBrakeMode();
         RobotContainer.resetModules.schedule();
-
+        RobotContainer.s_RGB.setLED(State.RAINBOW);
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
@@ -136,4 +146,12 @@ public class Robot extends TimedRobot {
     /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {}
+
+    public void sendAllianceRGB() {
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+            RobotContainer.s_RGB.setLED(State.RED);
+        } else {
+            RobotContainer.s_RGB.setLED(State.BLUE);
+        }
+    }
 }

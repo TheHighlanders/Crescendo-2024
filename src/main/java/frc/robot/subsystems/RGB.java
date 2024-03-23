@@ -13,7 +13,7 @@ public class RGB extends SubsystemBase {
     /** Creates a new RGB. */
     private SerialPort elPuerto;
 
-    enum State {
+    public enum State {
         TEST,
         OFF,
         RED,
@@ -28,7 +28,7 @@ public class RGB extends SubsystemBase {
     public EnumMap<State, String> stateMap = new EnumMap<>(State.class);
 
     public RGB() {
-        elPuerto = new SerialPort(9600, SerialPort.Port.kMXP);
+        elPuerto = new SerialPort(9600, SerialPort.Port.kUSB);
         stateMap.put(State.TEST, "0");
         stateMap.put(State.OFF, "1");
         stateMap.put(State.RED, "2");

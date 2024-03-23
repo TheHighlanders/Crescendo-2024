@@ -216,9 +216,14 @@ public class Pivot extends SubsystemBase {
         pidIntakeAngleController.setReference(0, CANSparkMax.ControlType.kPosition);
     }
 
+    public void alignIntakeToAmp(){
+        intakeShooterCommand.cancel();
+        DriverStation.reportWarning("Set Intake Setpoint Amp", false);
+        pidIntakeAngleController.setReference(frc.robot.Constants.Intake.Pivot.intakeAtAmp, CANSparkMax.ControlType.kPosition); 
+    }
+
     // Put shooter to avg shootig angle and align the Pivot
     public void readyPositions() {
-        // This isnt used anywhere
         alignIntakeToShooter();
         alignShooterToExtension(Shooter.Pivot.readyInches);
     }
@@ -288,5 +293,6 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putBoolean("Arm setpoint intaks", intakeAtSetpointShooter());
         SmartDashboard.putBoolean("Extension at setpoint", shooterAtSetpoint());
         SmartDashboard.putNumber("extension", shooterExtensionEncoder.getPosition());
+        SmartDashboard.putNumber("AbsolIntakePos", getIntakeAbsolutePosition());
     }
 }

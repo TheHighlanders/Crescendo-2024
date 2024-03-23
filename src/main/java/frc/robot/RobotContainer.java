@@ -38,7 +38,6 @@ import frc.robot.subsystems.RGB;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
-import frc.robot.util.InterpolatableShotData;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -80,44 +79,40 @@ public class RobotContainer {
     public static RGB s_RGB = new RGB();
 
     public static DoubleSupplier distToSpeaker = s_Localizer::getDistanceToSpeaker;
-    public static Supplier<InterpolatableShotData> data = () -> s_Pivot.interpolate(distToSpeaker);
-
     /* Auton */
     private SendableChooser<Command> autoChooser;
 
     /* Triggers */
-    public static Trigger hasGamePiece = new Trigger(() -> s_Intake.hasGamePiece());
-    public static Trigger readyToShoot = new Trigger(() -> s_Pivot.shooterAtSetpoint() && s_Shooter.atVelocity() && s_Localizer.alignedToSpeaker());
+    public static Trigger hasGamePiece = new Trigger(s_Intake::hasGamePiece);
 
     /* Commands */
 
-    static Runnable emptyRunnable = () -> {};
+    static Runnable nop = () -> {};
     static BooleanSupplier falseSupplier = () -> false;
+    static BooleanSupplier trueSupplier = () -> true;
     static Consumer<Boolean> emptyConsumable = t -> {};
 
     public static Command alignRobot = new SwerveMoveToCMD(s_Swerve, s_Localizer::getAngleToSpeaker).withName("alignRobotManual");
 
     public static Command alignPivot = new FunctionalCommand(
-        () -> {
-            InterpolatableShotData currentShotData = data.get();
+        () ->
             s_Pivot.alignPivot(() -> {
                 try {
-                    return currentShotData.getArmExtension();
+                    return s_Pivot.interpolate(distToSpeaker).getArmExtension();
                 } catch (Exception e) {
                     DriverStation.reportWarning("Unable to retreve Arm Extension" + e.toString(), false);
                     return 16;
                 }
-            });
-            s_Shooter.shoot(() -> currentShotData.getRPM());
-        },
-        emptyRunnable,
+            }),
+        nop,
         i -> DriverStation.reportWarning("Align Pivot End " + i, false),
-        () -> true,
+        trueSupplier,
         s_Pivot
-    ).withName("alignPivot");
+    )
+        .withName("alignPivot");
 
     public static Command driveShooterAngle = new FunctionalCommand(
-        emptyRunnable,  
+        nop,
         () -> s_Pivot.driveShooterAngleManual(operator.getRightY() * -0.4),
         emptyConsumable,
         falseSupplier,
@@ -125,24 +120,20 @@ public class RobotContainer {
     );
 
     public static Command driveShooterRPM = new FunctionalCommand(
-        emptyRunnable, // Initialize
+        nop, // Initialize
         () -> s_Shooter.shoot(() -> operator.getLeftY() * -4000), //Execute
         v -> s_Shooter.shootCancel(), // End
         falseSupplier,
         s_Shooter // Requirements
     );
 
+    public static Command readyPositions = new InstantCommand(s_Pivot::readyPositions);
     public static Command deployIntake = new deployIntakeCMD(s_Pivot, s_Intake, false);
+    public static Command retractIntake = new deployIntakeCMD(s_Pivot, s_Intake, true);
+    public static Command ampPosIntake = new InstantCommand(()->s_Pivot.alignIntakeToAmp());
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
-    public static Command intakeFloorCommand = new InstantCommand(s_Pivot::alignIntakeToGround);
-    public static Command intakeShooterCommand = new InstantCommand(s_Pivot::alignIntakeToShooter).andThen(setRumble(1).withTimeout(0.2));
     public static Command intakeHoldPos = new InstantCommand(s_Pivot::shooterAngleHold);
-    public static Command intakeRetract = new ParallelDeadlineGroup(
-        
-        new runIntakeCMD(s_Intake, true).withTimeout(0.5),
-        setRumble(1).withTimeout(0.5),
-        new deployIntakeCMD(s_Pivot, s_Intake, true)
-    );
+    public static Command intakeRetractAndSuck = new ParallelDeadlineGroup(new runIntakeCMD(s_Intake, true).withTimeout(0.5), new deployIntakeCMD(s_Pivot, s_Intake, true));
 
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
 
@@ -150,25 +141,19 @@ public class RobotContainer {
 
     public static Command resetModules = new InstantCommand(s_Swerve::resetAllModulestoAbsol);
     public static Command zeroGyroCommand = new InstantCommand(s_Swerve::zeroGyro);
-    public static Command armClimbPos = new InstantCommand(()->s_Pivot.alignPivot(18.75));
+    public static Command armClimbPos = new InstantCommand(() -> s_Pivot.alignPivot(18.75));
     public static Command idleShooterCMD = new InstantCommand(s_Shooter::shootIdle);
-    public static Command startShooter = new StartEndCommand(
-        () ->
-            s_Shooter.shoot(() -> {
-                try {
-                    return data.get().getRPM() + 75;
-                } catch (Exception e) {
-                    DriverStation.reportWarning("Unable to retreve RPM" + e.toString(), false);
-                    return 3000;
-                }
-            }),
-        s_Shooter::shootCancel
+
+    public static Command autonShootRoutineCMDG = new alignShootCMDG(
+        s_Shooter,
+        s_Intake,
+        s_Pivot,
+        s_Swerve,
+        s_Localizer,
+        () -> s_Localizer.getDistanceToSpeaker()
     );
 
-    // public static Command autonShootRoutineCMDG = new ParallelCommandGroup(alignPivot, alignRobot).finallyDo(s_Shooter::shootCancel);
-
     public RobotContainer() {
-        s_RGB.changeString("7");
         configureAuton();
         setDefaultCommands();
         configureBindings();
@@ -176,8 +161,8 @@ public class RobotContainer {
 
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
-        hasGamePiece.onTrue(idleShooterCMD.andThen(intakeRetract));
-        readyToShoot.debounce(0.2).and(hasGamePiece).whileTrue(setRumble(1));
+        hasGamePiece.onTrue(idleShooterCMD.andThen(intakeRetractAndSuck).alongWith(setRumble(1).withTimeout(0.5)).andThen(new InstantCommand(s_Pivot::readyPositions)));
+
         driver.y().onTrue(zeroGyroCommand);
 
         // s_RGB.setLED(State.ORANGESOLID) change this on hasGamePiece state change
@@ -186,13 +171,13 @@ public class RobotContainer {
         driver.rightTrigger(0.75).whileTrue(runIntakeOutCMD); // Runs intake out, alt new runIntakeCMD(s_Intake, false)
         driver.rightBumper().whileTrue(runIntakeInCMD); // Runs intake in, alt new runIntakeCMD(s_Intake, true)
         driver.a().onTrue(deployIntake);
-        driver.x().onTrue(new deployIntakeCMD(s_Pivot, s_Intake, true)); // 
+        driver.x().onTrue(retractIntake);
+        driver.b().onTrue(ampPosIntake);
 
         /* Shooter Button Bindings */
-        // operator.y().and(hasGamePiece).whileTrue(autonShootRoutineCMDG); // Automatic shooting routine
-        // operator.y().and(readyToShoot).onTrue(setRumble(1).withTimeout(0.5));
-        // operator.y().and(hasGamePiece.negate()).whileTrue(setRumble(1));
-        operator.y().onTrue(new alignShootCMDG(s_Shooter, s_Intake, s_Pivot, s_Swerve, s_Localizer,()-> s_Localizer.getDistanceToSpeaker()));
+        operator.y().and(hasGamePiece).whileTrue(autonShootRoutineCMDG);
+        operator.y().and(hasGamePiece.negate()).whileTrue(setRumble(0.5));
+
         operator.rightStick().whileTrue(driveShooterAngle);
         operator.rightStick().onFalse(intakeHoldPos); // Manual Pivot Angle Control
         operator
@@ -200,9 +185,15 @@ public class RobotContainer {
             .whileTrue(driveShooterRPM);
 
         operator.povDown().onTrue(resetModules);
-        operator.leftBumper().whileTrue(climbBoth);
+        operator.leftBumper().debounce(0.1).whileTrue(climbBoth);
         operator.rightBumper().whileTrue(runIntakeOutCMD);
         operator.a().onTrue(armClimbPos);
+        operator.b().onTrue(alignPivot);
+        operator.x().onTrue(readyPositions);
+        operator
+            .start()
+            .toggleOnTrue(new InstantCommand(() -> hasGamePiece = new Trigger(trueSupplier)))
+            .toggleOnFalse(new InstantCommand(() -> hasGamePiece = new Trigger(s_Intake::hasGamePiece)));
     }
 
     private void configureAuton() {

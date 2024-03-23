@@ -218,7 +218,6 @@ public final class Constants {
         public static final int slotID = 0;
 
         public static final double velocityTolerance = 50;
-        public static final double velocityMinimum = 60;
 
         public static final int kCurrentLimit = 20;
 
@@ -266,9 +265,9 @@ public final class Constants {
                 public static final double minOut = -0.25;
                 public static final double maxOut = 1;
                 public static final double kP = 1.4d;
-                public static final double kI = 0.0005d; //.005d;
-                public static final double kD = 0; //30;
-                public static final double iMaxAccum = 10d;
+                public static final double kI = 0.005d; //.005d;
+                public static final double kD = 0.01; //30;
+                public static final double iMaxAccum = 25d;
             }
 
             public static class ArmCurrentLimit {
@@ -311,6 +310,8 @@ public final class Constants {
             public static final int inversionFactor = (isInversed ? -1 : 1);
             public static final int kAbsolDutyCycleDIOPin = 3;
             public static final double absoluteEncoderOffset = 337d;
+
+            public static final double intakeAtAmp = -8.5;
 
             public static final double intakePivotRatio = 1;
             public static final double intakeInit = -13.2;

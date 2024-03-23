@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -78,25 +79,22 @@ public class Shooter extends SubsystemBase {
         pidTop.setReference(speed, CANSparkMax.ControlType.kVelocity);
     }
 
-    public boolean atVelocity() {
-        return (
-            Math.abs(bottomFlywheelEncoder.getVelocity() - setpoint) < Constants.Shooter.velocityTolerance &&
-            Math.abs(topFlywheelEncoder.getVelocity() - setpoint) < Constants.Shooter.velocityTolerance
-        );
-    }
+    public void motorsIdle(){
+        pidBottom.setReference(0, ControlType.kDutyCycle);
+        pidTop.setReference(0, ControlType.kDutyCycle);
 
-    public boolean aboveMinVelocity() {
-        return bottomFlywheelEncoder.getVelocity() > Constants.Shooter.velocityMinimum;
+    }
+    public boolean atVelocity() {
+        return MathUtil.isNear(setpoint, bottomFlywheelEncoder.getVelocity(), Constants.Shooter.velocityTolerance);
     }
 
     public void shootCancel() {
-        pidBottom.setReference(0, CANSparkMax.ControlType.kDutyCycle);
-        pidTop.setReference(0, CANSparkMax.ControlType.kDutyCycle);
+        // shoot(0);
+        motorsIdle();
     }
 
     public void shootIdle() {
-        pidBottom.setReference(3000, ControlType.kVelocity);
-        pidTop.setReference(3000, ControlType.kVelocity);
+        shoot(3000);
     }
 
     public boolean getBeamBreak() {
