@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,6 +32,8 @@ public class SwerveMoveToCMD extends Command {
     double endAngle;
 
     boolean translate;
+    
+    boolean autoPath;
 
     static double fieldLine = Units.feetToMeters(54) + Units.inchesToMeters(3.25);
 
@@ -77,29 +78,37 @@ public class SwerveMoveToCMD extends Command {
         this(s_Swerve, () -> pose, true);
     }
 
-    /** Mirrors Pose for Auton */
-    public SwerveMoveToCMD(Swerve s_Swerve, Pose2d pose, int i) {
-        this(s_Swerve, () -> pose, true);
-    }
-
-    public static SwerveMoveToCMD getAutoPath(Swerve swerve, Pose2d pose) {
-        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-            pose =
-                new Pose2d(
-                    fieldLine + (fieldLine - pose.getX()),
-                    pose.getY(),
-                    new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin())
-                );
-        }
-        return new SwerveMoveToCMD(swerve, pose);
-    }
+    // public static SwerveMoveToCMD getAutoPath(Swerve swerve, Pose2d pose) {
+    //     //if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+    //     // if(true){
+    //             pose =
+    //             new Pose2d(
+    //                 fieldLine + (fieldLine - pose.getX()),
+    //                 pose.getY(),
+    //                 new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin())
+    //             );
+        
+    //     return new SwerveMoveToCMD(swerve, pose);
+    // }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        xPID.setSetpoint(targetSup.get().getX());
-        yPID.setSetpoint(targetSup.get().getY());
-        aPID.setSetpoint(targetSup.get().getRotation().getDegrees());
+        Pose2d target;
+        if (translate && DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+                target =
+                    new Pose2d(
+                        fieldLine + (fieldLine - targetSup.get().getX()),
+                        targetSup.get().getY(),
+                        new Rotation2d(-targetSup.get().getRotation().getCos(), targetSup.get().getRotation().getSin())
+                        );
+        } else {
+            target = targetSup.get();
+        }
+
+        xPID.setSetpoint(target.getX());
+        yPID.setSetpoint(target.getY());
+        aPID.setSetpoint(target.getRotation().getDegrees());
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -109,8 +118,6 @@ public class SwerveMoveToCMD extends Command {
         if (translate) {
             double xCalc = xPID.calculate(s_Swerve.getPose().getX());
             double yCalc = yPID.calculate(s_Swerve.getPose().getY());
-            MathUtil.clamp(xCalc, -1, 1);
-            MathUtil.clamp(yCalc, -1, 1);
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xCalc, yCalc, aCalc);
             ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, s_Swerve.getYaw());
 

@@ -7,7 +7,6 @@ package frc.robot.auton;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -42,17 +41,19 @@ public class AmpSideAutonCMDG extends SequentialCommandGroup {
             new PrintCommand("Post Deploy"),
             new WaitUntilCommand(() -> pivot.intakeAtSetpointGround()),
             new InstantCommand(() -> intake.intakeForward()),
-            new ParallelCommandGroup(
-                SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.AmpClose, new Rotation2d(Math.PI))),
-                new SequentialCommandGroup(
-                    new WaitUntilCommand(intake::hasGamePiece),
-                    new PrintCommand("Had Game Piece"),
-                    new InstantCommand(intake::intakeStop),
-                    pivot.retractIntake(),
-                    new WaitUntilCommand(() -> pivot.intakeAtSetpointShooter()),
-                    new PrintCommand("Retracted")
-                )
-            ),
+            // new ParallelCommandGroup(
+            new SwerveMoveToCMD(swerve, new Pose2d(Notes.AmpClose, new Rotation2d(Math.PI))),
+            // new SequentialCommandGroup(
+            //     new WaitUntilCommand(intake::hasGamePiece),
+            //     new PrintCommand("Had Game Piece"),
+            //     new InstantCommand(intake::intakeStop),
+            //     pivot.retractIntake(),
+            //     new WaitUntilCommand(() -> pivot.intakeAtSetpointShooter()),
+            //     new PrintCommand("Retracted")
+            // )
+            // ),
+            new InstantCommand(() -> intake.intakeStop()),
+            pivot.retractIntake(),
             new PrintCommand("Post Move PCMDG"),
             new WaitCommand(1),
             new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker())

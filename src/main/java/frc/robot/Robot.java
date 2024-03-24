@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
     private double currentVeloc = 2;
     private RobotContainer m_robotContainer;
-
+    private boolean preMatchLEDS = false;;
     int val = 0;
 
     /**
@@ -48,13 +48,14 @@ public class Robot extends TimedRobot {
                 DriverStation.reportWarning("Interrupted Com:" + command.getName() + " Sub: " + command.getSubsystem(), false)
             );
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000);
-                sendAllianceRGB();
-            } catch (Exception e) {}
-        })
-            .start();
+        // new Thread(() -> {
+        //     try {
+        //         Thread.sleep(2000);
+        //         sendAllianceRGB();
+        //     } catch (Exception e) {}
+        // })
+        //     .start();
+        preMatchLEDS = false;
     }
 
     /**
@@ -75,6 +76,11 @@ public class Robot extends TimedRobot {
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("CPU Temp", RobotController.getCPUTemp());
+
+        if(!preMatchLEDS && DriverStation.getAlliance().isPresent()){
+            sendAllianceRGB();
+            preMatchLEDS = true;
+        }
         // RobotContainer.s_Swerve.getRobotRelativeSpeeds();
     }
 

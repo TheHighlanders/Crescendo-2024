@@ -105,10 +105,10 @@ public final class Constants {
 
         public static class DriveCurrentLimit {
 
-            public static final double kLimitToAmps = 40.0f;
-            public static final double kMaxSpikeTime = 25.0f;
-            public static final double kMaxSpikeAmps = 40.0f;
-            public static final int kSmartLimit = 40;
+            public static final double kLimitToAmps = 30.0f;
+            public static final double kMaxSpikeTime = 20.0f;
+            public static final double kMaxSpikeAmps = 35.0f;
+            public static final int kSmartLimit = 35;
         }
 
         public static class AngleCurrentLimit {
@@ -180,7 +180,7 @@ public final class Constants {
             public static final int driveMotorID = 21;
             public static final int angleMotorID = 22;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(60.66677474975586));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(80.91841578483582));
 
             public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -252,11 +252,11 @@ public final class Constants {
             public static final double absoluteEncoderOffset = -185;
 
             public static final double initExtension = 13.231982231140137; // Inches
-            public static final double readyInches = 12.6; // Inches
+            public static final double readyInches = 14.3; // Inches
 
             public static final double shooterPivotRatio = 1 / 7.0f;
 
-            public static final float shooterExtensionDeadzone = 0.0625f;
+            public static final float shooterExtensionDeadzone = 0.125f;
 
             public static final double shooterBaseToArmPivotAxis = 7.4353; //inches
 
@@ -265,7 +265,7 @@ public final class Constants {
                 public static final double minOut = -0.25;
                 public static final double maxOut = 1;
                 public static final double kP = 1.4d;
-                public static final double kI = 0.005d; //.005d;
+                public static final double kI = 0.0d; //.005d;
                 public static final double kD = 0.01; //30;
                 public static final double iMaxAccum = 25d;
             }

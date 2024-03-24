@@ -35,6 +35,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Localizer;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RGB;
+import frc.robot.subsystems.RGB.State;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -130,10 +131,13 @@ public class RobotContainer {
     public static Command readyPositions = new InstantCommand(s_Pivot::readyPositions);
     public static Command deployIntake = new deployIntakeCMD(s_Pivot, s_Intake, false);
     public static Command retractIntake = new deployIntakeCMD(s_Pivot, s_Intake, true);
-    public static Command ampPosIntake = new InstantCommand(()->s_Pivot.alignIntakeToAmp());
+    public static Command ampPosIntake = new InstantCommand(() -> s_Pivot.alignIntakeToAmp());
     public static Command runIntakeOutCMD = new StartEndCommand(s_Intake::intakeReverse, s_Intake::intakeStop, s_Intake);
     public static Command intakeHoldPos = new InstantCommand(s_Pivot::shooterAngleHold);
-    public static Command intakeRetractAndSuck = new ParallelDeadlineGroup(new runIntakeCMD(s_Intake, true).withTimeout(0.5), new deployIntakeCMD(s_Pivot, s_Intake, true));
+    public static Command intakeRetractAndSuck = new ParallelDeadlineGroup(
+        new runIntakeCMD(s_Intake, true).withTimeout(0.5),
+        new deployIntakeCMD(s_Pivot, s_Intake, true)
+    );
 
     public static Command runIntakeInCMD = new StartEndCommand(s_Intake::intakeForward, s_Intake::intakeStop, s_Intake);
 
@@ -143,6 +147,9 @@ public class RobotContainer {
     public static Command zeroGyroCommand = new InstantCommand(s_Swerve::zeroGyro);
     public static Command armClimbPos = new InstantCommand(() -> s_Pivot.alignPivot(18.75));
     public static Command idleShooterCMD = new InstantCommand(s_Shooter::shootIdle);
+
+    public static Command orangeRGB = new InstantCommand(() -> s_RGB.setLED(State.ORANGESOLID));
+    public static Command orangeRBGblink = new InstantCommand(() -> s_RGB.setLED(State.ORANGEBLINK));
 
     public static Command autonShootRoutineCMDG = new alignShootCMDG(
         s_Shooter,
@@ -161,8 +168,10 @@ public class RobotContainer {
 
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
-        hasGamePiece.onTrue(idleShooterCMD.andThen(intakeRetractAndSuck).alongWith(setRumble(1).withTimeout(0.5)).andThen(new InstantCommand(s_Pivot::readyPositions)));
-
+        hasGamePiece
+            .onTrue(idleShooterCMD.andThen(intakeRetractAndSuck).alongWith(setRumble(1).withTimeout(0.5)).alongWith(orangeRGB))
+            .onFalse(orangeRBGblink);
+        
         driver.y().onTrue(zeroGyroCommand);
 
         // s_RGB.setLED(State.ORANGESOLID) change this on hasGamePiece state change
@@ -173,7 +182,13 @@ public class RobotContainer {
         driver.a().onTrue(deployIntake);
         driver.x().onTrue(retractIntake);
         driver.b().onTrue(ampPosIntake);
-        driver.y().onTrue(new InstantCommand(()->{s_RGB.setLED(RGB.State.BROWN);})); // Toggles Poop Mode
+        driver
+            .start()
+            .onTrue(
+                new InstantCommand(() -> {
+                    s_RGB.setLED(RGB.State.BROWN);
+                })
+            ); // Toggles Poop Mode
 
         /* Shooter Button Bindings */
         operator.y().and(hasGamePiece).whileTrue(autonShootRoutineCMDG);

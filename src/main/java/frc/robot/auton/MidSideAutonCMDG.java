@@ -43,7 +43,7 @@ public class MidSideAutonCMDG extends SequentialCommandGroup {
             new WaitUntilCommand(() -> pivot.intakeAtSetpointGround()),
             new InstantCommand(() -> intake.intakeForward()),
             new ParallelCommandGroup(
-                SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Notes.MidClose, new Rotation2d(Math.PI))),
+                new SwerveMoveToCMD(swerve, new Pose2d(Notes.MidClose, new Rotation2d(Math.PI))),
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> intake.hasGamePiece()),
                     new PrintCommand("Had Game Piece"),

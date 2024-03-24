@@ -28,7 +28,7 @@ public class ShootAndLeaveMidAutonCMDG extends SequentialCommandGroup {
         // addCommands(new FooCommand(), new BarCommand());
         addCommands(
             new alignShootCMDG(shooter, intake, pivot, swerve, localizer, () -> RobotContainer.s_Localizer.getDistanceToSpeaker()),
-            SwerveMoveToCMD.getAutoPath(swerve, new Pose2d(Points.shootAndLeaveM1, new Rotation2d(Math.PI)))
+            new SwerveMoveToCMD(swerve, new Pose2d(Points.shootAndLeaveM1, new Rotation2d(Math.PI)))
         );
     }
 }
