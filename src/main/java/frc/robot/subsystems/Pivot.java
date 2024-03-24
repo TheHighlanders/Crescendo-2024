@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
 import frc.robot.util.CANSparkMaxCurrent;
@@ -178,10 +179,14 @@ public class Pivot extends SubsystemBase {
 
     /**Aligns both intake and shooter to a given angle */
     public boolean alignPivot(DoubleSupplier Extension) {
-        DriverStation.reportWarning("In Align Pivot Pivto Subsystem", true);
+        if (Constants.diagnosticMode) {
+            DriverStation.reportWarning("In Align Pivot Pivto Subsystem", true);
+        }
         try {
             double extSupplied = Extension.getAsDouble();
-            DriverStation.reportWarning("After Double", false);
+            if (Constants.diagnosticMode) {
+                DriverStation.reportWarning("After Double", false);
+            }
             alignShooterToExtension(extSupplied);
             alignIntakeToShooter();
             return true;
@@ -199,7 +204,9 @@ public class Pivot extends SubsystemBase {
         cachedSetpointShooter = Extension;
         pidShooterExtensionController.setReference(cachedSetpointShooter, CANSparkMax.ControlType.kPosition);
 
-        SmartDashboard.putNumber("Shooter setpoint", cachedSetpointShooter);
+        if (Constants.diagnosticMode) {
+            SmartDashboard.putNumber("Shooter setpoint", cachedSetpointShooter);
+        }
     }
 
     public void alignIntakeToShooter() {
@@ -207,19 +214,25 @@ public class Pivot extends SubsystemBase {
             intakeShooterCommand.schedule();
         }
 
-        DriverStation.reportWarning("Set Intake Setpoint Shooter", true);
+        if (Constants.diagnosticMode) {
+            DriverStation.reportWarning("Set Intake Setpoint Shooter", false);
+        }
     }
 
     public void alignIntakeToGround() {
         intakeShooterCommand.cancel();
-        DriverStation.reportWarning("Set Intake Setpoint Ground", false);
+        if (Constants.diagnosticMode) {
+            DriverStation.reportWarning("Set Intake Setpoint Ground", false);
+        }
         pidIntakeAngleController.setReference(0, CANSparkMax.ControlType.kPosition);
     }
 
-    public void alignIntakeToAmp(){
+    public void alignIntakeToAmp() {
         intakeShooterCommand.cancel();
-        DriverStation.reportWarning("Set Intake Setpoint Amp", false);
-        pidIntakeAngleController.setReference(frc.robot.Constants.Intake.Pivot.intakeAtAmp, CANSparkMax.ControlType.kPosition); 
+        if (Constants.diagnosticMode) {
+            DriverStation.reportWarning("Set Intake Setpoint Amp", false);
+        }
+        pidIntakeAngleController.setReference(frc.robot.Constants.Intake.Pivot.intakeAtAmp, CANSparkMax.ControlType.kPosition);
     }
 
     // Put shooter to avg shootig angle and align the Pivot
@@ -289,10 +302,11 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         shooterAngleMotor.periodicLimit();
         intakeAngleMotor.periodicLimit();
-
-        SmartDashboard.putBoolean("Arm setpoint intaks", intakeAtSetpointShooter());
-        SmartDashboard.putBoolean("Extension at setpoint", shooterAtSetpoint());
-        SmartDashboard.putNumber("extension", shooterExtensionEncoder.getPosition());
-        SmartDashboard.putNumber("AbsolIntakePos", getIntakeAbsolutePosition());
+        if (Constants.diagnosticMode) {
+            SmartDashboard.putBoolean("Arm setpoint intaks", intakeAtSetpointShooter());
+            SmartDashboard.putBoolean("Extension at setpoint", shooterAtSetpoint());
+            SmartDashboard.putNumber("extension", shooterExtensionEncoder.getPosition());
+            SmartDashboard.putNumber("AbsolIntakePos", getIntakeAbsolutePosition());
+        }
     }
 }

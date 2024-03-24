@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ClimberConsts;
 import frc.robot.auton.AmpSideAutonCMDG;
+import frc.robot.auton.AmpSideShootAndLeaveAutonCMDG;
 import frc.robot.auton.MidSideAutonCMDG;
 import frc.robot.auton.ShootAndLeaveMidAutonCMDG;
 import frc.robot.auton.ShootAndLeaveSourceSideAutonCMDG;
@@ -172,7 +173,7 @@ public class RobotContainer {
             .onTrue(idleShooterCMD.andThen(intakeRetractAndSuck).alongWith(setRumble(1).withTimeout(0.5)).alongWith(orangeRGB))
             .onFalse(orangeRBGblink);
         
-        driver.y().onTrue(zeroGyroCommand);
+        driver.povUp().onTrue(zeroGyroCommand);
 
         // s_RGB.setLED(State.ORANGESOLID) change this on hasGamePiece state change
 
@@ -189,6 +190,15 @@ public class RobotContainer {
                     s_RGB.setLED(RGB.State.BROWN);
                 })
             ); // Toggles Poop Mode
+
+        driver
+            .back()
+            .onTrue(
+                new InstantCommand(() -> {
+                    s_RGB.setLED(RGB.State.PARTYPOOPMODE);
+                })
+            );// toggles party pooooop!!!!
+
 
         /* Shooter Button Bindings */
         operator.y().and(hasGamePiece).whileTrue(autonShootRoutineCMDG);
@@ -222,6 +232,7 @@ public class RobotContainer {
         autoChooser.addOption("None", new SequentialCommandGroup());
         autoChooser.addOption("Source Side 1PLeave", new ShootAndLeaveSourceSideAutonCMDG(s_Shooter, s_Intake, s_Swerve, s_Pivot, s_Localizer));
         autoChooser.addOption("Mid 1P Leave", new ShootAndLeaveMidAutonCMDG(s_Shooter, s_Intake, s_Swerve, s_Pivot, s_Localizer));
+        autoChooser.addOption("Amp  1P Leave", new AmpSideShootAndLeaveAutonCMDG(s_Shooter, s_Intake, s_Swerve, s_Pivot, s_Localizer));
 
         autoChooser.setDefaultOption("Just Shoot", new ShootAutonCMDG(s_Swerve, s_Intake, s_Pivot, s_Shooter, s_Localizer));
         SmartDashboard.putData("Auto Chooser", autoChooser);

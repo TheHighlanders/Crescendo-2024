@@ -34,6 +34,7 @@ import frc.robot.util.SwerveModuleConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final boolean diagnosticMode = false;
 
     public static class SwerveConst {
 
@@ -160,7 +161,7 @@ public final class Constants {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 2;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(349.7586393356323));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(347.1482491493225));
 
             public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -170,7 +171,7 @@ public final class Constants {
             public static final int driveMotorID = 11;
             public static final int angleMotorID = 12;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(308.786244392395));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(307));
 
             public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -180,7 +181,7 @@ public final class Constants {
             public static final int driveMotorID = 21;
             public static final int angleMotorID = 22;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(80.91841578483582));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(57.84718573093414));
 
             public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -252,7 +253,7 @@ public final class Constants {
             public static final double absoluteEncoderOffset = -185;
 
             public static final double initExtension = 13.231982231140137; // Inches
-            public static final double readyInches = 14.3; // Inches
+            public static final double readyInches = 13.8; // Inches
 
             public static final double shooterPivotRatio = 1 / 7.0f;
 
@@ -374,5 +375,7 @@ public final class Constants {
         public static final Translation2d shootAndLeaveS1 = new Translation2d(2, 2);
         public static final Translation2d shootAndLeaveS2 = new Translation2d(4, 2);
         public static final Translation2d shootAndLeaveM1 = new Translation2d(4, 5.5);
+
+        public static final Translation2d shootAndLeaveA1 = new Translation2d(4, 7);
     }
 }

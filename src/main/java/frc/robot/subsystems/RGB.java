@@ -27,6 +27,7 @@ public class RGB extends SubsystemBase {
         FLAMEGRADIENT,
         FLAME,
         LOADINGBAR,
+        PARTYPOOPMODE
     }
 
     private boolean poopMode;
@@ -47,6 +48,7 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.LOADINGBAR, "9");
         stateMap.put(State.FLAMEGRADIENT, "10");
         stateMap.put(State.FLAME, "11");
+        stateMap.put(State.PARTYPOOPMODE, "12");
 
         setLED(State.OFF);
         // setArmLEDLoadingBar(10, 30);
@@ -65,7 +67,7 @@ public class RGB extends SubsystemBase {
         if (!poopMode) {
             changeString(stateMap.get(state));
         }
-        if (state == State.BROWN) {
+        if (state == State.BROWN || state == State.PARTYPOOPMODE) {
             poopMode = !poopMode;
         }
     }
