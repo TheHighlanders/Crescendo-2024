@@ -242,9 +242,9 @@ public class Swerve extends SubsystemBase {
 
     public void sendSmartDashboardDiagnostics() {
         sendAngleDiagnostic();
-        sendAngleTargetDiagnostic();
+        // sendAngleTargetDiagnostic();
 
-        sendDriveDiagnostic();
+        // sendDriveDiagnostic();
         // sendDriveTargetDiagnostic();
 
         sendAbsoluteDiagnostic();

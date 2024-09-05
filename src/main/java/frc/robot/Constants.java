@@ -34,7 +34,7 @@ import frc.robot.util.SwerveModuleConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final boolean diagnosticMode = false;
+    public static final boolean diagnosticMode = true;
 
     public static class SwerveConst {
 
@@ -188,8 +188,8 @@ public final class Constants {
 
         public static class BackRight {
 
-            public static final int driveMotorID = 32;
-            public static final int angleMotorID = 31;
+            public static final int driveMotorID = 31;
+            public static final int angleMotorID = 32;
 
             public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(256.65536928176877));
 
