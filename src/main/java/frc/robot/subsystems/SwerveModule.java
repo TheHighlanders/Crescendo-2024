@@ -34,7 +34,8 @@ public class SwerveModule {
     public SparkAbsoluteEncoder absoluteEncoder;
 
     private Rotation2d KModuleAbsoluteOffset;
-    private Rotation2d lastAngle;
+
+    // private Rotation2d lastAngle;
 
     public SwerveModule(int moduleNumber, SwerveModuleConfig config) {
         this.moduleNumber = moduleNumber;
@@ -103,8 +104,8 @@ public class SwerveModule {
      */
     public void setAngleState(SwerveModuleState state) {
         // Anti Jitter Code, not sure if it works, need to test and review
-        Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001) ? lastAngle : state.angle;
-        // Rotation2d angle = state.angle;
+        // Rotation2d angle = (Math.abs(state.speedMetersPerSecond) <= SwerveConst.kMaxAngularSpeedFast * 0.001) ? lastAngle : state.angle;
+        Rotation2d angle = state.angle;
         if (angle != null) {
             angleController.setReference(angle.getDegrees(), ControlType.kPosition);
             angleReference = angle.getDegrees();
@@ -145,11 +146,47 @@ public class SwerveModule {
      * @return Position of the module between 0 and 360, as a Rotation2d
      */
     public Rotation2d getAbsolutePosition() {
+        // double[] array = new double[10];
+        // array[0] = absoluteEncoder.getPosition();
+        // double maxID = 0;
+        // double minID = 0;
+        // for (int i = 1; i < array.length; i++) {
+        //     array[i] = absoluteEncoder.getPosition();
+
+        //     if (array[i] < minID) {
+        //         minID = i;
+        //     } else if (array[i] > maxID) {
+        //         maxID = i;
+        //     }
+        // }
+
+        // double avg = 0;
+        // for (int i = 0; i < array.length; i++) {
+        //     if (i != maxID && i != minID) {
+        //         avg += array[i];
+        //     }
+        // }
+        // avg /= (array.length - 2);
+
+        /* Gets Position from SparkMAX absol encoder * 360 to degrees */
+        // double positionDeg = avg * 360.0d;
+
+
         /* Gets Position from SparkMAX absol encoder * 360 to degrees */
         double positionDeg = absoluteEncoder.getPosition() * 360.0d;
 
         /* Subtracts magnetic offset to get wheel position */
         positionDeg -= KModuleAbsoluteOffset.getDegrees();
+
+        /* Inverts if necesary */
+        positionDeg *= (Module.KAbsoluteEncoderInverted ? -1 : 1);
+
+        return Rotation2d.fromDegrees(positionDeg);
+    }
+
+    public Rotation2d getAbsolutePositionNoOffset() {
+        /* Gets Position from SparkMAX absol encoder * 360 to degrees */
+        double positionDeg = absoluteEncoder.getPosition() * 360.0d;
 
         /* Inverts if necesary */
         positionDeg *= (Module.KAbsoluteEncoderInverted ? -1 : 1);
@@ -183,7 +220,7 @@ public class SwerveModule {
     /**
      * Configures Drive Motor using parameters from Constants
      */
-    private void configureDriveMotor() {
+    public void configureDriveMotor() {
         driveMotor.restoreFactoryDefaults();
 
         driveMotor.setInverted(Module.driveMotorInverted);
@@ -206,14 +243,14 @@ public class SwerveModule {
             Module.DriveCurrentLimit.kSmartLimit
         );
 
-        driveMotor.burnFlash();
+        // driveMotor.burnFlash();
         driveEncoder.setPosition(0.0);
     }
 
     /**
      * Configures Angle Motor using parameters from Constants
      */
-    private void configureAngleMotor() {
+    public void configureAngleMotor() {
         angleMotor.restoreFactoryDefaults();
 
         angleMotor.setInverted(Module.angleMotorInverted);
@@ -241,7 +278,7 @@ public class SwerveModule {
             Module.AngleCurrentLimit.kSmartLimit
         );
 
-        angleMotor.burnFlash();
+        // angleMotor.burnFlash();
 
         setIntegratedAngleToAbsolute();
     }

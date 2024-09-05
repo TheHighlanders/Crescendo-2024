@@ -5,14 +5,20 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.RGB.State;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
  * project.
  *
  * TODO: Fix current limiting
@@ -20,27 +26,46 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
 
     private Command m_autonomousCommand;
-    private double currentVeloc = 2.5;
+    private double currentVeloc = 2;
     private RobotContainer m_robotContainer;
-
+    private boolean preMatchLEDS = false;;
     int val = 0;
 
     /**
-     * This function is run when the robot is first started up and should be used for any
+     * This function is run when the robot is first started up and should be used
+     * for any
      * initialization code.
      */
     @Override
     public void robotInit() {
-        // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+        // Instantiate our RobotContainer. This will perform all our button bindings,
+        // and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
+        CommandScheduler
+            .getInstance()
+            .onCommandInterrupt(command ->
+                DriverStation.reportWarning("Interrupted Com:" + command.getName() + " Sub: " + command.getSubsystem(), false)
+            );
+
+        // new Thread(() -> {
+        //     try {
+        //         Thread.sleep(2000);
+        //         sendAllianceRGB();
+        //     } catch (Exception e) {}
+        // })
+        //     .start();
+        preMatchLEDS = false;
     }
 
     /**
-     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+     * This function is called every 20 ms, no matter the mode. Use this for items
+     * like diagnostics
      * that you want ran during disabled, autonomous, teleoperated and test.
      *
-     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+     * <p>
+     * This runs after the mode specific periodic functions, but before LiveWindow
+     * and
      * SmartDashboard integrated updating.
      */
     @Override
@@ -50,13 +75,22 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
-        RobotContainer.s_Swerve.sendSmartDashboardDiagnostics();
-        RobotContainer.s_Swerve.getRobotRelativeSpeeds();
+        // SmartDashboard.putNumber("CPU Temp", RobotController.getCPUTemp());
+
+        if(!preMatchLEDS && DriverStation.getAlliance().isPresent()){
+            sendAllianceRGB();
+            preMatchLEDS = true;
+        }
+        // RobotContainer.s_Swerve.getRobotRelativeSpeeds();
     }
 
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        RobotContainer.s_RGB.setLED(State.POPSICLE);
+        RobotContainer.s_Pivot.setShooterCoastMode();
+        CommandScheduler.getInstance().cancelAll();
+    }
 
     @Override
     public void disabledPeriodic() {}
@@ -64,8 +98,11 @@ public class Robot extends TimedRobot {
     /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
     @Override
     public void autonomousInit() {
+        RobotContainer.s_Pivot.setShooterBrakeMode();
+        RobotContainer.resetModules.schedule();
+        RobotContainer.s_RGB.setLED(State.RAINBOW);
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-        // schedule the autonomous command (example)
+
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
         }
@@ -73,15 +110,12 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {
-        // SequentialCommandGroup(new InstantCommand(()-> new WaitCommand(15)));
-        DriverStation.reportError("TACO CAT", false);
-        //  new SequentialCommandGroup(new InstantCommand(() -> s_RGB.changeString("1")), new WaitCommand(1),new InstantCommand(()->s_RGB.changeString("7")), new WaitCommand(1));
-
-    }
+    public void autonomousPeriodic() {}
 
     @Override
     public void teleopInit() {
+        RobotContainer.s_Pivot.setShooterBrakeMode();
+
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -89,31 +123,27 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+        RobotContainer.resetModules.schedule();
+
+        RobotContainer.s_Pivot.setShooterBrakeMode();
     }
 
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {
-        // if(val % 50 == 0){
-        //   m_robotContainer.s_RGB.setArmLEDLoadingBar((Math.sin(val/0)*50)+50, 100);
-        // }
-
-        // val++;
-    }
+    public void teleopPeriodic() {}
 
     @Override
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+        //RobotContainer.s_Swerve.jogSingleModule(0, currentVeloc, false);
         RobotContainer.s_Swerve.jogAllModuleDrive(currentVeloc);
         currentVeloc *= -1;
     }
 
     /** This function is called periodically during test mode. */
     @Override
-    public void testPeriodic() {
-        DriverStation.reportWarning(RobotContainer.s_Swerve.modules[1].getAbsolutePosition().getDegrees() + "", false);
-    }
+    public void testPeriodic() {}
 
     /** This function is called once when the robot is first started up. */
     @Override
@@ -122,4 +152,12 @@ public class Robot extends TimedRobot {
     /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {}
+
+    public void sendAllianceRGB() {
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+            RobotContainer.s_RGB.setLED(State.RED);
+        } else {
+            RobotContainer.s_RGB.setLED(State.BLUE);
+        }
+    }
 }

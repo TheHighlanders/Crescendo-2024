@@ -5,21 +5,15 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.Modules;
 import frc.robot.RobotContainer;
 import java.util.Arrays;
@@ -31,7 +25,7 @@ public class Swerve extends SubsystemBase {
     private AHRS gyro;
     public ChassisSpeeds chassisSpeeds;
 
-    public SwerveDriveOdometry odometer;
+    // public SwerveDriveOdometry odometer;
 
     public Swerve() {
         /* Initializes modules from Constants */
@@ -46,52 +40,32 @@ public class Swerve extends SubsystemBase {
         gyro = new AHRS(SPI.Port.kMXP);
         zeroGyro();
 
-        SmartDashboard.putNumber("getRobotRelativeSpeedsX", 1);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsY", 2);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsO", 3);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsX", 1);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsY", 2);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsO", 3);
 
-        SmartDashboard.putNumber("PP X", 4);
-        SmartDashboard.putNumber("PP Y", 5);
-        SmartDashboard.putNumber("PP O", 6);
+        // SmartDashboard.putNumber("PP X", 4);
+        // SmartDashboard.putNumber("PP Y", 5);
+        // SmartDashboard.putNumber("PP O", 6);
 
-        odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
+        // odometer = new SwerveDriveOdometry(Constants.SwerveConst.kinematics, gyro.getRotation2d(), getModulePositions());
 
         chassisSpeeds = new ChassisSpeeds();
         // SmartDashboard.putData(field);
-
-        /* <pp copied> */
-        AutoBuilder.configureHolonomic(
-            this::getPose, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-            Autonomous.pathFollowConfig,
-            () -> {
-                // Boolean supplier that controls when the path will be mirrored for the red
-                // alliance
-                // This will flip the path being followed to the red side of the field.
-                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            },
-            this
-        );
-        /* <pp copied\> */
     }
 
     @Override
     public void periodic() {
-        odometer.update(gyro.getRotation2d(), getModulePositions());
-        SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
+        // odometer.update(gyro.getRotation2d(), getModulePositions());
+        // SmartDashboard.putNumber("swerveOdoX", odometer.getPoseMeters().getX());
+        // SmartDashboard.putNumber("swerveOdoY", odometer.getPoseMeters().getY());
 
-        SmartDashboard.putNumber("xCalc", -1);
-        SmartDashboard.putNumber("yCalc", -1);
-        SmartDashboard.putBoolean("Running", false);
-
+        // SmartDashboard.putNumber("ODOX2", odometer.getPoseMeters().getX());
+        // SmartDashboard.putNumber("Module 2 inverted", (modules[2].driveMotor.getInverted() ? 1 : -1));
+        // SmartDashboard.putNumber("xCalc", -1);
+        // SmartDashboard.putNumber("yCalc", -1);
+        // SmartDashboard.putBoolean("Running", false);
+        if(Constants.diagnosticMode) {sendSmartDashboardDiagnostics();}
         // field.setRobotPose(getPose());
         for (SwerveModule m : modules) {
             m.runPeriodicLimiting();
@@ -122,9 +96,9 @@ public class Swerve extends SubsystemBase {
     }
 
     public void driveRobotRelative(ChassisSpeeds chassisSpeeds) {
-        SmartDashboard.putNumber("PP X", chassisSpeeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("PP Y", chassisSpeeds.vyMetersPerSecond);
-        SmartDashboard.putNumber("PP O", chassisSpeeds.omegaRadiansPerSecond);
+        // SmartDashboard.putNumber("PP X", chassisSpeeds.vxMetersPerSecond);
+        // SmartDashboard.putNumber("PP Y", chassisSpeeds.vyMetersPerSecond);
+        // SmartDashboard.putNumber("PP O", chassisSpeeds.omegaRadiansPerSecond);
 
         chassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
 
@@ -147,10 +121,9 @@ public class Swerve extends SubsystemBase {
     // For PP
     public void resetPose(Pose2d pose) {
         RobotContainer.s_Localizer.resetOdoPose2d(pose);
-        odometer.resetPosition(getYaw(), getModulePositions(), pose);
-
-        SmartDashboard.putNumber("ResetPoseX", pose.getX());
-        SmartDashboard.putNumber("ResetPoseY", pose.getY());
+        // odometer.resetPosition(getYaw(), getModulePositions(), pose);
+        // SmartDashboard.putNumber("ResetPoseX", pose.getX());
+        // SmartDashboard.putNumber("ResetPoseY", pose.getY());
     }
 
     /**
@@ -183,9 +156,9 @@ public class Swerve extends SubsystemBase {
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        SmartDashboard.putNumber("getRobotRelativeSpeedsX", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vxMetersPerSecond);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsY", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vyMetersPerSecond);
-        SmartDashboard.putNumber("getRobotRelativeSpeedsO", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).omegaRadiansPerSecond);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsX", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vxMetersPerSecond);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsY", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).vyMetersPerSecond);
+        // SmartDashboard.putNumber("getRobotRelativeSpeedsO", Constants.SwerveConst.kinematics.toChassisSpeeds(getStates()).omegaRadiansPerSecond);
 
         return Constants.SwerveConst.kinematics.toChassisSpeeds(getStates());
     }
@@ -206,6 +179,13 @@ public class Swerve extends SubsystemBase {
     public void resetAllModulestoAbsol() {
         for (SwerveModule m : modules) {
             m.setIntegratedAngleToAbsolute();
+        }
+    }
+
+    public void resetAllModules() {
+        for (SwerveModule m : modules) {
+            m.configureAngleMotor();
+            m.configureDriveMotor();
         }
     }
 
@@ -233,8 +213,9 @@ public class Swerve extends SubsystemBase {
     public void sendDriveDiagnostic() {
         double[] wheelSpeeds = new double[4];
         for (SwerveModule m : modules) {
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Position Drive Actual", m.driveEncoder.getPosition());
             SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Velocity Actual", m.driveEncoder.getVelocity());
-            wheelSpeeds[m.driveMotor.getDeviceId() / 10 - 1] = m.driveEncoder.getVelocity();
+            wheelSpeeds[m.driveMotor.getDeviceId() / 10] = m.driveEncoder.getVelocity();
         }
 
         SmartDashboard.putNumber(
@@ -254,15 +235,16 @@ public class Swerve extends SubsystemBase {
 
     public void sendAbsoluteDiagnostic() {
         for (SwerveModule m : modules) {
-            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Absolute", m.absoluteEncoder.getPosition());
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Absolute", m.getAbsolutePositionNoOffset().getDegrees());
+            SmartDashboard.putNumber("Module " + m.driveMotor.getDeviceId() / 10 + " Absolute Offsetted", m.getAbsolutePosition().getDegrees());
         }
     }
 
     public void sendSmartDashboardDiagnostics() {
-        // sendAngleDiagnostic();
-        // sendAngleTargetDiagnostic();
+        sendAngleDiagnostic();
+        sendAngleTargetDiagnostic();
 
-        // sendDriveDiagnostic();
+        sendDriveDiagnostic();
         // sendDriveTargetDiagnostic();
 
         sendAbsoluteDiagnostic();

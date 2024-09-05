@@ -14,7 +14,7 @@ public class RGB extends SubsystemBase {
     /** Creates a new RGB. */
     private SerialPort elPuerto;
 
-    enum State {
+    public enum State {
         TEST,
         OFF,
         RED,
@@ -24,12 +24,18 @@ public class RGB extends SubsystemBase {
         ORANGESOLID,
         POPSICLE,
         BROWN,
+        FLAMEGRADIENT,
+        FLAME,
+        LOADINGBAR,
+        PARTYPOOPMODE
     }
+
+    private boolean poopMode;
 
     public EnumMap<State, String> stateMap = new EnumMap<>(State.class);
 
     public RGB() {
-        elPuerto = new SerialPort(9600, SerialPort.Port.kMXP);
+        elPuerto = new SerialPort(9600, SerialPort.Port.kUSB);
         stateMap.put(State.TEST, "0");
         stateMap.put(State.OFF, "1");
         stateMap.put(State.RED, "2");
@@ -39,37 +45,30 @@ public class RGB extends SubsystemBase {
         stateMap.put(State.ORANGESOLID, "6");
         stateMap.put(State.POPSICLE, "7");
         stateMap.put(State.BROWN, "8");
+        stateMap.put(State.LOADINGBAR, "9");
+        stateMap.put(State.FLAMEGRADIENT, "10");
+        stateMap.put(State.FLAME, "11");
+        stateMap.put(State.PARTYPOOPMODE, "12");
 
         setLED(State.OFF);
         // setArmLEDLoadingBar(10, 30);
+        poopMode = false;
     }
 
     public void changeString(String str) {
-        elPuerto.writeString(str + "\n");
-        DriverStation.reportWarning(str, false);
+        try {
+            elPuerto.writeString(str + "\n");
+        } catch (Throwable e) {
+            DriverStation.reportWarning("AHHH",true);
+        }
     }
 
     public void setLED(State state) {
-        changeString(stateMap.get(state));
-    }
-
-    /**
-     *
-     * @param angleDif Angle Difference between arm and pivot !DEG! 100DEG is max
-     */
-    public void setArmLEDLoadingBar(double angleDif, int range) {
-        angleDif = angleDif / range;
-
-        angleDif = Math.max(Math.min(Math.abs(angleDif), 1), 0);
-
-        angleDif *= 100;
-        // int state = ((int) angleDif) + 100;
-        changeString((int) (angleDif + 100) + "");
-    }
-
-    @Override
-    public void periodic() {
-        // DriverStation.reportWarning("something", false);
-        // This method will be called once per scheduler run
+        if (!poopMode) {
+            changeString(stateMap.get(state));
+        }
+        if (state == State.BROWN || state == State.PARTYPOOPMODE) {
+            poopMode = !poopMode;
+        }
     }
 }

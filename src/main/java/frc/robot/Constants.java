@@ -34,26 +34,27 @@ import frc.robot.util.SwerveModuleConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final boolean diagnosticMode = false;
 
     public static class SwerveConst {
 
         public static final boolean kOpenLoop = true;
 
-        public static final double kTranslateP = 5.0;
-        public static final double kTranslateI = 0.1;
-        public static final double kTranslateD = 0.13;
+        public static final double kTranslateP = 1;
+        public static final double kTranslateI = 0;
+        public static final double kTranslateD = 0.1;
 
-        public static final double kRotateP = 5.0;
+        public static final double kRotateP = 2;
         public static final double kRotateI = 0.0;
-        public static final double kRotateD = 0.13;
+        public static final double kRotateD = 0;
 
         public static final double kMaxSpeedTele = 3.0; //Meters per Second
         public static final double kMaxAngularSpeedFast = Math.PI; //Degrees per Second
 
         public static final double kStickDeadband = 0.01;
 
-        public static final double kTrackWidth = Units.inchesToMeters(23.5);
-        public static final double kWheelBase = Units.inchesToMeters(23.5);
+        public static final double kTrackWidth = Units.inchesToMeters(20.5);
+        public static final double kWheelBase = Units.inchesToMeters(20.5);
 
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
@@ -62,14 +63,14 @@ public final class Constants {
             new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0)
         );
 
-        public static double speedLimit = 3.0;
-        public static double slowSpeedLimit = 1.0;
+        public static final double speedLimit = 3.0;
+        public static final double slowSpeedLimit = 0.5;
 
-        public static double accelerationLimit = 1.5;
-        public static double slowAccelerationLimit = 2;
+        public static final double accelerationLimit = 1.5;
+        public static final double slowAccelerationLimit = 0.5;
 
-        public static double angularVelocityLimit = 180.0;
-        public static double slowAngularVelocityLimit = 45.0;
+        public static final double angularVelocityLimit = 180.0;
+        public static final double slowAngularVelocityLimit = 45.0;
     }
 
     public static class Autonomous {
@@ -78,52 +79,37 @@ public final class Constants {
             new PIDConstants(1.1, 0.0, 0.0), // Translation PID constants
             new PIDConstants(0.35, 0.00, 0.00), // Rotation PID constants //0.004 0.01 0.01
             2, // Max module speed, in m/s //used to be 1, changed to rotate faster AND IT WORKS!
-            0.42207203769, // Drive base radius in meters. Distance from robot center to furthest module.
+            0.38615, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         );
     }
 
     public static class VisionConstants {
 
-        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 2);
-        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 2); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 1);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 1); // VecBuilder.fill(0.00040, 0.00080, 0.00050);
         //TODO: Actual stddevs
 
-        public static final Translation2d kBlueSpeaker = new Translation2d(-0.04, 5.55);
-        public static final Translation2d kRedSpeaker = new Translation2d(16.58, 5.55);
+        public static final Translation2d kBlueSpeaker = new Translation2d(-0.04 + Units.inchesToMeters(6), 5.55);
+        public static final Translation2d kRedSpeaker = new Translation2d(16.58 - Units.inchesToMeters(6), 5.55);
 
-        public static final Translation3d robotCameraTranslation0 = new Translation3d(
-            0.236,
-            0.288,
-            0.259
-        ); //-x, -y, z
+        public static final Translation3d robotCameraTranslation0 = new Translation3d(0.23, 0.288, 0.259); //-x, -y, z
         public static final Rotation3d robotCameraRotation0 = new Rotation3d(0, Units.degreesToRadians(25), Units.degreesToRadians(25));
-        public static final Transform3d kRobotCamera0 = new Transform3d(
-            robotCameraTranslation0,
-            robotCameraRotation0
-        );
+        public static final Transform3d kRobotCamera0 = new Transform3d(robotCameraTranslation0, robotCameraRotation0);
 
-        
-        public static final Translation3d robotCameraTranslation1 = new Translation3d(
-            0.236,
-            -0.288,
-            0.259
-        ); //-x, -y, z
+        public static final Translation3d robotCameraTranslation1 = new Translation3d(0.233, -0.288, 0.259); //-x, -y, z
         public static final Rotation3d robotCameraRotation1 = new Rotation3d(0, Units.degreesToRadians(25), -Units.degreesToRadians(25));
-        public static final Transform3d kRobotCamera1 = new Transform3d(
-            robotCameraTranslation0,
-            robotCameraRotation0
-        );
+        public static final Transform3d kRobotCamera1 = new Transform3d(robotCameraTranslation1, robotCameraRotation1);
     }
 
     public static class Module {
 
         public static class DriveCurrentLimit {
 
-            public static final double kLimitToAmps = 40.0f;
-            public static final double kMaxSpikeTime = 25.0f;
-            public static final double kMaxSpikeAmps = 40.0f;
-            public static final int kSmartLimit = 40;
+            public static final double kLimitToAmps = 30.0f;
+            public static final double kMaxSpikeTime = 20.0f;
+            public static final double kMaxSpikeAmps = 35.0f;
+            public static final int kSmartLimit = 35;
         }
 
         public static class AngleCurrentLimit {
@@ -172,40 +158,40 @@ public final class Constants {
 
         public static class FrontLeft {
 
-            public static final int driveMotorID = 10;
-            public static final int angleMotorID = 11;
+            public static final int driveMotorID = 1;
+            public static final int angleMotorID = 2;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(76.97476923465729));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(347.1482491493225));
 
             public static final SwerveModuleConfig FL0 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
 
         public static class FrontRight {
 
-            public static final int driveMotorID = 20;
-            public static final int angleMotorID = 21;
+            public static final int driveMotorID = 11;
+            public static final int angleMotorID = 12;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(59.69142973423005));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(307));
 
             public static final SwerveModuleConfig FR1 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
 
         public static class BackLeft {
 
-            public static final int driveMotorID = 40;
-            public static final int angleMotorID = 41;
+            public static final int driveMotorID = 21;
+            public static final int angleMotorID = 22;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(131.00274682044983));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(57.84718573093414));
 
             public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
 
         public static class BackRight {
 
-            public static final int driveMotorID = 30;
+            public static final int driveMotorID = 32;
             public static final int angleMotorID = 31;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(170.9482741355896));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(256.65536928176877));
 
             public static final SwerveModuleConfig BR3 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }
@@ -213,9 +199,183 @@ public final class Constants {
 
     public static final class SwerveMoveConsts {
 
-        public static final float posTolerance = 0.011f;
-        public static final float aTolerance = 0.5f;
+        public static final float posPosTolerance = 0.05f;
+        public static final float posVelTolerance = 0.1f;
+        public static final float aPosTolerance = 5f;
+        public static final float aVelTolerance = 2f;
 
         public static final float aVelocityTolerance = 1;
+    }
+
+    public static class Shooter {
+
+        public static double kWaitTimeBeforeStop = 2; //seconds
+
+        public static final int bottomFlywheelMotorID = 51;
+        public static final int topFlywheelMotorID = 52;
+        public static final double kBottomGearRatio = (1 / 1.0f);
+        public static final double kBottomVelocityConversionFactor = kBottomGearRatio;
+        public static final double kTopRatio = (1 / 1.0f);
+        public static final int slotID = 0;
+
+        public static final double velocityTolerance = 50;
+
+        public static final int kCurrentLimit = 20;
+
+        public static class ShooterCurrentLimit {
+
+            public static final double kLimitToAmps = 5.0f;
+            public static final double kMaxSpikeTime = 5.0f;
+            public static final double kMaxSpikeAmps = 20;
+            public static final int kSmartLimit = 10;
+        }
+
+        public static final int kShooterBeamBreakDIOPin = 0;
+
+        public static class PIDValues {
+
+            public static final double minOut = 0;
+            public static final double maxOut = 1;
+            public static final double kP = 0.001d;
+            public static final double kI = 0d;
+            public static final double kD = 0d;
+            public static final double iMaxAccum = .6d;
+        }
+
+        public static class Pivot {
+
+            public static final int SHOOTER = 41;
+            public static final int slotID = 0;
+
+            public static final boolean isInversed = true;
+            public static final int inversionFactor = (isInversed ? -1 : 1);
+            public static final int kAbsolDutyCycleDIOPin = 2;
+            public static final double absoluteEncoderOffset = -185;
+
+            public static final double initExtension = 13.231982231140137; // Inches
+            public static final double readyInches = 13.8; // Inches
+
+            public static final double shooterPivotRatio = 1 / 7.0f;
+
+            public static final float shooterExtensionDeadzone = 0.125f;
+
+            public static final double shooterBaseToArmPivotAxis = 7.4353; //inches
+
+            public static class PIDValues {
+
+                public static final double minOut = -0.25;
+                public static final double maxOut = 1;
+                public static final double kP = 1.4d;
+                public static final double kI = 0.0d; //.005d;
+                public static final double kD = 0.01; //30;
+                public static final double iMaxAccum = 25d;
+            }
+
+            public static class ArmCurrentLimit {
+
+                public static final double kLimitToAmps = 40.0f;
+                public static final double kMaxSpikeTime = 25.0f;
+                public static final double kMaxSpikeAmps = 40.0f;
+                public static final int kSmartLimit = 40;
+            }
+
+            public static class actuatorConst {
+
+                public static final double extensionVelocityDeadzone = 0.5;
+                public static final double inchesToRotationsConversion = Units.metersToInches(0.012) * shooterPivotRatio;
+            }
+        }
+    }
+
+    public static class Intake {
+
+        public static final int INTAKE = 53;
+        public static final int slotID = 0;
+
+        public static final int kIntakeBeamBreakDIOPin = 1;
+
+        public static class IntakeCurrentLimit {
+
+            public static final double kLimitToAmps = 40.0f;
+            public static final double kMaxSpikeTime = 25.0f;
+            public static final double kMaxSpikeAmps = 40.0f;
+            public static final int kSmartLimit = 40;
+        }
+
+        public static class Pivot {
+
+            public static final int INTAKE = 42;
+            public static final int slotID = 0;
+
+            public static final boolean isInversed = false;
+            public static final int inversionFactor = (isInversed ? -1 : 1);
+            public static final int kAbsolDutyCycleDIOPin = 3;
+            public static final double absoluteEncoderOffset = 337d;
+
+            public static final double intakeAtAmp = -8.5;
+
+            public static final double intakePivotRatio = 1;
+            public static final double intakeInit = -13.2;
+            public static final float intakeAngleDeadzone = 0.5f;
+            public static final float intakeVelocityDeadzone = 0.1f;
+
+            public static class PIDValues {
+
+                public static final double minOut = -0.3;
+                public static final double maxOut = 0.3;
+                public static final double kP = 0.03d;
+                public static final double kI = 0d;
+                public static final double kD = 0d;
+                public static final double kMaxI = 0d;
+                public static final double iMaxAccum = 0d;
+
+                public static class deviationPID {
+
+                    public static final double kP = 0.0045d;
+                    public static final double kI = 0d;
+                    public static final double kD = 0d;
+                    public static final double posTolerance = 1d;
+                    public static final double velTolerance = 0.2d;
+                }
+            }
+
+            public static class ArmCurrentLimit {
+
+                public static final double kLimitToAmps = 40.0f;
+                public static final double kMaxSpikeTime = 25.0f;
+                public static final double kMaxSpikeAmps = 40.0f;
+                public static final int kSmartLimit = 40;
+            }
+        }
+    }
+
+    public static final class ClimberConsts {
+
+        public static final int CLIMBER_LEFT = 61;
+        public static final int CLIMBER_RIGHT = 62;
+
+        public static final int kServoRightID = 3;
+        public static final int kServoLeftID = 4;
+
+        public static final double kClimbSpeed = 0.45;
+
+        public static final double kClimberP = 0.0;
+        public static final double kClimberPrimePoint = 0.0;
+    }
+
+    public static final class Notes {
+
+        public static final Translation2d AmpClose = new Translation2d(2.6, 7.0104);
+        public static final Translation2d MidClose = new Translation2d(2.6, 5.5626);
+        public static final Translation2d SourceClose = new Translation2d(2.6, 4.1148);
+    }
+
+    public static final class Points {
+
+        public static final Translation2d shootAndLeaveS1 = new Translation2d(2, 2);
+        public static final Translation2d shootAndLeaveS2 = new Translation2d(4, 2);
+        public static final Translation2d shootAndLeaveM1 = new Translation2d(4, 5.5);
+
+        public static final Translation2d shootAndLeaveA1 = new Translation2d(4, 7);
     }
 }
