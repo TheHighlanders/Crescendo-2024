@@ -85,6 +85,8 @@ public class SwerveModule {
         if (isOpenLoop) {
             double motorPercent = state.speedMetersPerSecond / SwerveConst.kMaxSpeedTele;
             driveMotor.set(motorPercent);
+            driveReference = state.speedMetersPerSecond;
+
         } else {
             driveController.setReference(
                 state.speedMetersPerSecond,

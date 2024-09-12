@@ -181,7 +181,7 @@ public final class Constants {
             public static final int driveMotorID = 21;
             public static final int angleMotorID = 22;
 
-            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(57.84718573093414));
+            public static final Rotation2d absoluteEncoderOffset = new Rotation2d(Math.toRadians(57.84718573093414+180.0));
 
             public static final SwerveModuleConfig BL2 = new SwerveModuleConfig(driveMotorID, angleMotorID, absoluteEncoderOffset);
         }

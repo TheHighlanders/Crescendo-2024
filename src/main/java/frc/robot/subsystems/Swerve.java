@@ -241,13 +241,13 @@ public class Swerve extends SubsystemBase {
     }
 
     public void sendSmartDashboardDiagnostics() {
-        sendAngleDiagnostic();
+        // sendAngleDiagnostic();
         // sendAngleTargetDiagnostic();
 
-        // sendDriveDiagnostic();
-        // sendDriveTargetDiagnostic();
+        sendDriveDiagnostic();
+        sendDriveTargetDiagnostic();
 
-        sendAbsoluteDiagnostic();
+        // sendAbsoluteDiagnostic();
 
         SmartDashboard.putNumber("NavX Angle", getYaw().getDegrees());
         SmartDashboard.putNumber("Pose X", getPose().getX());
