@@ -312,11 +312,11 @@ public final class Constants {
             public static final int kAbsolDutyCycleDIOPin = 3;
             public static final double absoluteEncoderOffset = 337d;
 
-            public static final double intakeAtAmp = -8.5;
+            public static final double intakeAtAmp = -8.5; 
 
             public static final double intakePivotRatio = 1;
-            public static final double intakeInit = -13.2;
-            public static final float intakeAngleDeadzone = 0.5f;
+            public static final double intakeInit = -13.2; // -12.5 for no grindy intake
+            public static final float intakeAngleDeadzone = 0.5f; 
             public static final float intakeVelocityDeadzone = 0.1f;
 
             public static class PIDValues {
